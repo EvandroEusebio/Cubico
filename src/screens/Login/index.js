@@ -5,12 +5,19 @@ import { useState } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
 import {  useFonts, Poppins_700Bold,  Poppins_300Light, Poppins_500Medium, Poppins_400Regular} from '@expo-google-fonts/poppins';
 import Button from '../../components/button/Button';
-
-
+import { useDispatch } from 'react-redux';
+import { login } from '../../features/authentication/authSlice';
 
 export default function Login(){
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
+  const dispatch = useDispatch();
+
+  const loginHandle = () =>{
+    dispatch(login({password, phone}));
+  }
+
   const [showPassword, setShowPassword] = useState(false);
-  const {number, onChangeNumber } = useState('');
   let [fontsLoaded] = useFonts({
     Poppins_700Bold,
     Poppins_300Light,
@@ -22,8 +29,6 @@ export default function Login(){
     return null;
   }
 
-  
-
   return (
     <View style={login_style.container}>
       <View style={login_style.containerImage}>
@@ -34,8 +39,8 @@ export default function Login(){
         <View style={login_style.form}>
           <TextInput
           style={[login_style.input, {fontFamily: 'Poppins_400Regular'}]}
-          onChangeText={onChangeNumber}
-          value={number}
+          onChangeText={setPhone}
+          value={phone}
           placeholder="Numero de telefone"
           keyboardType="numeric"
           />
@@ -45,8 +50,8 @@ export default function Login(){
         <View style={login_style.form}>
           <TextInput
             style={[login_style.input, {fontFamily: 'Poppins_400Regular'}]}
-            onChangeText={onChangeNumber}
-            value={number}
+            onChangeText={setPassword}
+            value={password}
             placeholder="senha"
             secureTextEntry={!showPassword}
           />
@@ -59,7 +64,7 @@ export default function Login(){
         </TouchableOpacity>
 
         <View>
-          <Button name={'Logar'} bgColor={'#094559'} textColor={'#f3f3f3'} fontFamily={'Poppins_700Bold'}/>
+          <Button name={'Logar'} bgColor={'#094559'} textColor={'#f3f3f3'} fontFamily={'Poppins_700Bold'} onPress={()=> loginHandle() }/>
         </View>
 
         <View style={login_style.containerSignUp}>

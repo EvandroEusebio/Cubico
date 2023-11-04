@@ -7,6 +7,7 @@ export const button_style = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: 20,
+        marginVertical: 10
         
     }
 });
