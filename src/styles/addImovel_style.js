@@ -145,8 +145,4 @@ export const addImovel_style = StyleSheet.create({
     marginVertical: 10
   }
 
-
-
-
-
 });

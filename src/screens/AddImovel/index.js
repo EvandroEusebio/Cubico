@@ -23,6 +23,33 @@ export default function AddImovel() {
     const [image02, setImage02] = useState(null);
     const [image03, setImage03] = useState(null);
     const [image04, setImage04] = useState(null);
+    const [totalBedrooms, setTotalBedrooms] = useState(0);
+    const [totalWC, setTotalWC] = useState(0); 
+    const [totalChinken, setTotalChinken] = useState(0);
+
+    function incrementTotal(typeTotal){
+        if(typeTotal == "totalBedrooms"){
+            setTotalBedrooms(totalBedrooms + 1)
+        }
+        else if(typeTotal == "totalWC"){
+            setTotalWC(totalWC + 1)
+        } 
+        else if(typeTotal == "totalChinken"){
+            setTotalChinken(totalChinken + 1)
+        } 
+    }
+
+    function decrementTotal(typeTotal){
+        if(typeTotal == "totalBedrooms" && totalBedrooms > 0){
+            setTotalBedrooms(totalBedrooms - 1)
+        }
+        else if(typeTotal == "totalWC" && totalWC > 0){
+            setTotalWC(totalWC - 1)
+        } 
+        else if(typeTotal == "totalChinken" && totalChinken > 0){
+            setTotalChinken(totalChinken - 1)
+        } 
+    }
 
     const Item = ({item, backgroundColor, onPress}) => (
         <TouchableOpacity style={[addImovel_style.categoryImovel, {backgroundColor}]} onPress={() => {onPress(); handlePressSelectedCategory(item.type)}}>
@@ -237,11 +264,11 @@ export default function AddImovel() {
                 <View style={addImovel_style.containerCounters}>
                     <Text  style={addImovel_style.containerCountersText}>Numero de Quartos</Text>
                     <View  style={addImovel_style.counter}>
-                        <TouchableOpacity style={addImovel_style.counterBtn}>
+                        <TouchableOpacity style={addImovel_style.counterBtn} onPress={() => incrementTotal('totalBedrooms')}>
                             <Text style={addImovel_style.counterBtnText}>+</Text>
                         </TouchableOpacity>
-                        <Text>0</Text>
-                        <TouchableOpacity style={addImovel_style.counterBtn}>
+                        <Text>{totalBedrooms}</Text>
+                        <TouchableOpacity style={addImovel_style.counterBtn} onPress={() => decrementTotal('totalBedrooms')}>
                             <Text style={addImovel_style.counterBtnText}>-</Text>
                         </TouchableOpacity>
                     </View>
@@ -250,11 +277,11 @@ export default function AddImovel() {
                 <View style={addImovel_style.containerCounters}>
                     <Text  style={addImovel_style.containerCountersText}>Numero de WC</Text>
                     <View  style={addImovel_style.counter}>
-                        <TouchableOpacity style={addImovel_style.counterBtn}>
+                        <TouchableOpacity style={addImovel_style.counterBtn} onPress={() => incrementTotal('totalWC')}>
                             <Text style={addImovel_style.counterBtnText}>+</Text>
                         </TouchableOpacity>
-                        <Text>0</Text>
-                        <TouchableOpacity style={addImovel_style.counterBtn}>
+                        <Text>{totalWC}</Text>
+                        <TouchableOpacity style={addImovel_style.counterBtn} onPress={() => decrementTotal('totalWC')}>
                             <Text style={addImovel_style.counterBtnText}>-</Text>
                         </TouchableOpacity>
                     </View>
@@ -263,11 +290,11 @@ export default function AddImovel() {
                 <View style={addImovel_style.containerCounters}>
                     <Text  style={addImovel_style.containerCountersText}>Numero de Cosinhas</Text>
                     <View  style={addImovel_style.counter}>
-                        <TouchableOpacity style={addImovel_style.counterBtn}>
+                        <TouchableOpacity style={addImovel_style.counterBtn} onPress={() => incrementTotal('totalChinken')}>
                             <Text style={addImovel_style.counterBtnText}>+</Text>
                         </TouchableOpacity>
-                        <Text>0</Text>
-                        <TouchableOpacity style={addImovel_style.counterBtn}>
+                        <Text>{totalChinken}</Text>
+                        <TouchableOpacity style={addImovel_style.counterBtn} onPress={() => decrementTotal('totalChinken')}>
                             <Text style={addImovel_style.counterBtnText}>-</Text>
                         </TouchableOpacity>
                     </View>
