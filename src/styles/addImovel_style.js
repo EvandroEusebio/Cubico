@@ -5,6 +5,7 @@ export const addImovel_style = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: BG_COLOR,
+    paddingTop: 40,
     
   },
   dropdown: {
@@ -63,7 +64,7 @@ export const addImovel_style = StyleSheet.create({
   },
   containerFormAddress:{
     paddingHorizontal: 16,
-    gap: 10
+    gap: 20
   },
   subtitle:{
     fontSize: 18,
@@ -87,8 +88,8 @@ export const addImovel_style = StyleSheet.create({
   },
   containerFormInfo:{
     paddingHorizontal: 16,
-    gap: 10,
-    marginTop: 16
+    gap: 20,
+    marginTop: 16,
   },
   containerCounters:{
     flexDirection: 'row',
@@ -127,13 +128,22 @@ export const addImovel_style = StyleSheet.create({
     justifyContent:'center',
     alignItems: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    borderWidth: 1
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.2)'
   },
   pictureText:{
     color: PRIMARY,
     fontSize: 25,
   },
-
+  categoryImovel:{
+    width: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 100,
+    borderWidth: 1,
+    marginHorizontal: 10,
+    marginVertical: 10
+  }
 
 
 
