@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { View, Text, SafeAreaView, FlatList, TextInput, StyleSheet, TouchableOpacity, ScrollView, ImageBackground, Image } from 'react-native'
 import { addImovel_style } from '../../styles/addImovel_style'
 import { StatusBar } from 'expo-status-bar'
@@ -6,13 +6,14 @@ import { Dropdown } from 'react-native-element-dropdown'
 import Button from '../../components/button/Button'
 import Icon2 from 'react-native-vector-icons/MaterialIcons';
 import * as ImagePicker from 'expo-image-picker';
+import API_URL from '../../../config/api'
 
 
 
 export default function AddImovel() {
     const {latitude, setLatitude} = useState('')
     const {longitude, setLongitude} = useState('')
-    const [province, setProvince] = useState(null);
+    const [dataProvince, setDataProvince] = useState([]);
     const [county, setCounty] = useState(null);
     const [typeStatus, setTypeStatus] = useState(null);
     const {price, setPrice} = useState('')
@@ -26,7 +27,27 @@ export default function AddImovel() {
     const [totalBedrooms, setTotalBedrooms] = useState(0);
     const [totalWC, setTotalWC] = useState(0); 
     const [totalChinken, setTotalChinken] = useState(0);
+    const [province, setProvince] = useState(null);
 
+    useEffect(()=>{
+
+        fetch(API_URL + `api/v1/provincia`)
+      .then((response) => response.json())
+      .then((data) => {
+        setDataProvince(data)
+        // Define os dados do usuário no estado
+      })
+      .catch((error) => {
+        console.error('Erro ao recuperar os dados do usuário:', error);
+      });
+    }, [])
+
+    const formatedProvinceData = dataProvince.map(opcao => ({
+        label: opcao.name,
+        value: opcao.id // Valor é a opção em minúsculas sem espaços
+      }));
+      
+    
     function incrementTotal(typeTotal){
         if(typeTotal == "totalBedrooms"){
             setTotalBedrooms(totalBedrooms + 1)
@@ -107,13 +128,13 @@ export default function AddImovel() {
         { label: 'Aluguer', value: '2' },
     ];
 
-    const provinceData = [
+    /*const provinceData = [
         { label: 'Luanda', value: '1' },
         { label: 'Benguela', value: '2' },
         { label: 'Uíla', value: '3' },
         { label: 'Bié', value: '4' },
         { label: 'Huambo', value: '5' },
-    ];
+    ];*/
 
     
     const countyData = [
@@ -216,7 +237,7 @@ export default function AddImovel() {
                     selectedTextStyle={addImovel_style.selectedTextStyle}
                     inputSearchStyle={addImovel_style.inputSearchStyle}
                     iconStyle={addImovel_style.iconStyle}
-                    data={provinceData}
+                    data={formatedProvinceData}
                     maxHeight={300}
                     labelField="label"
                     valueField="value"
