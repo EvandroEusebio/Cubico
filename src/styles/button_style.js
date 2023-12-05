@@ -8,6 +8,5 @@ export const button_style = StyleSheet.create({
         justifyContent: 'center',
         borderRadius: 20,
         marginVertical: 10
-        
     }
 });

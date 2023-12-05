@@ -129,7 +129,8 @@ export const addImovel_style = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.2)'
+    borderColor: 'rgba(0, 0, 0, 0.2)',
+    borderStyle: 'dashed'
   },
   pictureText:{
     color: PRIMARY,

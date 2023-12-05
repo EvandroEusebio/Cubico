@@ -4,11 +4,13 @@ import API_URL from '../../config/api';
 
 function Teste() {
   const [userData, setUserData] = useState(null);
+  const {price, setPrice} = useState('')
+
 
   useEffect(() => {
     // Faça uma solicitação à sua API para recuperar os dados do usuário
     // Substitua 'API_URL' pela URL da sua API e 'userId' pelo ID do usuário
-    fetch(API_URL + `api/v1/user/8`)
+    fetch(API_URL + `api/v1/user/2`)
       .then((response) => response.json())
       .then((data) => {
         setUserData(data);
