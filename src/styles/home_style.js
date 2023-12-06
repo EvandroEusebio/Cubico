@@ -59,7 +59,7 @@ export const home_style = StyleSheet.create({
     
   },
   headerTitle:{
-    color: PRIMARY,
+    color: "#000",
     fontSize: 25,
     fontWeight: '900',
   },

@@ -154,10 +154,7 @@ export default function Home() {
                     showsVerticalScrollIndicator={false}
                 />
             </ScrollView>
-            <TouchableOpacity style={home_style.map} activeOpacity={0.3}>
-                <Text style={home_style.textMap}>Mapa</Text>
-                <Icon name="map" size={20} color="#FFF" />
-            </TouchableOpacity>
+            
         </View>
     )
 }
