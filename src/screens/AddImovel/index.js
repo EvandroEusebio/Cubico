@@ -141,7 +141,7 @@ export default function AddImovel() {
     formData.append("type_imovel_id", selectedCategory);
     formData.append("province_id", province);
     formData.append("county_id", county);
-    formData.append("owner_id", 1);
+    formData.append("owner_id", 2);
     formData.append("total_bedrooms", totalBedrooms);
     formData.append("total_wc", totalWC);
     formData.append("latitude", latitude);

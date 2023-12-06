@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, Text, ScrollView, TouchableOpacity, FlatList, Image, TextInput } from 'react-native'
 import Search from '../../components/Search'
 import { home_style } from '../../styles/home_style'
 import {  useFonts, Poppins_700Bold,  Poppins_300Light, Poppins_500Medium, Poppins_400Regular} from '@expo-google-fonts/poppins';
 import Icon from 'react-native-vector-icons/Feather';
 import Icon2 from 'react-native-vector-icons/MaterialIcons';
+import API_URL from '../../../config/api';
 
 const dataTypeProperties = [
     {
@@ -76,37 +77,37 @@ const TypeProperties = ({type, icon}) => (
     </TouchableOpacity>
 );
 
-
-const Properties = ({country, province, owner, distance, type, image, price, status}) => (
+//http://192.168.106.1:8000/imovelImage/image01_1701875626.jpg
+const Properties = ({item}) => (
     <TouchableOpacity activeOpacity={1} style={home_style.containerItemPropertie}>  
       <Image
       style={home_style.imageProperties}
-      source={image}
+      source={{ uri: API_URL + `${item.image01}` }}
       />
       <View style={[home_style.containerInfo]}>
         <View>
-            <Text>{country}, {province}</Text>
-            <Text>{owner}</Text>
+            <Text>{item.county_id}, {item.province_id}</Text>
+            <Text>{item.owner.name}</Text>
             <View style={home_style.details}>
                 <Icon name="map-pin" size={13} color="#000" />
-                <Text>{distance}</Text>
+                
 
                 <Icon name="shopping-bag" size={13} color="#000" />
-                <Text>{status}</Text>
+                <Text>{item.status}</Text>
             </View>
         </View>
         <View style={home_style.details2}>
-            <Text>{type}</Text>
+            <Text>{item.type_imovel_id}</Text>
             <View style={home_style.price}>
-                <Text style={home_style.textPrice}>{price} KZ</Text>
+                <Text style={home_style.textPrice}>{item.price} KZ</Text>
             </View>
         </View>
       </View>
       <TouchableOpacity activeOpacity={0.7} style={home_style.favorites}>
         <Icon2 name="favorite" size={25} color="#fff" />
       </TouchableOpacity>
-      <View style={[home_style.tag, {backgroundColor: status == 'A venda' ? 'green' : 'red'}]}>
-        <Text style={home_style.textTag}>{status}</Text>
+      <View style={[home_style.tag, {backgroundColor: item.status == 'a venda' ? 'green' : 'red'}]}>
+        <Text style={home_style.textTag}>{item.status}</Text>
       </View>
     </TouchableOpacity>
 );
@@ -114,6 +115,14 @@ const Properties = ({country, province, owner, distance, type, image, price, sta
 
 export default function Home() {
     const [text, onChangeText] = useState('');
+    const [imovels, setImovels] = useState([]);
+
+    useEffect(function(){
+        fetch(API_URL + `api/v1/owner/imovel`)
+        .then(response => response.json())
+        .then(data => setImovels(data.imovel))
+        .catch(error => console.error('Erro ao obter imóveis:', error));
+    }, [])
     return (
         <View style={home_style.container}>
             <View style={home_style.header}>
@@ -148,9 +157,9 @@ export default function Home() {
             
             <ScrollView showsVerticalScrollIndicator={false}>
                 <FlatList
-                    data={dataProperties}
-                    renderItem={({item}) => <Properties type={item.type} country={item.country} price={item.price} distance={item.distance} image={item.image} province={item.province} owner={item.owner} status={item.status}/>}
-                    keyExtractor={item => item.id}
+                    data={imovels}
+                    renderItem={Properties}
+                    keyExtractor={item => item.id.toString()}
                     showsVerticalScrollIndicator={false}
                 />
             </ScrollView>
