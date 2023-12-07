@@ -10,7 +10,6 @@ import { register } from '../../features/authentication/authSlice';
 import * as ImagePicker from 'expo-image-picker';
 
 export default function SignUp(){
-  const [image, setImage] = useState(null);
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -18,29 +17,7 @@ export default function SignUp(){
   const dispatch = useDispatch();
 
   const signUpHandle = () =>{
-    const uri =
-    Platform.OS === "android"
-      ? image
-      : image.replace("file://", "");
-    const filename = image.split("/").pop();
-    const match = /\.(\w+)$/.exec(filename);
-    const ext = match?.[1];
-    const type = match ? `image/${match[1]}` : `image`;
-    
-    console.log(match?.[1]);
-
-    const formData = new FormData();
-    formData.append('name', name);
-    formData.append('email', email);
-    formData.append('password', password);
-    formData.append('phone', phone);
-    formData.append('imageProfile', {
-      uri,
-      type,
-      name: 'profile.jpg',
-    });
-    console.log(formData._parts)
-    dispatch(register(formData));
+    dispatch(register({name, email, password, phone}));
   }
 
   const [showPassword, setShowPassword] = useState(false);
@@ -55,32 +32,10 @@ export default function SignUp(){
     return null;
   }
 
-  const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    console.log(result);
-
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
-      console.log(result.assets[0].uri);
-    }
-  };
-
   return (
     <View style={register_style.container}>
-      <View style={register_style.containerImage}>
-        <Image source={require('../../../assets/Ellipse1.png')}/>
-      </View>
       <View style={register_style.containerForm}>
-        <ScrollView showsVerticalScrollIndicator={false}>
-
-            <Text style={[register_style.title, {fontFamily: 'Poppins_700Bold'}]}>Login</Text>
+            <Text style={[register_style.title, {fontFamily: 'Poppins_700Bold'}]}>Cadastre-se</Text>
 
             <View style={register_style.form}>
             <TextInput
@@ -113,15 +68,6 @@ export default function SignUp(){
             <Icon name="phone" size={30} color="#adadad" />
             </View>
 
-            <TouchableOpacity style={register_style.form} onPress={pickImage}>
-                <View>
-                    <Text style={ {fontFamily: 'Poppins_400Regular', color:'#adadad'}}>Adicionar imagem de perfil</Text>
-                    
-                </View>
-                <Icon name="plus" size={30} color="#094559" />
-            </TouchableOpacity>
-            
-
             <View style={register_style.form}>
             <TextInput
                 style={[register_style.input, {fontFamily: 'Poppins_400Regular'}]}
@@ -139,7 +85,7 @@ export default function SignUp(){
             </TouchableOpacity>
 
             <View>
-            <Button name={'Registar'} bgColor={'#094559'} textColor={'#f3f3f3'} fontFamily={'Poppins_700Bold'} onPress={()=> signUpHandle() }/>
+            <Button name={'Registar'} bgColor={'#000'} textColor={'#f3f3f3'} fontFamily={'Poppins_700Bold'} onPress={()=> signUpHandle() }/>
             </View>
 
             <View style={register_style.containerSignUp}>
@@ -148,8 +94,7 @@ export default function SignUp(){
                 <Text style={[register_style.signUp, {fontFamily: 'Poppins_400Regular'}]}>Registrar</Text>
             </TouchableOpacity>
             </View>
-        </ScrollView>
-      </View>
+        </View>
 
     </View>
   );

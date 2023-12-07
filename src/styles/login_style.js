@@ -4,7 +4,9 @@ import { PRIMARY, BG_COLOR, TEXTCOLOR, BORDER } from './palette';
 export const login_style = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: PRIMARY,
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems:'center'
   },
   containerImage:{
     flex: 1,
@@ -12,12 +14,7 @@ export const login_style = StyleSheet.create({
     justifyContent: 'center',
   },
   containerForm:{
-    flex: 2,
-    backgroundColor: BG_COLOR,
-    borderTopLeftRadius: 50,
-    paddingHorizontal: 40,
-    borderTopRightRadius: 50,
-    paddingTop: 20,
+    
     gap: 20
   },
   title:{
@@ -25,14 +22,15 @@ export const login_style = StyleSheet.create({
     fontSize: 30
   },
   form:{
-    borderRadius: 20,
+    borderRadius: 12,
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 10,
     borderWidth: 1,
     borderColor: BORDER,
     alignItems: 'center',
-    height: 60
+    height: 60,
+    width: '87%'
   },
   input:{
     flex: 1,
@@ -47,5 +45,12 @@ export const login_style = StyleSheet.create({
   },
   info:{
     color: '#adadad'
+  },
+  waveImage:{
+    width: 400,
+    height: 350,
+    position: 'absolute',
+    right: -10,
+    top: 550
   }
 });

@@ -25,10 +25,10 @@ export const login = createAsyncThunk('login', async(data)=>{
 export const register = createAsyncThunk('register', async(data)=>{
   const response = await fetch(API_URL + "api/v1/register", {
     method: 'POST',
-    body:data,
+    body:JSON.stringify(data),
     headers:{
-      "Content-Type": "multipart/form-data",
-      
+      "Content-Type":'application/json',
+      "Accept":"application/json"
     }
   })
   

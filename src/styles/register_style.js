@@ -4,28 +4,20 @@ import { PRIMARY, BG_COLOR, TEXTCOLOR, BORDER } from './palette';
 export const register_style = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: PRIMARY,
-  },
-  containerImage:{
-    flex: 1,
+    backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   containerForm:{
-    flex: 2,
-    backgroundColor: BG_COLOR,
-    borderTopLeftRadius: 50,
-    paddingHorizontal: 40,
-    borderTopRightRadius: 50,
-    paddingTop: 20,
-    gap: 20
+    gap: 20,
+    
   },
   title:{
     color: TEXTCOLOR,
     fontSize: 30
   },
   form:{
-    borderRadius: 20,
+    borderRadius: 12,
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 10,
@@ -33,7 +25,7 @@ export const register_style = StyleSheet.create({
     borderColor: BORDER,
     alignItems: 'center',
     height: 60,
-    marginVertical: 10
+    width: '87%'
   },
   input:{
     flex: 1,

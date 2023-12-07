@@ -31,9 +31,7 @@ export default function Login(){
 
   return (
     <View style={login_style.container}>
-      <View style={login_style.containerImage}>
-        <Image source={require('../../../assets/Ellipse1.png')}/>
-      </View>
+      <Image source={require('../../../assets/wave.png')} style={login_style.waveImage}/>
       <View style={login_style.containerForm}>
         <Text style={[login_style.title, {fontFamily: 'Poppins_700Bold'}]}>Login</Text>
         <View style={login_style.form}>
@@ -64,7 +62,7 @@ export default function Login(){
         </TouchableOpacity>
 
         <View>
-          <Button name={'Logar'} bgColor={'#094559'} textColor={'#f3f3f3'} fontFamily={'Poppins_700Bold'} onPress={()=> loginHandle() }/>
+          <Button name={'Logar'} bgColor={'#000'} textColor={'#f3f3f3'} fontFamily={'Poppins_700Bold'} onPress={()=> loginHandle() }/>
         </View>
 
         <View style={login_style.containerSignUp}>
