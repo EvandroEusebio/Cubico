@@ -14,6 +14,7 @@ import Button from "../../components/button/Button";
 import Icon2 from "react-native-vector-icons/MaterialIcons";
 import * as ImagePicker from "expo-image-picker";
 import API_URL from "../../../config/api";
+import axios from "axios";
 
 export default function AddImovel() {
   const [latitude, setLatitude] = useState("");
@@ -35,9 +36,8 @@ export default function AddImovel() {
   const [totalChinken, setTotalChinken] = useState(0);
   const [province, setProvince] = useState(null);
 
-
   // Function for Update screen
-  function fresh() {
+  async function fresh() {
     setLatitude("");
     setLongitude("");
     setDataProvince([]);
@@ -54,28 +54,19 @@ export default function AddImovel() {
     setTotalWC(0);
     setTotalChinken(0);
     setProvince(null);
-    fetch(API_URL + `api/v1/provincia`)
-      .then((response) => response.json())
-      .then((data) => {
-        setDataProvince(data);
-        // Define os dados do usuário no estado
-      })
+    await axios
+      .get(API_URL + `api/v1/provincia`)
+      .then((response) => setDataProvince(response.data))
       .catch((error) => {
         console.error("Erro ao recuperar os dados do usuário:", error);
       });
-
-      
   }
 
   // get Province Data for show in Province Dropdown
   useEffect(() => {
-    fetch(API_URL + `api/v1/provincia`)
-      .then((response) => response.json())
-      .then((data) => {
-        setDataProvince(data);
-
-        // Define os dados do usuário no estado
-      })
+    axios
+      .get(API_URL + `api/v1/provincia`)
+      .then((response) => setDataProvince(response.data))
       .catch((error) => {
         console.error("Erro ao recuperar os dados do usuário:", error);
       });
@@ -108,8 +99,8 @@ export default function AddImovel() {
     }
   }
 
-  function submitImovelData() {
-    const uri01 =
+  async function submitImovelData() {
+      const uri01 =
       Platform.OS === "android" ? image01 : image01.replace("file://", "");
     const filename01 = image01.split("/").pop();
     const match01 = /\.(\w+)$/.exec(filename01);
@@ -147,7 +138,7 @@ export default function AddImovel() {
     formData.append("latitude", latitude);
     formData.append("longitude", longitude);
     formData.append("area_total", totalArea);
-    formData.append("status", typeStatus == 1 ? "a venda":"aluguer");
+    formData.append("status", typeStatus == 1 ? "a venda" : "aluguer");
     formData.append("price", price);
     formData.append("image01", {
       uri: uri01,
@@ -172,33 +163,21 @@ export default function AddImovel() {
 
     console.log(formData._parts);
 
-    fetch(API_URL + `api/v1/criar/imovel`, {
-      // Adding method type
-      method: "POST",
-      body: formData,
+    await axios.post(API_URL + `api/v1/criar/imovel`, formData, {
       headers: {
-        "Content-Type": "multipart/form-data",
-      },
+        'Content-Type': 'multipart/form-data'
+      }
     })
-      .then((response) => {
-        // Verifica se a resposta da requisição foi bem-sucedida 
-        if (!response.ok) {
-          throw new Error(
-            `Erro na requisição: ${response.status} - ${response.statusText}`
-          );
-        }
-        return response.json();
-      })
-      .then((data) => {
-        // Manipula os dados da resposta
-        console.log("Resposta:", data);
-        console.warn("Envio bem-sucedido!");
-        fresh()
-      })
-      .catch((error) => {
-        // Manipula erros durante a requisição
-        console.error("Erro na requisição:", error);
-      });
+    .then(function(response) {
+      fresh();
+      console.log("Enviado com sucesso: ");
+      
+    })
+    .catch(error => {
+      console.error(error);
+    });
+    
+    
   }
 
   // show Imovel categories in flatlist
@@ -208,7 +187,7 @@ export default function AddImovel() {
       onPress={() => {
         onPress();
         handlePressSelectedCategory(item.id);
-        fresh()
+        fresh();
       }}
     >
       <Icon2 name={item.icon} size={20} color="#000" />
@@ -234,15 +213,12 @@ export default function AddImovel() {
   };
 
   const fetchCountyData = async (id) => {
-    try {
-      const response = await fetch(
-        API_URL + `api/v1/provincia/localidade/${id}`
-      );
-      const jsonCountyData = await response.json();
-      setDataCounty(jsonCountyData);
-    } catch (error) {
-      console.error("Erro ao obter dados da API", error);
-    }
+    await axios
+      .get(API_URL + `api/v1/provincia/localidade/${id}`)
+      .then((response) => setDataCounty(response.data))
+      .catch((error) => {
+        console.error("Erro ao obter dados da API:", error);
+      });
   };
 
   const formatedCountyData = dataCounty.map((opcao) => ({
@@ -275,7 +251,7 @@ export default function AddImovel() {
 
   const typeStatusData = [
     { label: "a venda", value: 1 },
-    { label: "aluguer", value: 2},
+    { label: "aluguer", value: 2 },
   ];
 
   // Function Async, for Acess Galery of the dispositive, and get Photo

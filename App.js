@@ -11,6 +11,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Profile from "./src/screens/Profile";
+import EditProfile from "./src/screens/EditProfile";
 
 const Tab = createBottomTabNavigator();
 
@@ -48,7 +49,7 @@ export default function App() {
           },
         })}>
           <Tab.Screen name="Home" component={Home} options={{headerShown: false}}/>
-          <Tab.Screen name="Favoritos"  component={Login} options={{headerShown: false }}/>
+          <Tab.Screen name="Favoritos"  component={SignUp} options={{headerShown: false }}/>
           <Tab.Screen name="Settings" component={AddImovel} options={{
             tabBarIcon: ({focused}) => (
               <View
@@ -71,7 +72,7 @@ export default function App() {
             headerShown: false
           }} />
           <Tab.Screen name="Chat" component={Login} options={{headerShown: false}}/>
-          <Tab.Screen name="Perfil" component={Profile} options={{headerShown: false}}/>
+          <Tab.Screen name="Perfil" component={EditProfile} options={{headerShown: false}}/>
         </Tab.Navigator>
       </NavigationContainer>
     </Provider>

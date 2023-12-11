@@ -1,125 +1,176 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import API_URL from "../../../config/api";
+import axios from "axios";
 
 const initialState = {
   message: null,
-  user: null,
-  token: '',
+  user:null,
+  token: "",
   isloading: false,
-}
+};
 
-export const login = createAsyncThunk('login', async(data)=>{
-  const response = await fetch(API_URL + "api/v1/login", {
+export const login = createAsyncThunk("login", async (data) => {
+  try {
+    const response = await axios.post(API_URL + "api/v1/login", data, {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.status === 401) {
+      console.error("Credenciais incorretas.");
+    } else {
+      console.error("Erro:", error);
+    }
+    throw error;
+  }
+
+  /*const response = await fetch(API_URL + "api/v1/login", {
     method: 'POST',
     body:JSON.stringify(data),
     headers:{
       "Content-Type":'application/json',
       "Accept":"application/json"
     }
-  })
-  const resp = await response.json() 
-  console.log(resp);
-  return resp;
-})
+  })*/
+});
 
-export const register = createAsyncThunk('register', async(data)=>{
+export const register = createAsyncThunk("register", async (data) => {
+  try{
+    const response  = await axios.post(API_URL + "api/v1/register", data, {
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      }
+    })
+    console.log(response.data);
+    return response.data;
+  } catch(error){
+    if (error.response && error.response.status === 422) {
+      console.error('Erro 422 - Solicitação inválida:', error.response.data);
+      console.error("Erro ao criar o usuário: Preencha todos os campos");
+    } else {
+      // Outro tipo de erro
+      console.error('Erro:', error);
+    }
+  }
+  
+
+  /*
   const response = await fetch(API_URL + "api/v1/register", {
-    method: 'POST',
-    body:JSON.stringify(data),
-    headers:{
-      "Content-Type":'application/json',
-      "Accept":"application/json"
-    }
-  })
-  
-  const resp = await response.json() 
-  console.log(resp);
-  return resp;
-})
+    method: "POST",
+    body: JSON.stringify(data),
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+    },
+  });
 
-export const updateUser = createAsyncThunk('updateUser', async(data, id)=>{
-  console.log(id)
-  console.log(data)
-  const response = await fetch(API_URL + "api/v1/user/update/"+id , {
-    method: 'PUT',
-    body:JSON.stringify(data),
-    headers:{
-      "Content-Type":'application/json',
-      "Accept":"application/json",
+  const resp = await response.json();
+  console.log(resp);
+  return resp;*/
+});
+
+export const updateUser = createAsyncThunk("updateUser", async (data, id) => {
+  console.log(id);
+  console.log(data);
+  const response = await fetch(API_URL + "api/v1/user/update/" + id, {
+    method: "PUT",
+    body: data,
+    headers: {
+      "Content-Type": "multipart/form-data",
       //"Authorization": `Bearer ${token}`
-    }
-  })
-  
-  console.log(response)
-  const resp = await response.json() 
+    },
+  });
+
+  console.log(response);
+  const resp = await response.json();
   console.log(resp);
   return resp;
-})
+});
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
-  reducers:{
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      /*----------------------login----------------------------------*/
+      .addCase(login.pending, (state, action) => {
+        state.isloading = true;
+      })
+      .addCase(
+        login.fulfilled,
+        (state, { payload: { message, user, token } }) => {
+          state.isloading = false;
+          if (message) {
+            state.message = message;
+            console.warn(state.message);
+          } else {
+            state.user = user;
+            state.token = token;
+            console.warn("sucesso!");
+          }
+        }
+      )
+      .addCase(login.rejected, (state, action) => {
+        state.isloading = true;
+      })
 
+      /*----------------------UPDATE----------------------------------*/
+      .addCase(updateUser.pending, (state, action) => {
+        state.isloading = true;
+      })
+      .addCase(
+        updateUser.fulfilled,
+        (state, { payload: { message, user } }) => {
+          state.isloading = false;
+          if (message) {
+            state.message = message;
+            console.warn(state.message);
+          } else {
+            state.user = user;
+            console.warn("sucesso!");
+            console.log(state.user.id);
+          }
+        }
+      )
+      .addCase(updateUser.rejected, (state, action) => {
+        state.isloading = true;
+      })
+
+      /*----------------------Register----------------------------------*/
+      .addCase(register.pending, (state, action) => {
+        state.isloading = true;
+      })
+      .addCase(
+        register.fulfilled,
+        (state, { payload: { message, user, token } }) => {
+          state.isloading = false;
+          if (message) {
+            state.message = message;
+            console.warn(state.message);
+          } else {
+            state.user = user;
+            state.token = token;
+            console.warn("sucesso!");
+            console.log(state.token);
+            console.log(state.user);
+          }
+        }
+      )
+      .addCase(register.rejected, (state, action) => {
+        state.isloading = true;
+      });
   },
-  extraReducers:{
-    [login.pending]: (state, action)=>{
-      state.isloading = true
-    },
-    [login.fulfilled]: (state, {payload: {message, user, token}})=>{
-      state.isloading = false
-      if(message){
-        state.message = message
-        console.warn(state.message)
-      }else{
-        state.user = user
-        state.token = token
-        console.warn("sucesso!");
-      }
-    },
-    [login.rejected]: (state, action)=>{
-      state.isloading = true
-    },
-     /*----------------------UPDATE----------------------------------*/
-    [updateUser.pending]: (state, action)=>{
-      state.isloading = true
-    },
-    [updateUser.fulfilled]: (state, {payload: {message, user}})=>{
-      state.isloading = false
-      if(message){
-        state.message = message
-        console.warn(state.message)
-      }else{
-        state.user = user
-        console.warn("sucesso!");
-        console.log(state.user.id)
-      }
-    },
-    [updateUser.rejected]: (state, action)=>{
-      state.isloading = true
-    },
+});
 
-    /*----------------------Register----------------------------------*/
-    [register.pending]: (state, action)=>{
-      state.isloading = true
-    },
-    [register.fulfilled]: (state, {payload: {message, user, token}})=>{
-      state.isloading = false
-      if(message){
-        state.message = message
-        console.warn(state.message)
-      }else{
-        state.user = user
-        state.token = token
-        console.warn("sucesso!");
-        console.log(state.token)
-        console.log(state.user)
-      }
-    },
-    [register.rejected]: (state, action)=>{
-      state.isloading = true
-    },
-  }
-})
+export default authSlice.reducer;
 
-export default authSlice.reducer
+/*
+
+*/
