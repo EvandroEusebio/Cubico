@@ -75,9 +75,19 @@ export const register = createAsyncThunk("register", async (data) => {
   return resp;*/
 });
 
-export const updateUser = createAsyncThunk("updateUser", async (data, id) => {
-  console.log(id);
-  console.log(data);
+export const updateUser = createAsyncThunk("updateUser", async (data) => {
+  
+  console.log(data.id);
+  console.log(data)
+  try{
+    const response = await axios.put(API_URL + `api/v1/user/update/${data.id}`, data)
+    console.log(response.data);
+    return response.data;
+  }catch(error){
+    console.error(error.response.data)
+  }
+  
+  /*
   const response = await fetch(API_URL + "api/v1/user/update/" + id, {
     method: "PUT",
     body: data,
@@ -85,12 +95,7 @@ export const updateUser = createAsyncThunk("updateUser", async (data, id) => {
       "Content-Type": "multipart/form-data",
       //"Authorization": `Bearer ${token}`
     },
-  });
-
-  console.log(response);
-  const resp = await response.json();
-  console.log(resp);
-  return resp;
+  });*/
 });
 
 const authSlice = createSlice({

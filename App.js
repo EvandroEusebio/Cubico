@@ -49,7 +49,7 @@ export default function App() {
           },
         })}>
           <Tab.Screen name="Home" component={Home} options={{headerShown: false}}/>
-          <Tab.Screen name="Favoritos"  component={SignUp} options={{headerShown: false }}/>
+          <Tab.Screen name="Favoritos"  component={Login} options={{headerShown: false }}/>
           <Tab.Screen name="Settings" component={AddImovel} options={{
             tabBarIcon: ({focused}) => (
               <View
