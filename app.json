@@ -15,13 +15,24 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Permissão para acessar a câmera",
+        "NSPhotoLibraryUsageDescription": "Permissão para acessar a biblioteca de fotos"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.anonymous.HomePrice"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -33,6 +44,7 @@
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
       ]
+      
     ]
   }
 }

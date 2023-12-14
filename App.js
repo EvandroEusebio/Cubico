@@ -71,7 +71,7 @@ export default function App() {
             tabBarLabel: '',
             headerShown: false
           }} />
-          <Tab.Screen name="Chat" component={Login} options={{headerShown: false}}/>
+          <Tab.Screen name="Chat" component={SignUp} options={{headerShown: false}}/>
           <Tab.Screen name="Perfil" component={EditProfile} options={{headerShown: false}}/>
         </Tab.Navigator>
       </NavigationContainer>

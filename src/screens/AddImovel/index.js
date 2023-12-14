@@ -15,6 +15,7 @@ import Icon2 from "react-native-vector-icons/MaterialIcons";
 import * as ImagePicker from "expo-image-picker";
 import API_URL from "../../../config/api";
 import axios from "axios";
+import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 
 export default function AddImovel() {
   const [latitude, setLatitude] = useState("");
@@ -100,29 +101,25 @@ export default function AddImovel() {
   }
 
   async function submitImovelData() {
-      const uri01 =
-      Platform.OS === "android" ? image01 : image01.replace("file://", "");
+    const uri01 = image01;
     const filename01 = image01.split("/").pop();
     const match01 = /\.(\w+)$/.exec(filename01);
     const ext01 = match01?.[1];
     const type01 = match01 ? `image/${match01[1]}` : `image`;
 
-    const uri02 =
-      Platform.OS === "android" ? image02 : image02.replace("file://", "");
+    const uri02 = image02;
     const filename02 = image02.split("/").pop();
     const match02 = /\.(\w+)$/.exec(filename02);
     const ext02 = match02?.[1];
     const type02 = match02 ? `image/${match02[1]}` : `image`;
 
-    const uri03 =
-      Platform.OS === "android" ? image03 : image03.replace("file://", "");
+    const uri03 = image03;
     const filename03 = image03.split("/").pop();
     const match03 = /\.(\w+)$/.exec(filename03);
     const ext03 = match03?.[1];
     const type03 = match03 ? `image/${match03[1]}` : `image`;
 
-    const uri04 =
-      Platform.OS === "android" ? image04 : image04.replace("file://", "");
+    const uri04 = image04;
     const filename04 = image04.split("/").pop();
     const match04 = /\.(\w+)$/.exec(filename04);
     const ext04 = match04?.[1];
@@ -132,7 +129,7 @@ export default function AddImovel() {
     formData.append("type_imovel_id", selectedCategory);
     formData.append("province_id", province);
     formData.append("county_id", county);
-    formData.append("owner_id", 2);
+    formData.append("owner_id", 1);
     formData.append("total_bedrooms", totalBedrooms);
     formData.append("total_wc", totalWC);
     formData.append("latitude", latitude);
@@ -163,21 +160,19 @@ export default function AddImovel() {
 
     console.log(formData._parts);
 
-    await axios.post(API_URL + `api/v1/criar/imovel`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })
-    .then(function(response) {
-      fresh();
-      console.log("Enviado com sucesso: ");
-      
-    })
-    .catch(error => {
-      console.error(error);
-    });
-    
-    
+    await axios
+      .post(API_URL + `api/v1/criar/imovel`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then(function (response) {
+        fresh();
+        console.warn("Enviado com sucesso");
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }
 
   // show Imovel categories in flatlist
@@ -267,8 +262,32 @@ export default function AddImovel() {
     console.log(result);
 
     if (!result.canceled) {
-      setImage01(result.assets[0].uri);
-      console.log(result.assets[0].uri);
+      const originalWidth = result.assets[0].width;
+      const originalHeight = result.assets[0].height;
+
+      // Define as dimensões máximas desejadas
+      const maxWidth = 800;
+      const maxHeight = 600;
+
+      // Calcula as novas dimensões mantendo a proporção original
+      const aspectRatio = originalWidth / originalHeight;
+      let newWidth = maxWidth;
+      let newHeight = newWidth / aspectRatio;
+
+      if (newHeight > maxHeight) {
+        newHeight = maxHeight;
+        newWidth = newHeight * aspectRatio;
+      }
+
+      // Redimensiona a imagem
+      const resizedImage = await manipulateAsync(
+        result.assets[0].uri,
+        [{ resize: { width: newWidth, height: newHeight } }],
+        { compress: 0.7, format: SaveFormat.JPEG }
+      );
+
+      setImage01(resizedImage.uri);
+      console.log(resizedImage);
     }
   };
   const pickImage02 = async () => {
@@ -283,8 +302,31 @@ export default function AddImovel() {
     console.log(result);
 
     if (!result.canceled) {
-      setImage02(result.assets[0].uri);
-      console.log(result.assets[0].uri);
+      const originalWidth = result.assets[0].width;
+      const originalHeight = result.assets[0].height;
+
+      // Define as dimensões máximas desejadas
+      const maxWidth = 800;
+      const maxHeight = 600;
+
+      // Calcula as novas dimensões mantendo a proporção original
+      const aspectRatio = originalWidth / originalHeight;
+      let newWidth = maxWidth;
+      let newHeight = newWidth / aspectRatio;
+
+      if (newHeight > maxHeight) {
+        newHeight = maxHeight;
+        newWidth = newHeight * aspectRatio;
+      }
+
+      // Redimensiona a imagem
+      const resizedImage = await manipulateAsync(
+        result.assets[0].uri,
+        [{ resize: { width: newWidth, height: newHeight } }],
+        { compress: 0.7, format: SaveFormat.JPEG }
+      );
+      setImage02(resizedImage.uri);
+      console.log(resizedImage.uri);
     }
   };
   const pickImage03 = async () => {
@@ -299,8 +341,31 @@ export default function AddImovel() {
     console.log(result);
 
     if (!result.canceled) {
-      setImage03(result.assets[0].uri);
-      console.log(result.assets[0].uri);
+      const originalWidth = result.assets[0].width;
+      const originalHeight = result.assets[0].height;
+
+      // Define as dimensões máximas desejadas
+      const maxWidth = 800;
+      const maxHeight = 600;
+
+      // Calcula as novas dimensões mantendo a proporção original
+      const aspectRatio = originalWidth / originalHeight;
+      let newWidth = maxWidth;
+      let newHeight = newWidth / aspectRatio;
+
+      if (newHeight > maxHeight) {
+        newHeight = maxHeight;
+        newWidth = newHeight * aspectRatio;
+      }
+
+      // Redimensiona a imagem
+      const resizedImage = await manipulateAsync(
+        result.assets[0].uri,
+        [{ resize: { width: newWidth, height: newHeight } }],
+        { compress: 0.7, format: SaveFormat.JPEG }
+      );
+      setImage03(resizedImage.uri);
+      console.log(resizedImage.uri);
     }
   };
   const pickImage04 = async () => {
@@ -315,8 +380,31 @@ export default function AddImovel() {
     console.log(result);
 
     if (!result.canceled) {
-      setImage04(result.assets[0].uri);
-      console.log(result.assets[0].uri);
+      const originalWidth = result.assets[0].width;
+      const originalHeight = result.assets[0].height;
+
+      // Define as dimensões máximas desejadas
+      const maxWidth = 800;
+      const maxHeight = 600;
+
+      // Calcula as novas dimensões mantendo a proporção original
+      const aspectRatio = originalWidth / originalHeight;
+      let newWidth = maxWidth;
+      let newHeight = newWidth / aspectRatio;
+
+      if (newHeight > maxHeight) {
+        newHeight = maxHeight;
+        newWidth = newHeight * aspectRatio;
+      }
+
+      // Redimensiona a imagem
+      const resizedImage = await manipulateAsync(
+        result.assets[0].uri,
+        [{ resize: { width: newWidth, height: newHeight } }],
+        { compress: 0.7, format: SaveFormat.JPEG }
+      );
+      setImage04(resizedImage.uri);
+      console.log(resizedImage.uri);
     }
   };
 

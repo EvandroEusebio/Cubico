@@ -7,6 +7,7 @@ import {
   FlatList,
   Image,
   TextInput,
+  ActivityIndicator,
 } from "react-native";
 import Search from "../../components/Search";
 import { home_style } from "../../styles/home_style";
@@ -21,6 +22,7 @@ import Icon from "react-native-vector-icons/Feather";
 import Icon2 from "react-native-vector-icons/MaterialIcons";
 import API_URL from "../../../config/api";
 import Swiper from "react-native-swiper";
+import axios from "axios";
 //import { SliderBox } from "react-native-image-slider-box";
 
 const dataTypeProperties = [
@@ -94,11 +96,19 @@ const TypeProperties = ({ type, icon }) => (
 //http://192.168.106.1:8000/imovelImage/image01_1701875626.jpg
 const Properties = ({ item }) => (
   <View activeOpacity={1} style={home_style.containerItemPropertie}>
-    
-    <Swiper style={{ height: 250}} horizontal>
+    <Swiper
+      style={{ height: 250 }}
+      horizontal
+      dotColor="#fff"
+      activeDotColor="red"
+    >
       {[item.image01, item.image02, item.image03, item.image04].map(
         (image, index) => (
-          <Image key={index} source={{ uri: API_URL + image }} style={home_style.imageProperties} />
+          <Image
+            key={index}
+            source={{ uri: API_URL + image }}
+            style={home_style.imageProperties}
+          />
         )
       )}
     </Swiper>
@@ -136,16 +146,37 @@ const Properties = ({ item }) => (
   </View>
 );
 
+const ListEndLoader = ({ loading }) => {
+  if (!loading) return null;
+  return <ActivityIndicator size={"small"} color={"#000"} />;
+};
+
 export default function Home() {
   const [text, onChangeText] = useState("");
   const [imovels, setImovels] = useState([]);
+  const [pagination, setPagination] = useState(1);
+  const [loading, setLoading] = useState(false);
 
   useEffect(function () {
-    fetch(API_URL + `api/v1/owner/imovel`)
-      .then((response) => response.json())
-      .then((data) => setImovels(data.imovel))
-      .catch((error) => console.error("Erro ao obter imóveis:", error));
+    getDataImovels();
   }, []);
+
+  async function getDataImovels() {
+    if (loading) return;
+
+    setLoading(true);
+
+    await axios
+      .get(API_URL + `api/v1/imovel?page=${pagination}`)
+      .then((response) => {
+        setImovels([...imovels, ...response.data.imovel.data]);
+      })
+      .catch((error) => console.error("Erro ao buscar os dados: " + error));
+
+    setPagination(pagination + 1);
+    setLoading(false);
+  }
+
   return (
     <View style={home_style.container}>
       <View style={home_style.header}>
@@ -185,6 +216,9 @@ export default function Home() {
         renderItem={Properties}
         keyExtractor={(item) => item.id.toString()}
         showsVerticalScrollIndicator={false}
+        onEndReached={getDataImovels}
+        onEndReachedThreshold={0.1}
+        ListFooterComponent={<ListEndLoader loading={loading} />}
       />
     </View>
   );
