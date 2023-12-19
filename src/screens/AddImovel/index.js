@@ -472,14 +472,14 @@ export default function AddImovel() {
           onChangeText={setLatitude}
           value={latitude}
           placeholder="Insira a latitude"
-          keyboardType="numeric"
+          keyboardType="default"
         />
         <TextInput
           style={addImovel_style.input}
           onChangeText={setLongitude}
           value={longitude}
           placeholder="Insira a longitude"
-          keyboardType="numeric"
+          keyboardType="default"
         />
       </View>
       {selectedCategory === 3 && (

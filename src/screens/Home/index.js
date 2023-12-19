@@ -23,6 +23,7 @@ import Icon2 from "react-native-vector-icons/MaterialIcons";
 import API_URL from "../../../config/api";
 import Swiper from "react-native-swiper";
 import axios from "axios";
+import Map from "../../components/Map";
 //import { SliderBox } from "react-native-image-slider-box";
 
 const dataTypeProperties = [
@@ -45,42 +46,6 @@ const dataTypeProperties = [
     id: 4,
     type: "Quartos",
     icon: "single-bed",
-  },
-];
-
-const dataProperties = [
-  {
-    id: 1,
-    country: "Angola",
-    province: "Luanda",
-    owner: "Evandro Eusébio",
-    distance: "2m",
-    type: "Casa",
-    image: require("../../../assets/casa.jpg"),
-    price: 2000,
-    status: "A venda",
-  },
-  {
-    id: 2,
-    country: "Angola",
-    province: "Benguela",
-    owner: "Mario Coxe",
-    distance: "5m",
-    type: "Terreno",
-    image: require("../../../assets/terreno.jpg"),
-    price: 2000,
-    status: "A venda",
-  },
-  {
-    id: 3,
-    country: "Angola",
-    province: "Huíla",
-    owner: "Magallas production",
-    distance: "3m",
-    type: "Apartamento",
-    image: require("../../../assets/apartamento.jpg"),
-    price: 2000,
-    status: "Aluguer",
   },
 ];
 
@@ -148,7 +113,7 @@ const Properties = ({ item }) => (
 
 const ListEndLoader = ({ loading }) => {
   if (!loading) return null;
-  return <ActivityIndicator size={"small"} color={"#000"} />;
+  return <ActivityIndicator style={{ padding: 10 }} size={25} color={"#000"} />;
 };
 
 export default function Home() {
@@ -156,6 +121,7 @@ export default function Home() {
   const [imovels, setImovels] = useState([]);
   const [pagination, setPagination] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [showMap, setShowMap] = useState(false);
 
   useEffect(function () {
     getDataImovels();
@@ -169,11 +135,15 @@ export default function Home() {
     await axios
       .get(API_URL + `api/v1/imovel?page=${pagination}`)
       .then((response) => {
-        setImovels([...imovels, ...response.data.imovel.data]);
+        if (response.data.imovel.data.length === 0) {
+          return;
+        } else {
+          setImovels([...imovels, ...response.data.imovel.data]);
+          setPagination(pagination + 1);
+        }
       })
       .catch((error) => console.error("Erro ao buscar os dados: " + error));
 
-    setPagination(pagination + 1);
     setLoading(false);
   }
 
@@ -181,9 +151,14 @@ export default function Home() {
     <View style={home_style.container}>
       <View style={home_style.header}>
         <Text style={home_style.headerTitle}>CUBICO</Text>
-        <TouchableOpacity style={home_style.containerIcon}>
-          <Icon name="bell" size={20} color="#000" />
-        </TouchableOpacity>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
+          <TouchableOpacity style={home_style.containerIcon}>
+            <Icon name="bell" size={20} color="#000" />
+          </TouchableOpacity>
+          <TouchableOpacity style={home_style.containerIcon} onPress={() => setShowMap(!showMap)}>
+            <Icon name={showMap ? "airplay":"map-pin"} size={20} color="#000" />
+          </TouchableOpacity>
+        </View>
       </View>
       <View style={home_style.containerFilter}>
         <View style={home_style.containerInput}>
@@ -210,16 +185,20 @@ export default function Home() {
           showsHorizontalScrollIndicator={false}
         />
       </View>
-
-      <FlatList
-        data={imovels}
-        renderItem={Properties}
-        keyExtractor={(item) => item.id.toString()}
-        showsVerticalScrollIndicator={false}
-        onEndReached={getDataImovels}
-        onEndReachedThreshold={0.1}
-        ListFooterComponent={<ListEndLoader loading={loading} />}
-      />
+      {!showMap && (
+        <>
+          <FlatList
+            data={imovels}
+            renderItem={Properties}
+            keyExtractor={(item) => item.id.toString()}
+            showsVerticalScrollIndicator={false}
+            onEndReached={!loading && getDataImovels}
+            onEndReachedThreshold={0.1}
+            ListFooterComponent={<ListEndLoader loading={loading} />}
+          />
+        </>
+      )}
+      {showMap && <Map />}
     </View>
   );
 }
