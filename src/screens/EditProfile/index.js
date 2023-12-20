@@ -1,5 +1,12 @@
 import { StatusBar } from "expo-status-bar";
-import { Text, View, Image, TextInput, TouchableOpacity, ScrollView } from "react-native";
+import {
+  Text,
+  View,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import Button from "../../components/button/Button";
 import API_URL from "../../../config/api";
 import { useEffect, useState } from "react";
@@ -24,6 +31,8 @@ export default function EditProfile() {
   const imageProfile = useSelector((state) => state.auth.user.imageProfile);
   const id = useSelector((state) => state.auth.user.id);
 
+  console.log(imageProfile)
+
   const [editedName, setEditedName] = useState("");
   const [editedEmail, setEditedEmail] = useState("");
   const [editedPhone, setEditedPhone] = useState("");
@@ -34,15 +43,15 @@ export default function EditProfile() {
   const dispatch = useDispatch();
 
   const updateUserHandle = (type) => {
-    if(type == "name"){
+    if (type == "name") {
       let name = editedName;
-      dispatch(updateUser({ id, name}))
-    }else if(type == "email"){
+      dispatch(updateUser({ id, name }));
+    } else if (type == "email") {
       let email = editedEmail;
-      dispatch(updateUser({ id, email}))
-    }else if(type == "phone"){
+      dispatch(updateUser({ id, email }));
+    } else if (type == "phone") {
       let phone = editedPhone;
-      dispatch(updateUser({ id, phone}))
+      dispatch(updateUser({ id, phone }));
     }
   };
   let [fontsLoaded] = useFonts({
@@ -59,10 +68,19 @@ export default function EditProfile() {
   return (
     <ScrollView contentContainerStyle={editProfile_style.container}>
       <View style={editProfile_style.containerImage}>
-        <Image
+        {imageProfile == null && (
+          <Image
           source={{ uri: `${API_URL}${imageProfile}` }}
           style={editProfile_style.image}
         />
+        )}
+        {imageProfile != null && (
+          
+          <Image
+            source={require("../../../assets/pro.png")}
+            style={editProfile_style.image}
+          />
+        )}
         <Text
           style={[editProfile_style.name, { fontFamily: "Poppins_700Bold" }]}
         >
@@ -102,9 +120,14 @@ export default function EditProfile() {
               onChangeText={setEditedName}
               value={editedName}
             />
-            
+
             <TouchableOpacity>
-              <Text style={editProfile_style.edit} onPress={() => updateUserHandle("name")}>Editar</Text>
+              <Text
+                style={editProfile_style.edit}
+                onPress={() => updateUserHandle("name")}
+              >
+                Editar
+              </Text>
             </TouchableOpacity>
           </View>
         )}
@@ -174,7 +197,6 @@ export default function EditProfile() {
               ]}
               onChangeText={setEditedPhone}
               value={editedPhone}
-  
             />
             <TouchableOpacity onPress={() => updateUserHandle("phone")}>
               <Text style={editProfile_style.edit}>Editar</Text>

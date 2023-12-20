@@ -13,13 +13,21 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Profile from "./src/screens/Profile";
 import EditProfile from "./src/screens/EditProfile";
 import Map from "./src/components/Map";
+import InfoImovel from "./src/components/InfoImovel";
 
 const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
     <Provider store={Store}>
-      <NavigationContainer>
+      <InfoImovel/>
+    </Provider>
+  );
+}
+
+
+/*
+<NavigationContainer>
         <Tab.Navigator screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
             let iconName;
@@ -76,11 +84,4 @@ export default function App() {
           <Tab.Screen name="Perfil" component={EditProfile} options={{headerShown: false}}/>
         </Tab.Navigator>
       </NavigationContainer>
-    </Provider>
-  );
-}
-
-
-/*
-
 */
