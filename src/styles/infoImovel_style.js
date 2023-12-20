@@ -57,8 +57,7 @@ export const infoImovel_style = StyleSheet.create({
     justifyContent: 'space-between'
   },
   containerUserContact:{
-    flexDirection: 'row',
-    gap: 10
+    gap: 10,
   },
   btnContact:{
     borderWidth: 1,
@@ -67,9 +66,58 @@ export const infoImovel_style = StyleSheet.create({
     borderColor: '#cfcfd1'
   },
   galeryImage:{
-    width: 60,
-    height: 60,
+    width: 90,
+    height: 70,
     borderRadius: 10,
-    marginRight: 37
+    marginRight: 10
+  },
+  subTitle:{
+    fontSize: 17,
+    fontWeight: 'bold',
+
+  },
+  containerDescription:{
+    gap: 6
+  },
+  text:{
+    textAlign:  'justify',
+    color: '#848484'
+  },
+  iconHeart:{
+    position: 'absolute',
+    top: 50,
+    left: 310
+  },
+  userDatailDiv1:{
+    flexDirection: 'row',
+    gap: 10,
+    alignItems:'center'
+  },
+  userDatail:{
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
+  containerContactBtn:{
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between', 
+    gap: 10
+  },
+  contactBtn:{
+    flexDirection: 'row',
+    alignItems:'center',
+    justifyContent:'center',
+    backgroundColor: '#000',
+    height:60,
+    borderRadius: 10,
+    gap: 10
+  },
+  map:{
+    height: 250,
+    borderRadius: 10,
+  },
+  containerMap:{
+    gap: 10
   }
 });
