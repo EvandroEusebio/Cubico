@@ -58,7 +58,9 @@ const TypeProperties = ({ type, icon }) => (
   </TouchableOpacity>
 );
 
-//http://192.168.106.1:8000/imovelImage/image01_1701875626.jpg
+/*
+/storage/profilePictures/1703253586.png
+http://192.168.100.60:8000/storage/imovelPictures/01HJ8XQ7DSP0QSMKKVSJQ5K15X.jpg */
 const Properties = ({ item }) => (
   <View activeOpacity={1} style={home_style.containerItemPropertie}>
     <Swiper
@@ -71,7 +73,7 @@ const Properties = ({ item }) => (
         (image, index) => (
           <Image
             key={index}
-            source={{ uri: API_URL + image }}
+            source={{ uri: API_URL +  'storage/' + image }}
             style={home_style.imageProperties}
           />
         )
@@ -103,10 +105,10 @@ const Properties = ({ item }) => (
     <View
       style={[
         home_style.tag,
-        { backgroundColor: item.status == "a venda" ? "green" : "red" },
+        { backgroundColor: item.type_transaction.type == "a venda" ? "green" : "red" },
       ]}
     >
-      <Text style={home_style.textTag}>{item.status}</Text>
+      <Text style={home_style.textTag}>{item.type_transaction.type}</Text>
     </View>
   </View>
 );
@@ -140,6 +142,7 @@ export default function Home() {
         } else {
           setImovels([...imovels, ...response.data.imovel.data]);
           setPagination(pagination + 1);
+          console.log(response.data.imovel.data)
         }
       })
       .catch((error) => console.error("Erro ao buscar os dados: " + error));

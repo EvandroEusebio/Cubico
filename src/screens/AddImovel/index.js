@@ -129,14 +129,15 @@ export default function AddImovel() {
     formData.append("type_imovel_id", selectedCategory);
     formData.append("province_id", province);
     formData.append("county_id", county);
-    formData.append("owner_id", 1);
+    formData.append("owner_id", 9);
+    
     formData.append("total_bedrooms", totalBedrooms);
     formData.append("total_wc", totalWC);
     formData.append("latitude", latitude);
     formData.append("longitude", longitude);
     formData.append("area_total", totalArea);
-    formData.append("status", typeStatus == 1 ? "a venda" : "aluguer");
     formData.append("price", price);
+    formData.append("transaction_type_id", typeStatus);
     formData.append("image01", {
       uri: uri01,
       type: type01,
