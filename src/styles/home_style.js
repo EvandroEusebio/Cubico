@@ -27,11 +27,14 @@ export const home_style = StyleSheet.create({
   },
   containerItemPropertie:{
     margin:13,
+    
   },
   imageProperties:{
     width: 'auto',
     height: 230,
-    borderRadius: 20
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0,  0, 0.1)',
   },
   containerInfo:{
     flexDirection: 'row',

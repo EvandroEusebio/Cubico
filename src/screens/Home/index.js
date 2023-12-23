@@ -8,6 +8,7 @@ import {
   Image,
   TextInput,
   ActivityIndicator,
+  StatusBar
 } from "react-native";
 import Search from "../../components/Search";
 import { home_style } from "../../styles/home_style";
@@ -62,7 +63,7 @@ const TypeProperties = ({ type, icon }) => (
 /storage/profilePictures/1703253586.png
 http://192.168.100.60:8000/storage/imovelPictures/01HJ8XQ7DSP0QSMKKVSJQ5K15X.jpg */
 const Properties = ({ item }) => (
-  <View activeOpacity={1} style={home_style.containerItemPropertie}>
+  <View style={home_style.containerItemPropertie}>
     <Swiper
       style={{ height: 250 }}
       horizontal
@@ -71,11 +72,17 @@ const Properties = ({ item }) => (
     >
       {[item.image01, item.image02, item.image03, item.image04].map(
         (image, index) => (
-          <Image
+          <TouchableOpacity
             key={index}
-            source={{ uri: API_URL +  'storage/' + image }}
-            style={home_style.imageProperties}
-          />
+            onPress={() => console.warn("ola")}
+            activeOpacity={1}
+            style={{marginRight: 10,}}
+          >
+            <Image
+              source={{ uri: API_URL + "storage/" + image }}
+              style={home_style.imageProperties}
+            />
+          </TouchableOpacity>
         )
       )}
     </Swiper>
@@ -105,7 +112,10 @@ const Properties = ({ item }) => (
     <View
       style={[
         home_style.tag,
-        { backgroundColor: item.type_transaction.type == "a venda" ? "green" : "red" },
+        {
+          backgroundColor:
+            item.type_transaction.type == "a venda" ? "green" : "red",
+        },
       ]}
     >
       <Text style={home_style.textTag}>{item.type_transaction.type}</Text>
@@ -142,7 +152,7 @@ export default function Home() {
         } else {
           setImovels([...imovels, ...response.data.imovel.data]);
           setPagination(pagination + 1);
-          console.log(response.data.imovel.data)
+          console.log(response.data.imovel.data);
         }
       })
       .catch((error) => console.error("Erro ao buscar os dados: " + error));
@@ -158,8 +168,15 @@ export default function Home() {
           <TouchableOpacity style={home_style.containerIcon}>
             <Icon name="bell" size={20} color="#000" />
           </TouchableOpacity>
-          <TouchableOpacity style={home_style.containerIcon} onPress={() => setShowMap(!showMap)}>
-            <Icon name={showMap ? "airplay":"map-pin"} size={20} color="#000" />
+          <TouchableOpacity
+            style={home_style.containerIcon}
+            onPress={() => setShowMap(!showMap)}
+          >
+            <Icon
+              name={showMap ? "airplay" : "map-pin"}
+              size={20}
+              color="#000"
+            />
           </TouchableOpacity>
         </View>
       </View>
@@ -188,6 +205,9 @@ export default function Home() {
           showsHorizontalScrollIndicator={false}
         />
       </View>
+      <View style={{shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5, height: 1, backgroundColor:'rgba(0, 0, 0, 0.1)'}}></View>
       {!showMap && (
         <>
           <FlatList
@@ -202,6 +222,7 @@ export default function Home() {
         </>
       )}
       {showMap && <Map />}
+      <StatusBar barStyle={"dark-content"}/>
     </View>
   );
 }

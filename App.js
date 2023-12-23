@@ -20,14 +20,7 @@ const Tab = createBottomTabNavigator();
 export default function App() {
   return (
     <Provider store={Store}>
-      <Home/>
-    </Provider>
-  );
-}
-
-
-/*
-<NavigationContainer>
+      <NavigationContainer>
         <Tab.Navigator screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
             let iconName;
@@ -84,4 +77,11 @@ export default function App() {
           <Tab.Screen name="Perfil" component={EditProfile} options={{headerShown: false}}/>
         </Tab.Navigator>
       </NavigationContainer>
+    </Provider>
+  );
+}
+
+
+/*
+
 */
