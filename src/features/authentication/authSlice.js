@@ -1,6 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import API_URL from "../../../config/api";
 import axios from "axios";
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
 
 const initialState = {
   message: null,
@@ -98,6 +101,72 @@ export const updateUser = createAsyncThunk("updateUser", async (data) => {
   });*/
 });
 
+async function sendPushNotification(expoPushToken) {
+  const message = {
+    to: expoPushToken,
+    sound: 'default',
+    title: 'Original Title',
+    body: 'Ola, Seja bem vindo!',
+    data: { someData: 'goes here' },
+  };
+
+  await fetch('https://exp.host/--/api/v2/push/send', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Accept-encoding': 'gzip, deflate',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(message),
+  });
+}
+
+const storeDeviceToken = async (user_id) => {
+  let token;
+
+  if (Platform.OS === 'android') {
+    Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    });
+  }
+
+  if (Device.isDevice) {
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+      alert('Failed to get push token for push notification!');
+      return;
+    }
+    token = await Notifications.getExpoPushTokenAsync({
+      projectId: Constants.expoConfig.extra.eas.projectId,
+    });
+    console.log(token);
+  } else {
+    alert('Must use physical device for Push Notifications');
+  }
+
+  const data = {
+    token: token.data,
+    user_id: user_id
+  }
+  await axios
+  .post(API_URL + `api/v1/criar/devicetoken`, data)
+  .then(function (response) {
+    console.log(response.data)
+    
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+}
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -119,6 +188,7 @@ const authSlice = createSlice({
             state.user = user;
             state.token = token;
             console.warn("sucesso!");
+            storeDeviceToken(user.id)
           }
         }
       )

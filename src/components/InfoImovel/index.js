@@ -12,6 +12,9 @@ import { infoImovel_style } from "../../styles/infoImovel_style";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import M2 from "react-native-vector-icons/MaterialCommunityIcons";
 import MapView, { Marker, Polyline } from "react-native-maps";
+import { useSelector } from "react-redux";
+import API_URL from "../../../config/api";
+import { useNavigation } from '@react-navigation/native';
 
 const dataInfo = [
   {
@@ -45,24 +48,25 @@ const dataImage = [
     id: 1,
     uri: require("../../../assets/apartamento.jpg"),
   },
-  {
-    id: 2,
-    uri: require("../../../assets/apartamento.jpg"),
-  },
-  {
-    id: 3,
-    uri: require("../../../assets/apartamento.jpg"),
-  },
-  {
-    id: 4,
-    uri: require("../../../assets/apartamento.jpg"),
-  },
 ];
 
-const ShowImages = ({ uri }) => (
-  <TouchableOpacity style={infoImovel_style.containerGaleryImage}>
-    <Image source={uri} style={infoImovel_style.galeryImage} />
-  </TouchableOpacity>
+const ShowImages = ({ item }) => (
+  <View style={{flexDirection: 'row'}}>
+    {[
+      item.image01,
+      item.image02,
+      item.image03,
+      item.image04,
+    ].map((image, index) => (
+      <TouchableOpacity >
+        <Image
+        key={index}
+          source={{ uri: API_URL + "storage/" + image }}
+          style={infoImovel_style.galeryImage}
+        />
+      </TouchableOpacity>
+    ))}
+  </View>
 );
 
 const Info = ({ type, icon, quantity }) => (
@@ -77,11 +81,18 @@ const Info = ({ type, icon, quantity }) => (
 );
 
 export default function InfoImovel() {
+  const infoImovel = useSelector((state) => state.infoImovel.imovelDetail);
+  const [data, setData] = useState([infoImovel])
+  const navigation = useNavigation();
+  console.log(infoImovel);
   return (
-    <ScrollView style={infoImovel_style.container} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      style={infoImovel_style.container}
+      showsVerticalScrollIndicator={false}
+    >
       <View style={{ height: 260 }}>
         <Image
-          source={require("../../../assets/apartamento.jpg")}
+          source={{ uri: API_URL + "storage/" + infoImovel.image01 }}
           style={infoImovel_style.bannerImage}
         />
         <TouchableOpacity style={infoImovel_style.iconHeart}>
@@ -91,14 +102,16 @@ export default function InfoImovel() {
       <View style={infoImovel_style.containerInfo}>
         <View>
           <FlatList
-            data={dataImage}
-            renderItem={({ item }) => <ShowImages uri={item.uri} />}
-            keyExtractor={(item) => item.id}
+            data={data}
+            renderItem={({ item }) => (
+              <ShowImages item={item} />
+            )}
+            keyExtractor={(item) => item.id.toString()}
             horizontal
             showsHorizontalScrollIndicator={false}
           />
         </View>
-        <Text style={infoImovel_style.title}>Apartamento Kz 2000/mês</Text>
+        <Text style={infoImovel_style.title}>{infoImovel.type_imovel.type} Kz {infoImovel.price}/mês</Text>
         <View style={{ alignItems: "center" }}>
           <FlatList
             data={dataInfo}
@@ -121,7 +134,7 @@ export default function InfoImovel() {
               style={infoImovel_style.profileImage}
             />
             <View style={infoImovel_style.containerUserName}>
-              <Text style={infoImovel_style.userName}>Evandro Eusébio</Text>
+              <Text style={infoImovel_style.userName}>{infoImovel.owner.name}</Text>
               <Text style={infoImovel_style.userEmail}>Proprietário</Text>
             </View>
           </View>
@@ -133,7 +146,7 @@ export default function InfoImovel() {
               <MaterialIcons name="alternate-email" size={20} />
               <Text>Email ......................................</Text>
             </View>
-            <Text>evandro@gmail.com</Text>
+            <Text>{infoImovel.owner.email}</Text>
           </View>
           <View style={infoImovel_style.userDatail}>
             <View style={infoImovel_style.userDatailDiv1}>
@@ -142,7 +155,7 @@ export default function InfoImovel() {
                 Telefone ..............................................
               </Text>
             </View>
-            <Text>938390399</Text>
+            <Text>{infoImovel.owner.phone}</Text>
           </View>
           <View style={infoImovel_style.containerContactBtn}>
             <TouchableOpacity
@@ -176,19 +189,24 @@ export default function InfoImovel() {
           <MapView
             style={infoImovel_style.map}
             initialRegion={{
-              latitude: -8.9365512,
-              longitude: 13.3040733,
+              latitude: infoImovel.latitude,
+              longitude: infoImovel.longitude,
               latitudeDelta: 0.00922,
               longitudeDelta: 0.00421,
             }}
           >
             <Marker
-              coordinate={{ latitude: -8.9365512, longitude: 13.3040733 }}
+              coordinate={{ latitude: infoImovel.latitude, longitude: infoImovel.longitude }}
               title="Seu Marcador"
               description="Descrição do seu marcador aqui"
             />
           </MapView>
         </View>
+        <TouchableOpacity style={infoImovel_style.btn} onPress={() => navigation.navigate("VisitAppointment")}>
+          <Text style={infoImovel_style.btnTitle}>
+            Marcar Visita
+          </Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );

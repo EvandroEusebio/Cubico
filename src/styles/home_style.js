@@ -8,7 +8,7 @@ export const home_style = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: BG_COLOR,
-    paddingTop: 40
+    paddingTop: 10
   },
   item:{
     paddingHorizontal: 16,

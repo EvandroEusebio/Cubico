@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "HomePrice",
-    "slug": "HomePrice",
+    "slug": "cubico",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -44,7 +44,12 @@
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
       ]
-      
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "4ef99a36-7622-4775-a9ee-48906b697c17"
+      }
+    },
+    "owner": "ivandroe1234"
   }
 }

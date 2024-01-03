@@ -25,7 +25,14 @@ import API_URL from "../../../config/api";
 import Swiper from "react-native-swiper";
 import axios from "axios";
 import Map from "../../components/Map";
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { setDataImovel } from "../../features/infoImovel/infoImovelSlice";
+
 //import { SliderBox } from "react-native-image-slider-box";
+
+
 
 const dataTypeProperties = [
   {
@@ -62,7 +69,7 @@ const TypeProperties = ({ type, icon }) => (
 /*
 /storage/profilePictures/1703253586.png
 http://192.168.100.60:8000/storage/imovelPictures/01HJ8XQ7DSP0QSMKKVSJQ5K15X.jpg */
-const Properties = ({ item }) => (
+const Properties = ({ item, navigation, dispatch }) => (
   <View style={home_style.containerItemPropertie}>
     <Swiper
       style={{ height: 250 }}
@@ -74,9 +81,13 @@ const Properties = ({ item }) => (
         (image, index) => (
           <TouchableOpacity
             key={index}
-            onPress={() => console.warn("ola")}
+            
             activeOpacity={1}
             style={{marginRight: 10,}}
+            onPress={() => {
+              dispatch(setDataImovel(item))
+              navigation.navigate('InfoImovel')
+            }}
           >
             <Image
               source={{ uri: API_URL + "storage/" + image }}
@@ -134,6 +145,8 @@ export default function Home() {
   const [pagination, setPagination] = useState(1);
   const [loading, setLoading] = useState(false);
   const [showMap, setShowMap] = useState(false);
+  const navigation = useNavigation();
+  const dispatch = useDispatch()
 
   useEffect(function () {
     getDataImovels();
@@ -212,7 +225,9 @@ export default function Home() {
         <>
           <FlatList
             data={imovels}
-            renderItem={Properties}
+            renderItem={({ item }) => (
+              <Properties item={item} navigation={navigation} dispatch={dispatch}/>
+            )}
             keyExtractor={(item) => item.id.toString()}
             showsVerticalScrollIndicator={false}
             onEndReached={!loading && getDataImovels}
@@ -222,7 +237,7 @@ export default function Home() {
         </>
       )}
       {showMap && <Map />}
-      <StatusBar barStyle={"dark-content"}/>
+      <StatusBar barStyle={"light-content"}/>
     </View>
   );
 }

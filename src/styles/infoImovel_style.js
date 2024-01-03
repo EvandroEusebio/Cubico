@@ -119,5 +119,20 @@ export const infoImovel_style = StyleSheet.create({
   },
   containerMap:{
     gap: 10
+  },
+  btn:{
+    backgroundColor: "#000",
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+    borderRadius: 13,
+    marginVertical: 20
+  },
+  btnTitle:{
+    color: '#fff',
+    fontSize: 17,
+    letterSpacing: 1,
+    fontWeight: 'bold'
   }
 });
