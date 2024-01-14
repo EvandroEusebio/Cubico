@@ -8,7 +8,7 @@ import {
   Image,
   TextInput,
   ActivityIndicator,
-  StatusBar
+  StatusBar,
 } from "react-native";
 import Search from "../../components/Search";
 import { home_style } from "../../styles/home_style";
@@ -25,14 +25,9 @@ import API_URL from "../../../config/api";
 import Swiper from "react-native-swiper";
 import axios from "axios";
 import Map from "../../components/Map";
-import { useNavigation } from '@react-navigation/native';
-import { useDispatch, useSelector } from 'react-redux';
-
+import { useNavigation } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
 import { setDataImovel } from "../../features/infoImovel/infoImovelSlice";
-
-//import { SliderBox } from "react-native-image-slider-box";
-
-
 
 const dataTypeProperties = [
   {
@@ -57,15 +52,6 @@ const dataTypeProperties = [
   },
 ];
 
-const TypeProperties = ({ type, icon }) => (
-  <TouchableOpacity style={home_style.item} activeOpacity={false}>
-    <View style={home_style.containerIcon}>
-      <Icon2 name={icon} size={20} color="#000" />
-    </View>
-    <Text style={home_style.nameTypeProperties}>{type}</Text>
-  </TouchableOpacity>
-);
-
 /*
 /storage/profilePictures/1703253586.png
 http://192.168.100.60:8000/storage/imovelPictures/01HJ8XQ7DSP0QSMKKVSJQ5K15X.jpg */
@@ -81,12 +67,11 @@ const Properties = ({ item, navigation, dispatch }) => (
         (image, index) => (
           <TouchableOpacity
             key={index}
-            
             activeOpacity={1}
-            style={{marginRight: 10,}}
+            style={{ marginRight: 10 }}
             onPress={() => {
-              dispatch(setDataImovel(item))
-              navigation.navigate('InfoImovel')
+              dispatch(setDataImovel(item));
+              navigation.navigate("InfoImovel");
             }}
           >
             <Image
@@ -140,25 +125,81 @@ const ListEndLoader = ({ loading }) => {
 };
 
 export default function Home() {
+  const [selectedTypeImovelItemId, setSelectedTypeImovelItemId] =
+    useState(null);
   const [text, onChangeText] = useState("");
   const [imovels, setImovels] = useState([]);
   const [pagination, setPagination] = useState(1);
   const [loading, setLoading] = useState(false);
   const [showMap, setShowMap] = useState(false);
   const navigation = useNavigation();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-  useEffect(function () {
+  useEffect(() => {
     getDataImovels();
-  }, []);
+  }, [selectedTypeImovelItemId]);
+
+  const TypeProperties = ({ item, backgroundColor, onPress, iconColor }) => (
+    <TouchableOpacity
+      style={[home_style.item]}
+      activeOpacity={0.5}
+      onPress={() => {
+        setImovels([]);
+        setPagination(1);
+        onPress();
+      }}
+    >
+      <View style={[home_style.containerIcon, { backgroundColor }]}>
+        <Icon2 name={item.icon} size={20} color={iconColor} />
+      </View>
+      <Text style={home_style.nameTypeProperties}>{item.type}</Text>
+    </TouchableOpacity>
+  );
+
+  const renderItemTypeProperties = ({ item }) => {
+    const backgroundColor =
+      item.id === selectedTypeImovelItemId ? "#000" : "#fff";
+    const iconColor = item.id === selectedTypeImovelItemId ? "#fff" : "#000";
+
+    return (
+      <TypeProperties
+        item={item}
+        onPress={() => setSelectedTypeImovelItemId(item.id)}
+        backgroundColor={backgroundColor}
+        iconColor={iconColor}
+      />
+    );
+  };
 
   async function getDataImovels() {
     if (loading) return;
 
     setLoading(true);
 
+    if (selectedTypeImovelItemId === null) {
+      await axios
+        .get(API_URL + `api/v1/imovel?page=${pagination}`)
+        .then((response) => {
+          if (response.data.imovel.data.length === 0) {
+            return;
+          } else {
+            setImovels([...imovels, ...response.data.imovel.data]);
+            setPagination(pagination + 1);
+            console.log(response.data.imovel.data);
+          }
+        })
+        .catch((error) => console.error("Erro ao buscar os dados: " + error));
+      setLoading(false);
+      return;
+    }
+
+    //console.warn(selectedTypeImovelItemId);
+
     await axios
-      .get(API_URL + `api/v1/imovel?page=${pagination}`)
+      .get(
+        API_URL +
+          `api/v1/imovel/show/type/${selectedTypeImovelItemId}?page=${pagination}`
+      )
       .then((response) => {
         if (response.data.imovel.data.length === 0) {
           return;
@@ -169,14 +210,30 @@ export default function Home() {
         }
       })
       .catch((error) => console.error("Erro ao buscar os dados: " + error));
-
     setLoading(false);
+
+    
+  }
+
+  let [fontsLoaded] = useFonts({
+    Poppins_700Bold,
+    Poppins_300Light,
+    Poppins_500Medium,
+    Poppins_400Regular,
+  });
+
+  if (!fontsLoaded) {
+    return null;
   }
 
   return (
     <View style={home_style.container}>
       <View style={home_style.header}>
-        <Text style={home_style.headerTitle}>CUBICO</Text>
+        <Text
+          style={[home_style.headerTitle, { fontFamily: "Poppins_700Bold" }]}
+        >
+          CUBICO
+        </Text>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
           <TouchableOpacity style={home_style.containerIcon}>
             <Icon name="bell" size={20} color="#000" />
@@ -210,23 +267,32 @@ export default function Home() {
       <View>
         <FlatList
           data={dataTypeProperties}
-          renderItem={({ item }) => (
-            <TypeProperties type={item.type} icon={item.icon} />
-          )}
+          renderItem={renderItemTypeProperties}
           keyExtractor={(item) => item.id}
           horizontal
           showsHorizontalScrollIndicator={false}
+          extraData={selectedTypeImovelItemId}
         />
       </View>
-      <View style={{shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5, height: 1, backgroundColor:'rgba(0, 0, 0, 0.1)'}}></View>
+      <View
+        style={{
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.5,
+          height: 1,
+          backgroundColor: "rgba(0, 0, 0, 0.1)",
+        }}
+      ></View>
       {!showMap && (
         <>
           <FlatList
             data={imovels}
             renderItem={({ item }) => (
-              <Properties item={item} navigation={navigation} dispatch={dispatch}/>
+              <Properties
+                item={item}
+                navigation={navigation}
+                dispatch={dispatch}
+              />
             )}
             keyExtractor={(item) => item.id.toString()}
             showsVerticalScrollIndicator={false}
@@ -237,7 +303,7 @@ export default function Home() {
         </>
       )}
       {showMap && <Map />}
-      <StatusBar barStyle={"light-content"}/>
+      <StatusBar barStyle={"light-content"} />
     </View>
   );
 }

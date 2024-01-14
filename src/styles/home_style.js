@@ -7,14 +7,14 @@ import { PRIMARY, BG_COLOR, TEXTCOLOR, BORDER, SECUNDARY, TEXTCOLOR_02 } from '.
 export const home_style = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: BG_COLOR,
+    backgroundColor: "#fff",
     paddingTop: 10
   },
   item:{
     paddingHorizontal: 16,
     paddingVertical: 13,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
     
   },
   nameCity:{
@@ -64,7 +64,7 @@ export const home_style = StyleSheet.create({
   headerTitle:{
     color: "#000",
     fontSize: 25,
-    fontWeight: '900',
+    
   },
   containerIcon:{
     borderWidth: 1,
