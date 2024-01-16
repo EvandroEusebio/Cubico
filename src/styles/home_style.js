@@ -124,4 +124,5 @@ export const home_style = StyleSheet.create({
   textPrice:{
     fontWeight: 'bold'
   },
+  
 });

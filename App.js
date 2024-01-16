@@ -23,6 +23,10 @@ import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
 import axios from "axios";
 import API_URL from "./config/api";
+import MyImovels from "./src/screens/MyImovels";
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
+
+
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -46,9 +50,27 @@ const HomeStack = () => {
       />
       <Stack.Screen name="InfoImovel" component={InfoImovel} />
       <Stack.Screen name="VisitAppointment" component={MarkDataCalendar} />
+      <Stack.Screen name="Profile" component={Profile} />
+      
     </Stack.Navigator>
   );
 };
+
+const ScreenProfile = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Profile"
+        component={Profile}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen name="MyImovels" component={MyImovels} />
+      
+    </Stack.Navigator>
+  );
+};
+
+
 
 const Tab = createBottomTabNavigator();
 
@@ -78,6 +100,7 @@ export default function App() {
             tabBarActiveTintColor: "#fff",
             tabBarInactiveTintColor: "gray",
             tabBarStyle: {
+              display: getTabBarVisibility(route),
               borderTopColor: "transparent",
               backgroundColor: "#000",
               paddingBottom: 5,
@@ -127,20 +150,34 @@ export default function App() {
           />
           <Tab.Screen
             name="Chat"
-            component={InfoImovel}
+            component={MyImovels}
             options={{ headerShown: false }}
           />
           <Tab.Screen
             name="Perfil"
-            component={Profile}
-            options={{ headerShown: false }}
+            component={ScreenProfile}
+            options={{
+              headerShown: false
+            }}
+            
+            
           />
         </Tab.Navigator>
       </NavigationContainer>
-      
     </Provider>
   );
 }
+
+const getTabBarVisibility = route => {
+  //console.warn(route);
+  const routeName = getFocusedRouteNameFromRoute(route) ?? 'Feed';
+  //console.warn(routeName);
+
+  if( routeName === 'MyImovels' ) {
+    return 'none';
+  }
+  return 'flex';
+};
 
 /*
 

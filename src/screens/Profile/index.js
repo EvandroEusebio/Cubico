@@ -3,66 +3,87 @@ import { View, Text, Image, FlatList, TouchableOpacity } from "react-native";
 import { profile_style } from "../../styles/profile_style";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Feather from "react-native-vector-icons/Feather";
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import { useNavigation } from "@react-navigation/native";
 
 const DATA = [
   {
     id: 1,
     title: "Editar Perfil",
     icon: "person-outline",
+    route: "MyImovels",
   },
   {
     id: 2,
     title: "Ver Fvoritos",
     icon: "heart-outline",
+    route: "MyImovels",
   },
   {
     id: 3,
     title: "Meus Imóveis",
     icon: "home-outline",
+    route: "MyImovels",
   },
-  
+
   {
     id: 4,
     title: "Notificações",
     icon: "notifications-outline",
+    route: "MyImovels",
   },
   {
     id: 5,
     title: "Nos contacte",
     icon: "megaphone-outline",
+    route: "MyImovels",
   },
   {
     id: 6,
     title: "Termos & Privacidade",
     icon: "key-outline",
+    route: "MyImovels",
   },
   {
     id: 7,
     title: "Sair",
     icon: "exit-outline",
+    route: "MyImovels",
   },
-
 ];
 
-const Item = ({ title, icon }) => (
-  <TouchableOpacity style={profile_style.item}>
+const Item = ({ title, icon, navigation, route }) => (
+  <TouchableOpacity
+    style={profile_style.item}
+    onPress={() => {
+      navigation.navigate(route);
+    }}
+  >
     <View style={profile_style.containerItemLeft}>
-      <Ionicons name={icon} size={25} color={title == "Sair" ? "red":"#000"} />
-      <Text style={[profile_style.itemText, {color: title == "Sair" ? "red":"#000"}]}>{title}</Text>
+      <Ionicons
+        name={icon}
+        size={25}
+        color={title == "Sair" ? "red" : "#000"}
+      />
+      <Text
+        style={[
+          profile_style.itemText,
+          { color: title == "Sair" ? "red" : "#000" },
+        ]}
+      >
+        {title}
+      </Text>
     </View>
-    {
-        title !== "Sair" && (
-            <View style={profile_style.containerItemRigth}>
-                <MaterialIcons name="chevron-right" size={25} color={"#000"} />
-            </View>
-        )
-    }
-    
+    {title !== "Sair" && (
+      <View style={profile_style.containerItemRigth}>
+        <MaterialIcons name="chevron-right" size={25} color={"#000"} />
+      </View>
+    )}
   </TouchableOpacity>
 );
 
 export default function Profile() {
+  const navigation = useNavigation();
   return (
     <View style={profile_style.container}>
       <View style={profile_style.containerProfileDetails}>
@@ -94,7 +115,12 @@ export default function Profile() {
         <FlatList
           data={DATA}
           renderItem={({ item }) => (
-            <Item title={item.title} icon={item.icon} />
+            <Item
+              title={item.title}
+              icon={item.icon}
+              navigation={navigation}
+              route={item.route}
+            />
           )}
           keyExtractor={(item) => item.id}
         />

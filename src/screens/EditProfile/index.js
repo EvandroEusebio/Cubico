@@ -23,6 +23,7 @@ import { editProfile_style } from "../../styles/editProfile_style";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import axios from "axios";
 import { updateUser } from "../../features/authentication/authSlice";
+import { useNavigation } from '@react-navigation/native';
 
 export default function EditProfile() {
   const phoneRedux = useSelector((state) => state.auth.user.phone);
@@ -30,6 +31,7 @@ export default function EditProfile() {
   const nameRedux = useSelector((state) => state.auth.user.name);
   const imageProfile = useSelector((state) => state.auth.user.imageProfile);
   const id = useSelector((state) => state.auth.user.id);
+  const navigation = useNavigation();
 
   console.log(imageProfile)
 
