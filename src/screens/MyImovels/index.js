@@ -18,6 +18,7 @@ import {
 } from "@expo-google-fonts/poppins";
 import axios from "axios";
 import API_URL from "../../../config/api";
+import { useSelector } from "react-redux";
 
 const typeProperties = [
   {
@@ -39,17 +40,27 @@ const typeProperties = [
 ];
 
 const ListEndLoader = ({ loading }) => {
-    if (!loading) return null;
-    return (
-      <ActivityIndicator style={{ padding: 10 }} size={25} color={"#000"} />
-    );
-  };
+  if (!loading) return null;
+  return <ActivityIndicator style={{ padding: 10 }} size={25} color={"#000"} />;
+};
 
 export default function MyImovels() {
   const [selectedTypeImovelItemId, setSelectedTypeImovelItemId] = useState(1);
   const [imovels, setImovels] = useState([]);
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState(1);
+  const id = useSelector((state) => state.auth.user.id);
+
+  const deleteImovel = async (id) => {
+    await axios
+      .delete(API_URL + `api/v1/imovel/delete/${id}`)
+      .then((response) => {
+        console.warn(response.data.response);
+        const filteredData = imovels.filter((item) => item.id !== id);
+        setImovels(filteredData);
+      })
+      .catch((error) => console.error(error));
+  };
 
   useEffect(() => {
     getDataImovels();
@@ -127,7 +138,10 @@ export default function MyImovels() {
         </View>
       </View>
       <View style={myImovels_style.outhers}>
-        <TouchableOpacity style={myImovels_style.closeBtn}>
+        <TouchableOpacity
+          style={myImovels_style.closeBtn}
+          onPress={() => deleteImovel(item.id)}
+        >
           <Text
             style={[
               myImovels_style.textCloseBtn,
@@ -158,6 +172,7 @@ export default function MyImovels() {
     if (loading) return;
 
     setLoading(true);
+    /*
     if (selectedTypeImovelItemId === null) {
       await axios
         .get(API_URL + `api/v1/imovel?page=${pagination}`)
@@ -172,12 +187,15 @@ export default function MyImovels() {
         })
         .catch((error) => console.error("Erro ao buscar os dados: " + error));
       return;
-    }
+    }*/
 
     //console.warn(selectedTypeImovelItemId);
 
     await axios
-      .get(API_URL + `api/v1/user/show/imovels/type/9/${selectedTypeImovelItemId}?page=${pagination}`)
+      .get(
+        API_URL +
+          `api/v1/user/show/imovels/type/${id}/${selectedTypeImovelItemId}?page=${pagination}`
+      )
       .then((response) => {
         if (response.data.imovel.data.length === 0) {
           return;
@@ -192,8 +210,6 @@ export default function MyImovels() {
     setLoading(false);
   }
 
-  
-
   let [fontsLoaded] = useFonts({
     Poppins_700Bold,
     Poppins_300Light,
@@ -204,8 +220,6 @@ export default function MyImovels() {
   if (!fontsLoaded) {
     return null;
   }
-
-  
 
   return (
     <View style={myImovels_style.container}>

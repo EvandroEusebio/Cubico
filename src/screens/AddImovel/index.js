@@ -16,6 +16,7 @@ import * as ImagePicker from "expo-image-picker";
 import API_URL from "../../../config/api";
 import axios from "axios";
 import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
+import { useSelector } from "react-redux";
 
 export default function AddImovel() {
   const [latitude, setLatitude] = useState("");
@@ -36,6 +37,7 @@ export default function AddImovel() {
   const [totalWC, setTotalWC] = useState(0);
   const [totalChinken, setTotalChinken] = useState(0);
   const [province, setProvince] = useState(null);
+  const id = useSelector((state) => state.auth.user.id);
 
   // Function for Update screen
   async function fresh() {
@@ -129,7 +131,7 @@ export default function AddImovel() {
     formData.append("type_imovel_id", selectedCategory);
     formData.append("province_id", province);
     formData.append("county_id", county);
-    formData.append("owner_id", 9);
+    formData.append("owner_id", id);
     
     formData.append("total_bedrooms", totalBedrooms);
     formData.append("total_wc", totalWC);

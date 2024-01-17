@@ -65,6 +65,7 @@ const ScreenProfile = () => {
         options={{ headerShown: false }}
       />
       <Stack.Screen name="MyImovels" component={MyImovels} />
+      <Stack.Screen name="EditProfile" component={EditProfile} />
       
     </Stack.Navigator>
   );

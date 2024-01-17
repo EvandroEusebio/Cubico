@@ -11,7 +11,7 @@ const DATA = [
     id: 1,
     title: "Editar Perfil",
     icon: "person-outline",
-    route: "MyImovels",
+    route: "EditProfile",
   },
   {
     id: 2,
