@@ -18,7 +18,9 @@ import {
 } from "@expo-google-fonts/poppins";
 import axios from "axios";
 import API_URL from "../../../config/api";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setDataImovel } from "../../features/infoImovel/infoImovelSlice";
+import { useNavigation } from "@react-navigation/native";
 
 const typeProperties = [
   {
@@ -50,6 +52,8 @@ export default function MyImovels() {
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState(1);
   const id = useSelector((state) => state.auth.user.id);
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const deleteImovel = async (id) => {
     await axios
@@ -117,7 +121,14 @@ export default function MyImovels() {
   };
 
   const Properties = ({ item, navigation, dispatch }) => (
-    <TouchableOpacity style={myImovels_style.containerItemPropertie}>
+    <TouchableOpacity
+    activeOpacity={0.7}
+      style={myImovels_style.containerItemPropertie}
+      onPress={() => {
+        dispatch(setDataImovel(item));
+        navigation.navigate("MyInfoImovel");
+      }}
+    >
       <View style={myImovels_style.infoImovels}>
         <Image
           source={{ uri: API_URL + "storage/" + item.image01 }}
@@ -239,9 +250,8 @@ export default function MyImovels() {
           renderItem={({ item }) => (
             <Properties
               item={item}
-              /*
               navigation={navigation}
-              dispatch={dispatch}*/
+              dispatch={dispatch}
             />
           )}
           keyExtractor={(item) => item.id.toString()}

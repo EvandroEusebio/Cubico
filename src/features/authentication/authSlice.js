@@ -101,6 +101,7 @@ export const updateUser = createAsyncThunk("updateUser", async (data) => {
   });*/
 });
 
+/*
 async function sendPushNotification(expoPushToken) {
   const message = {
     to: expoPushToken,
@@ -120,6 +121,7 @@ async function sendPushNotification(expoPushToken) {
     body: JSON.stringify(message),
   });
 }
+*/
 
 const storeDeviceToken = async (user_id) => {
   let token;
@@ -127,9 +129,8 @@ const storeDeviceToken = async (user_id) => {
   if (Platform.OS === 'android') {
     Notifications.setNotificationChannelAsync('default', {
       name: 'default',
-      importance: Notifications.AndroidImportance.MAX,
+      importance: Notifications.AndroidImportance.HIGH,
       vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FF231F7C',
     });
   }
 

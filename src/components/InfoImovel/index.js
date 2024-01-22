@@ -14,7 +14,7 @@ import M2 from "react-native-vector-icons/MaterialCommunityIcons";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import { useSelector } from "react-redux";
 import API_URL from "../../../config/api";
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from "@react-navigation/native";
 
 const dataInfo = [
   {
@@ -51,21 +51,18 @@ const dataImage = [
 ];
 
 const ShowImages = ({ item }) => (
-  <View style={{flexDirection: 'row'}}>
-    {[
-      item.image01,
-      item.image02,
-      item.image03,
-      item.image04,
-    ].map((image, index) => (
-      <TouchableOpacity >
-        <Image
-        key={index}
-          source={{ uri: API_URL + "storage/" + image }}
-          style={infoImovel_style.galeryImage}
-        />
-      </TouchableOpacity>
-    ))}
+  <View style={{ flexDirection: "row" }}>
+    {[item.image01, item.image02, item.image03, item.image04].map(
+      (image, index) => (
+        <TouchableOpacity>
+          <Image
+            key={index}
+            source={{ uri: API_URL + "storage/" + image }}
+            style={infoImovel_style.galeryImage}
+          />
+        </TouchableOpacity>
+      )
+    )}
   </View>
 );
 
@@ -82,7 +79,8 @@ const Info = ({ type, icon, quantity }) => (
 
 export default function InfoImovel() {
   const infoImovel = useSelector((state) => state.infoImovel.imovelDetail);
-  const [data, setData] = useState([infoImovel])
+  const ownerId = useSelector((state) => state.auth.user.id);
+  const [data, setData] = useState([infoImovel]);
   const navigation = useNavigation();
   console.log(infoImovel);
   return (
@@ -103,15 +101,15 @@ export default function InfoImovel() {
         <View>
           <FlatList
             data={data}
-            renderItem={({ item }) => (
-              <ShowImages item={item} />
-            )}
+            renderItem={({ item }) => <ShowImages item={item} />}
             keyExtractor={(item) => item.id.toString()}
             horizontal
             showsHorizontalScrollIndicator={false}
           />
         </View>
-        <Text style={infoImovel_style.title}>{infoImovel.type_imovel.type} Kz {infoImovel.price}/mês</Text>
+        <Text style={infoImovel_style.title}>
+          {infoImovel.type_imovel.type} Kz {infoImovel.price}/mês
+        </Text>
         <View style={{ alignItems: "center" }}>
           <FlatList
             data={dataInfo}
@@ -134,7 +132,9 @@ export default function InfoImovel() {
               style={infoImovel_style.profileImage}
             />
             <View style={infoImovel_style.containerUserName}>
-              <Text style={infoImovel_style.userName}>{infoImovel.owner.name}</Text>
+              <Text style={infoImovel_style.userName}>
+                {infoImovel.owner.name}
+              </Text>
               <Text style={infoImovel_style.userEmail}>Proprietário</Text>
             </View>
           </View>
@@ -196,17 +196,59 @@ export default function InfoImovel() {
             }}
           >
             <Marker
-              coordinate={{ latitude: infoImovel.latitude, longitude: infoImovel.longitude }}
+              coordinate={{
+                latitude: infoImovel.latitude,
+                longitude: infoImovel.longitude,
+              }}
               title="Seu Marcador"
               description="Descrição do seu marcador aqui"
             />
           </MapView>
         </View>
-        <TouchableOpacity style={infoImovel_style.btn} onPress={() => navigation.navigate("VisitAppointment")}>
-          <Text style={infoImovel_style.btnTitle}>
-            Marcar Visita
-          </Text>
-        </TouchableOpacity>
+        {ownerId !== infoImovel.owner_id && (
+          <TouchableOpacity
+            style={infoImovel_style.btn}
+            onPress={() => navigation.navigate("VisitAppointment", {
+              province_id: null,
+              county_id: null,
+              showCounty: false,
+              image01: null,
+              image02: null,
+              image03: null,
+              image04: null,
+              status: false
+            })}
+          >
+            <Text style={infoImovel_style.btnTitle}>Marcar Visita</Text>
+          </TouchableOpacity>
+        )}
+        {ownerId === infoImovel.owner_id && (
+          <TouchableOpacity
+            style={infoImovel_style.btn}
+            onPress={() => navigation.navigate("UpdateMyImovel", {
+              province_id: infoImovel.province_id,
+              county_id: infoImovel.county_id,
+              showCounty: true,
+              image01: API_URL + "storage/" +  infoImovel.image01,
+              image02: API_URL + "storage/" +  infoImovel.image02,
+              image03: API_URL + "storage/" +  infoImovel.image03,
+              image04: API_URL + "storage/" +  infoImovel.image04,
+              status: true,
+              price: infoImovel.price.toString(),
+              totalArea: infoImovel.area_total.toString(),
+              latitude: infoImovel.latitude.toString(),
+              longitude: infoImovel.longitude.toString(),
+              type_imovel_id: infoImovel.type_imovel_id,
+              total_wc: infoImovel.total_wc,
+              total_bedrooms: infoImovel.total_bedrooms,
+              transaction_type_id: infoImovel.transaction_type_id,
+              title: "Edite o seu Imovel",
+              text: infoImovel.type_imovel.type
+            })}
+          >
+            <Text style={infoImovel_style.btnTitle}>Editar</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </ScrollView>
   );

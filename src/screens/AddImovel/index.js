@@ -17,26 +17,32 @@ import API_URL from "../../../config/api";
 import axios from "axios";
 import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 import { useSelector } from "react-redux";
+import { useRoute } from "@react-navigation/native";
 
 export default function AddImovel() {
-  const [latitude, setLatitude] = useState("");
-  const [longitude, setLongitude] = useState("");
+  const route = useRoute();
+  const [latitude, setLatitude] = useState(route.params?.latitude);
+  const [longitude, setLongitude] = useState(route.params?.longitude);
   const [dataProvince, setDataProvince] = useState([]);
   const [dataCounty, setDataCounty] = useState([]);
-  const [county, setCounty] = useState(null);
-  const [typeStatus, setTypeStatus] = useState(null);
-  const [price, setPrice] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState(1);
-  const [totalArea, setTotalArea] = useState("");
-  const [selectedItemId, setSelectedItemId] = useState(1);
-  const [image01, setImage01] = useState(null);
-  const [image02, setImage02] = useState(null);
-  const [image03, setImage03] = useState(null);
-  const [image04, setImage04] = useState(null);
-  const [totalBedrooms, setTotalBedrooms] = useState(0);
+  const [typeStatus, setTypeStatus] = useState(route.params?.transaction_type_id);
+  const [price, setPrice] = useState(route.params?.price);
+  const [selectedCategory, setSelectedCategory] = useState(
+    route.params?.type_imovel_id
+  );
+  const [totalArea, setTotalArea] = useState(route.params?.totalArea);
+  const [selectedItemId, setSelectedItemId] = useState(
+    route.params?.type_imovel_id
+  );
+  const [image01, setImage01] = useState(route.params?.image01);
+  const [image02, setImage02] = useState(route.params?.image02);
+  const [image03, setImage03] = useState(route.params?.image03);
+  const [image04, setImage04] = useState(route.params?.image04);
+  const [totalBedrooms, setTotalBedrooms] = useState(route.params?.total_bedrooms);
   const [totalWC, setTotalWC] = useState(0);
   const [totalChinken, setTotalChinken] = useState(0);
-  const [province, setProvince] = useState(null);
+  const [province, setProvince] = useState(route.params?.province_id);
+  const [county, setCounty] = useState(route.params?.county_id);
   const id = useSelector((state) => state.auth.user.id);
 
   // Function for Update screen
@@ -132,7 +138,7 @@ export default function AddImovel() {
     formData.append("province_id", province);
     formData.append("county_id", county);
     formData.append("owner_id", id);
-    
+
     formData.append("total_bedrooms", totalBedrooms);
     formData.append("total_wc", totalWC);
     formData.append("latitude", latitude);
@@ -213,7 +219,10 @@ export default function AddImovel() {
   const fetchCountyData = async (id) => {
     await axios
       .get(API_URL + `api/v1/provincia/localidade/${id}`)
-      .then((response) => setDataCounty(response.data))
+      .then((response) => {
+        setDataCounty(response.data);
+        console.log(response.data);
+      })
       .catch((error) => {
         console.error("Erro ao obter dados da API:", error);
       });
@@ -417,19 +426,22 @@ export default function AddImovel() {
       showsVerticalScrollIndicator={false}
     >
       <View style={addImovel_style.header}>
-        <Text style={addImovel_style.headerTitle01}>Descreva o seu</Text>
-        <Text style={addImovel_style.headerTitle02}>Imóvel</Text>
+        <Text style={addImovel_style.headerTitle01}>{route.params?.title}</Text>
+        <Text style={addImovel_style.headerTitle02}>{route.params?.text}</Text>
       </View>
-      <View>
-        <FlatList
-          data={categoriesData}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          extraData={selectedItemId}
-        />
-      </View>
+      {!route.params?.status && (
+        <View>
+          <FlatList
+            data={categoriesData}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            extraData={selectedItemId}
+          />
+        </View>
+      )}
+
       <View style={addImovel_style.containerFormAddress}>
         <Text style={addImovel_style.subtitle}>Localização</Text>
 
@@ -510,7 +522,7 @@ export default function AddImovel() {
             onChangeText={setPrice}
             value={price}
             placeholder="Informe o preço"
-            keyboardType="numeric"
+            keyboardType="default"
           />
 
           <TextInput
@@ -518,7 +530,7 @@ export default function AddImovel() {
             onChangeText={setTotalArea}
             value={totalArea}
             placeholder="Informe a Area total em metros"
-            keyboardType="numeric"
+            keyboardType="default"
           />
         </View>
       )}
@@ -611,7 +623,7 @@ export default function AddImovel() {
             onChangeText={setPrice}
             value={price}
             placeholder="Informe o preço"
-            keyboardType="numeric"
+            keyboardType="default"
           />
 
           <TextInput
@@ -619,7 +631,7 @@ export default function AddImovel() {
             onChangeText={setTotalArea}
             value={totalArea}
             placeholder="Informe a Area total em metros"
-            keyboardType="numeric"
+            keyboardType="default"
           />
         </View>
       )}
@@ -649,7 +661,7 @@ export default function AddImovel() {
             onChangeText={setPrice}
             value={price}
             placeholder="Informe o preço"
-            keyboardType="numeric"
+            keyboardType="default"
           />
         </View>
       )}
@@ -742,7 +754,7 @@ export default function AddImovel() {
             onChangeText={setPrice}
             value={price}
             placeholder="Informe o preço"
-            keyboardType="numeric"
+            keyboardType="default"
           />
 
           <TextInput
@@ -750,7 +762,7 @@ export default function AddImovel() {
             onChangeText={setTotalArea}
             value={totalArea}
             placeholder="Informe a Area total em metros"
-            keyboardType="numeric"
+            keyboardType="default"
           />
         </View>
       )}
@@ -814,16 +826,31 @@ export default function AddImovel() {
             )}
           </TouchableOpacity>
         </View>
-        <View style={{ marginBottom: 40 }}>
-          <Button
-            name={"Hospedar"}
-            bgColor={"#094559"}
-            textColor={"#fff"}
-            onPress={() => {
-              submitImovelData();
-            }}
-          />
-        </View>
+        {route.params?.status && (
+          <View style={{ marginBottom: 40 }}>
+            <Button
+              name={"Salvar"}
+              bgColor={"#000"}
+              textColor={"#fff"}
+              onPress={() => {
+                submitImovelData();
+              }}
+            />
+          </View>
+        )}
+        {route.params?.status !== true && (
+          <View style={{ marginBottom: 40 }}>
+            <Button
+              name={"Hospedar"}
+              bgColor={"#000"}
+              textColor={"#fff"}
+              onPress={() => {
+                submitImovelData();
+              }}
+            />
+          </View>
+        )}
+        
       </View>
     </ScrollView>
   );

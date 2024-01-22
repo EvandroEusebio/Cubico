@@ -66,7 +66,8 @@ const ScreenProfile = () => {
       />
       <Stack.Screen name="MyImovels" component={MyImovels} />
       <Stack.Screen name="EditProfile" component={EditProfile} />
-      
+      <Stack.Screen name="MyInfoImovel" component={InfoImovel} />
+      <Stack.Screen name="UpdateMyImovel" component={AddImovel} />
     </Stack.Navigator>
   );
 };
@@ -120,7 +121,7 @@ export default function App() {
             options={{ headerShown: false }}
           />
           <Tab.Screen
-            name="Settings"
+            name="AddImovel"
             component={AddImovel}
             options={{
               tabBarIcon: ({ focused }) => (
@@ -172,9 +173,9 @@ export default function App() {
 const getTabBarVisibility = route => {
   //console.warn(route);
   const routeName = getFocusedRouteNameFromRoute(route) ?? 'Feed';
-  //console.warn(routeName);
+  //console.warn(routeName)MyInfoImovel;
 
-  if( routeName === 'MyImovels' ) {
+  if( routeName === 'MyImovels' || routeName === 'MyInfoImovel' || routeName === 'UpdateMyImovel' ) {
     return 'none';
   }
   return 'flex';
