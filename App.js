@@ -25,6 +25,7 @@ import axios from "axios";
 import API_URL from "./config/api";
 import MyImovels from "./src/screens/MyImovels";
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
+import Onboard from "./src/screens/Onboard";
 
 
 
@@ -79,7 +80,24 @@ const Tab = createBottomTabNavigator();
 export default function App() {
   return (
     <Provider store={Store}>
-      <NavigationContainer>
+      <Onboard/>
+    </Provider>
+  );
+}
+
+const getTabBarVisibility = route => {
+  //console.warn(route);
+  const routeName = getFocusedRouteNameFromRoute(route) ?? 'Feed';
+  //console.warn(routeName)MyInfoImovel;
+
+  if( routeName === 'MyImovels' || routeName === 'MyInfoImovel' || routeName === 'UpdateMyImovel' ) {
+    return 'none';
+  }
+  return 'flex';
+};
+
+/*
+<NavigationContainer>
         <Tab.Navigator
           screenOptions={({ route }) => ({
             tabBarIcon: ({ focused, color, size }) => {
@@ -166,21 +184,4 @@ export default function App() {
           />
         </Tab.Navigator>
       </NavigationContainer>
-    </Provider>
-  );
-}
-
-const getTabBarVisibility = route => {
-  //console.warn(route);
-  const routeName = getFocusedRouteNameFromRoute(route) ?? 'Feed';
-  //console.warn(routeName)MyInfoImovel;
-
-  if( routeName === 'MyImovels' || routeName === 'MyInfoImovel' || routeName === 'UpdateMyImovel' ) {
-    return 'none';
-  }
-  return 'flex';
-};
-
-/*
-
 */
