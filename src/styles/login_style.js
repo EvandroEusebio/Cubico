@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import { PRIMARY, BG_COLOR, TEXTCOLOR, BORDER } from './palette';
 
 export const login_style = StyleSheet.create({
@@ -51,6 +51,10 @@ export const login_style = StyleSheet.create({
     height: 350,
     position: 'absolute',
     right: -10,
-    top: 550
+    top: Platform.OS === "android" ? 580 : 540 
+  },
+  img:{
+    height: 100,
+    width: 100
   }
 });

@@ -34,6 +34,7 @@ export default function SignUp(){
 
   return (
     <View style={register_style.container}>
+      <Image source={require('../../../assets/logo.png')} style={register_style.img}/>
       <View style={register_style.containerForm}>
             <Text style={[register_style.title, {fontFamily: 'Poppins_700Bold'}]}>Cadastre-se</Text>
 
@@ -89,9 +90,9 @@ export default function SignUp(){
             </View>
 
             <View style={register_style.containerSignUp}>
-            <Text style={[register_style.info, {fontFamily: 'Poppins_400Regular'}]}>Não tens uma conta?</Text>
+            <Text style={[register_style.info, {fontFamily: 'Poppins_400Regular'}]}>Já tens uma conta?</Text>
             <TouchableOpacity>
-                <Text style={[register_style.signUp, {fontFamily: 'Poppins_400Regular'}]}>Registrar</Text>
+                <Text style={[register_style.signUp, {fontFamily: 'Poppins_400Regular'}]}>Entrar</Text>
             </TouchableOpacity>
             </View>
         </View>

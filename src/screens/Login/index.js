@@ -32,6 +32,7 @@ export default function Login(){
   return (
     <View style={login_style.container}>
       <Image source={require('../../../assets/wave.png')} style={login_style.waveImage}/>
+      <Image source={require('../../../assets/logo.png')} style={login_style.img}/>
       <View style={login_style.containerForm}>
         <Text style={[login_style.title, {fontFamily: 'Poppins_700Bold'}]}>Login</Text>
         <View style={login_style.form}>
@@ -40,7 +41,7 @@ export default function Login(){
           onChangeText={setPhone}
           value={phone}
           placeholder="Numero de telefone"
-          keyboardType="numeric"
+          keyboardType="default"
           />
           <Icon name="phone" size={30} color="#adadad" />
         </View>

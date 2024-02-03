@@ -26,6 +26,8 @@ import API_URL from "./config/api";
 import MyImovels from "./src/screens/MyImovels";
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import Onboard from "./src/screens/Onboard";
+import Chat from "./src/screens/Chat";
+import ChatTalk from "./src/screens/ChatTalk";
 
 
 
@@ -80,7 +82,7 @@ const Tab = createBottomTabNavigator();
 export default function App() {
   return (
     <Provider store={Store}>
-      <Onboard/>
+     <ChatTalk />
     </Provider>
   );
 }
@@ -97,7 +99,7 @@ const getTabBarVisibility = route => {
 };
 
 /*
-<NavigationContainer>
+ <NavigationContainer>
         <Tab.Navigator
           screenOptions={({ route }) => ({
             tabBarIcon: ({ focused, color, size }) => {
@@ -170,7 +172,7 @@ const getTabBarVisibility = route => {
           />
           <Tab.Screen
             name="Chat"
-            component={MyImovels}
+            component={Chat}
             options={{ headerShown: false }}
           />
           <Tab.Screen

@@ -42,5 +42,9 @@ export const register_style = StyleSheet.create({
   info:{
     color: '#adadad',
     
+  },
+  img:{
+    height: 100,
+    width: 100
   }
 });
