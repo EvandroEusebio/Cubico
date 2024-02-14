@@ -122,8 +122,7 @@ const Info = ({ type, icon, quantity }) => (
 
 export default function InfoImovel() {
   const infoImovel = useSelector((state) => state.infoImovel.imovelDetail);
-  //const ownerId = useSelector((state) => state.auth.user.id);
-  const ownerId = useState(1);
+  const ownerId = useSelector((state) => state.auth.user.id);
   const [data, setData] = useState([infoImovel]);
   const navigation = useNavigation();
   const [dataImovelCommentar, setDataImovelCommentar] = useState([]);
@@ -166,8 +165,8 @@ export default function InfoImovel() {
     await axios
       .get(API_URL + `api/v1/imovel/comentarios/${infoImovel.id}`)
       .then((response) => {
-        //console.log(response.data.commentsImovel);
-        setDataImovelCommentar(response.data.commentsImovel);
+        //console.log(response.data.commentsImovel.data);
+        setDataImovelCommentar(response.data.commentsImovel.data);
         setTotalCommentImovel(response.data.totalCommentsImovel);
         /*
         if (response.data.imovel.data.length === 0) {
@@ -342,7 +341,7 @@ export default function InfoImovel() {
               />
               <TouchableOpacity
                 style={infoImovel_style.btnCommentarSend}
-                onPress={() => postComment(myComment, 9, infoImovel.id)}
+                onPress={() => postComment(myComment, ownerId, infoImovel.id)}
               >
                 <Ionicons name="navigate" size={20} color={"#fff"} />
               </TouchableOpacity>
