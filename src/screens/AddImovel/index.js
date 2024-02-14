@@ -185,7 +185,7 @@ export default function AddImovel() {
   }
 
   // show Imovel categories in flatlist
-  const Item = ({ item, backgroundColor, onPress }) => (
+  const Item = ({ item, backgroundColor, onPress, textColor, iconColor }) => (
     <TouchableOpacity
       style={[addImovel_style.categoryImovel, { backgroundColor }]}
       onPress={() => {
@@ -194,18 +194,22 @@ export default function AddImovel() {
         fresh();
       }}
     >
-      <Icon2 name={item.icon} size={20} color="#000" />
-      <Text style={addImovel_style.categoryImovelText}>{item.type}</Text>
+      <Icon2 name={item.icon} size={20} color={iconColor} />
+      <Text style={[addImovel_style.categoryImovelText, {color: textColor}]}>{item.type}</Text>
     </TouchableOpacity>
   );
   const renderItem = ({ item }) => {
     const backgroundColor =
-      item.id === selectedItemId ? "rgba(0, 0, 0, 0.1)" : "rgba(0, 0, 0, 0.0)";
+      item.id === selectedItemId ? "rgb(0, 0, 0)" : "rgba(0, 0, 0, 0.0)";
+    const textColor = item.id === selectedItemId ? "#fff" : "#000";
+    const iconColor = item.id === selectedItemId ? "#fff" : "#000";
 
     return (
       <Item
         item={item}
         onPress={() => setSelectedItemId(item.id)}
+        textColor={textColor}
+        iconColor={iconColor}
         backgroundColor={backgroundColor}
       />
     );
@@ -426,8 +430,8 @@ export default function AddImovel() {
       showsVerticalScrollIndicator={false}
     >
       <View style={addImovel_style.header}>
-        <Text style={addImovel_style.headerTitle01}>{route.params?.title}</Text>
-        <Text style={addImovel_style.headerTitle02}>{route.params?.text}</Text>
+        <Text style={addImovel_style.headerTitle01}>{route.params?.title ? route.params?.title : "Adicione seu"}</Text>
+        <Text style={addImovel_style.headerTitle02}>{route.params?.text ? route.params?.text : "Imóvel"}</Text>
       </View>
       {!route.params?.status && (
         <View>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import {
   View,
@@ -15,6 +15,9 @@ import MapView, { Marker, Polyline } from "react-native-maps";
 import { useSelector } from "react-redux";
 import API_URL from "../../../config/api";
 import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
+import { TextInput } from "react-native-gesture-handler";
+import { Ionicons } from "@expo/vector-icons";
 
 const dataInfo = [
   {
@@ -43,12 +46,27 @@ const dataInfo = [
   },
 ];
 
-const dataImage = [
-  {
-    id: 1,
-    uri: require("../../../assets/apartamento.jpg"),
-  },
-];
+const calcularDiferencaTempo = (dataComentario) => {
+  const dataComentarioFormatada = new Date(dataComentario);
+  const currentDate = new Date();
+  const differenceMS = currentDate - dataComentarioFormatada;
+  const differenceMinutes = Math.floor(differenceMS / (1000 * 60));
+  const differenceTimes = Math.floor(differenceMinutes / 60);
+  const differenceDays = Math.floor(differenceTimes / 24);
+  const differenceMonth = Math.floor(differenceDays / 30);
+
+  if (differenceMonth > 0) {
+    return `${differenceMonth} meses atrás`;
+  } else if (differenceDays > 0) {
+    return `${differenceDays} dias atrás`;
+  } else if (differenceTimes > 0) {
+    return `${differenceTimes} horas atrás`;
+  } else if (differenceMinutes > 0) {
+    return `${differenceMinutes} minutos atrás`;
+  } else {
+    return "Agora mesmo";
+  }
+};
 
 const ShowImages = ({ item }) => (
   <View style={{ flexDirection: "row" }}>
@@ -66,6 +84,31 @@ const ShowImages = ({ item }) => (
   </View>
 );
 
+const Commentar = ({ item }) => {
+  return (
+    <View style={infoImovel_style.containerComentar}>
+      <View>
+        <Text>{calcularDiferencaTempo(item.created_at)}</Text>
+      </View>
+      <ScrollView style={infoImovel_style.textComment}>
+        <Text numberOfLines={7} >{item.comment}</Text>
+      </ScrollView>
+      <View style={infoImovel_style.containerUserComentar}>
+        <Image
+          source={item.user.imageProfile == null ? require("../../../assets/pro.png"): { uri: API_URL + "storage/" + item.user.imageProfile }}
+          style={infoImovel_style.userImageComentar}
+        />
+        <View>
+          <Text style={infoImovel_style.userTextComentar}>
+            {item.user.name}
+          </Text>
+          <Text>{item.user.phone}</Text>
+        </View>
+      </View>
+    </View>
+  );
+};
+
 const Info = ({ type, icon, quantity }) => (
   <View style={infoImovel_style.item}>
     <View style={infoImovel_style.containerIcon}>
@@ -79,10 +122,68 @@ const Info = ({ type, icon, quantity }) => (
 
 export default function InfoImovel() {
   const infoImovel = useSelector((state) => state.infoImovel.imovelDetail);
-  const ownerId = useSelector((state) => state.auth.user.id);
+  //const ownerId = useSelector((state) => state.auth.user.id);
+  const ownerId = useState(1);
   const [data, setData] = useState([infoImovel]);
   const navigation = useNavigation();
-  console.log(infoImovel);
+  const [dataImovelCommentar, setDataImovelCommentar] = useState([]);
+  const [showContainerComment, setShowContainerComment] = useState(false);
+  const [myComment, setMyComment] = useState("");
+  const [totalCommentImovel, setTotalCommentImovel] = useState(0);
+
+  //console.log(infoImovel);
+
+  async function postComment(comment, user_id, imovel_id) {
+    try {
+      let data = {
+        user_id: user_id,
+        imovel_id: imovel_id,
+        comment: comment,
+      };
+      const response = await axios.post(
+        API_URL + "api/v1/enviar/comentario",
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      );
+      getDataImovelCommentar()
+      console.log(response.data);
+    } catch (error) {
+      if (error.response && error.response.status === 422) {
+        console.error("Erro 422 - Solicitação inválida:", error.response.data);
+      } else {
+        // Outro tipo de erro
+        console.error("Erro:", error);
+      }
+    }
+  }
+
+  async function getDataImovelCommentar() {
+    await axios
+      .get(API_URL + `api/v1/imovel/comentarios/${infoImovel.id}`)
+      .then((response) => {
+        //console.log(response.data.commentsImovel);
+        setDataImovelCommentar(response.data.commentsImovel);
+        setTotalCommentImovel(response.data.totalCommentsImovel);
+        /*
+        if (response.data.imovel.data.length === 0) {
+          return;
+        } else {
+          setImovels([...imovels, ...response.data.imovel.data]);
+          setPagination(pagination + 1);
+          console.log(response.data.imovel.data);
+        }*/
+      })
+      .catch((error) => console.error("Erro ao buscar os dados: " + error));
+  }
+
+  useEffect(() => {
+    getDataImovelCommentar();
+  }, []);
   return (
     <ScrollView
       style={infoImovel_style.container}
@@ -205,19 +306,73 @@ export default function InfoImovel() {
             />
           </MapView>
         </View>
+
+        <View style={infoImovel_style.containerComm}>
+          <View style={infoImovel_style.containerTitleCommentary}>
+            <View style={infoImovel_style.titleCommentary}>
+              <Text style={infoImovel_style.countCommentar}>
+                {totalCommentImovel}
+              </Text>
+              <Text style={infoImovel_style.textCommentar}>Comentários</Text>
+            </View>
+
+            <TouchableOpacity
+              style={infoImovel_style.btnShowCommentar}
+              onPress={() => setShowContainerComment(!showContainerComment)}
+            >
+              <Ionicons
+                name={showContainerComment ? "chevron-up" : "chevron-down"}
+                size={20}
+                color={"#000"}
+              />
+            </TouchableOpacity>
+          </View>
+
+          {showContainerComment && (
+            <View style={infoImovel_style.commentContainer}>
+              <TextInput
+                placeholder="Comente aqui"
+                style={infoImovel_style.inputComment}
+                textAlignVertical="top"
+                multiline={true}
+                numberoflines={4}
+                keyboardType="default"
+                onChangeText={setMyComment}
+                autoScroll={true}
+              />
+              <TouchableOpacity
+                style={infoImovel_style.btnCommentarSend}
+                onPress={() => postComment(myComment, 9, infoImovel.id)}
+              >
+                <Ionicons name="navigate" size={20} color={"#fff"} />
+              </TouchableOpacity>
+            </View>
+          )}
+
+          <FlatList
+            data={dataImovelCommentar}
+            renderItem={({ item }) => <Commentar item={item} />}
+            keyExtractor={(item) => item.id.toString()}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+          />
+        </View>
+
         {ownerId !== infoImovel.owner_id && (
           <TouchableOpacity
             style={infoImovel_style.btn}
-            onPress={() => navigation.navigate("VisitAppointment", {
-              province_id: null,
-              county_id: null,
-              showCounty: false,
-              image01: null,
-              image02: null,
-              image03: null,
-              image04: null,
-              status: false
-            })}
+            onPress={() =>
+              navigation.navigate("VisitAppointment", {
+                province_id: null,
+                county_id: null,
+                showCounty: false,
+                image01: null,
+                image02: null,
+                image03: null,
+                image04: null,
+                status: false,
+              })
+            }
           >
             <Text style={infoImovel_style.btnTitle}>Marcar Visita</Text>
           </TouchableOpacity>
@@ -225,26 +380,28 @@ export default function InfoImovel() {
         {ownerId === infoImovel.owner_id && (
           <TouchableOpacity
             style={infoImovel_style.btn}
-            onPress={() => navigation.navigate("UpdateMyImovel", {
-              province_id: infoImovel.province_id,
-              county_id: infoImovel.county_id,
-              showCounty: true,
-              image01: API_URL + "storage/" +  infoImovel.image01,
-              image02: API_URL + "storage/" +  infoImovel.image02,
-              image03: API_URL + "storage/" +  infoImovel.image03,
-              image04: API_URL + "storage/" +  infoImovel.image04,
-              status: true,
-              price: infoImovel.price.toString(),
-              totalArea: infoImovel.area_total.toString(),
-              latitude: infoImovel.latitude.toString(),
-              longitude: infoImovel.longitude.toString(),
-              type_imovel_id: infoImovel.type_imovel_id,
-              total_wc: infoImovel.total_wc,
-              total_bedrooms: infoImovel.total_bedrooms,
-              transaction_type_id: infoImovel.transaction_type_id,
-              title: "Edite o seu Imovel",
-              text: infoImovel.type_imovel.type
-            })}
+            onPress={() =>
+              navigation.navigate("UpdateMyImovel", {
+                province_id: infoImovel.province_id,
+                county_id: infoImovel.county_id,
+                showCounty: true,
+                image01: API_URL + "storage/" + infoImovel.image01,
+                image02: API_URL + "storage/" + infoImovel.image02,
+                image03: API_URL + "storage/" + infoImovel.image03,
+                image04: API_URL + "storage/" + infoImovel.image04,
+                status: true,
+                price: infoImovel.price.toString(),
+                totalArea: infoImovel.area_total.toString(),
+                latitude: infoImovel.latitude.toString(),
+                longitude: infoImovel.longitude.toString(),
+                type_imovel_id: infoImovel.type_imovel_id,
+                total_wc: infoImovel.total_wc,
+                total_bedrooms: infoImovel.total_bedrooms,
+                transaction_type_id: infoImovel.transaction_type_id,
+                title: "Edite o seu Imovel",
+                text: infoImovel.type_imovel.type,
+              })
+            }
           >
             <Text style={infoImovel_style.btnTitle}>Editar</Text>
           </TouchableOpacity>

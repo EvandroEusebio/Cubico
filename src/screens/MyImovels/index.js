@@ -234,6 +234,9 @@ export default function MyImovels() {
 
   return (
     <View style={myImovels_style.container}>
+      <TouchableOpacity style={myImovels_style.addImovelBtn}>
+        <Text style={myImovels_style.textAddImovelBtn}>+</Text>
+      </TouchableOpacity>
       <View>
         <FlatList
           data={typeProperties}

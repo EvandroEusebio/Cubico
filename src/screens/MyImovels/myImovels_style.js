@@ -80,5 +80,31 @@ export const myImovels_style = StyleSheet.create({
   },
   containerImovels:{
     flex: 1
+  },
+  addImovelBtn:{
+    position:"absolute",
+    backgroundColor: '#000',
+    width: 50,
+    height: 50,
+    justifyContent:'center',
+    alignItems:'center',
+    borderRadius: 50,
+    left: 300,
+    top: 600,
+    zIndex: 100,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+
+    elevation: 5,
+  },
+  textAddImovelBtn:{
+    color: '#fff',
+    fontSize:25
   }
+
 });

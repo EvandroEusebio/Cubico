@@ -82,24 +82,7 @@ const Tab = createBottomTabNavigator();
 export default function App() {
   return (
     <Provider store={Store}>
-     <ChatTalk />
-    </Provider>
-  );
-}
-
-const getTabBarVisibility = route => {
-  //console.warn(route);
-  const routeName = getFocusedRouteNameFromRoute(route) ?? 'Feed';
-  //console.warn(routeName)MyInfoImovel;
-
-  if( routeName === 'MyImovels' || routeName === 'MyInfoImovel' || routeName === 'UpdateMyImovel' ) {
-    return 'none';
-  }
-  return 'flex';
-};
-
-/*
- <NavigationContainer>
+     <NavigationContainer>
         <Tab.Navigator
           screenOptions={({ route }) => ({
             tabBarIcon: ({ focused, color, size }) => {
@@ -186,4 +169,21 @@ const getTabBarVisibility = route => {
           />
         </Tab.Navigator>
       </NavigationContainer>
+    </Provider>
+  );
+}
+
+const getTabBarVisibility = route => {
+  //console.warn(route);
+  const routeName = getFocusedRouteNameFromRoute(route) ?? 'Feed';
+  //console.warn(routeName)MyInfoImovel;
+
+  if( routeName === 'MyImovels' || routeName === 'MyInfoImovel' || routeName === 'UpdateMyImovel' ) {
+    return 'none';
+  }
+  return 'flex';
+};
+
+/*
+ 
 */

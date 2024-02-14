@@ -4,13 +4,13 @@ import { PRIMARY, BG_COLOR, TEXTCOLOR, BORDER, TEXTCOLOR_02 } from './palette';
 export const addImovel_style = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: BG_COLOR,
+    backgroundColor: "#fff",
     paddingTop: 10,
     
   },
   dropdown: {
     height: 50,
-    backgroundColor: 'white',
+    backgroundColor: '#f4f4f4',
     borderRadius: 12,
     padding: 12,
     shadowColor: '#000',
@@ -28,6 +28,7 @@ export const addImovel_style = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    
   },
   textItem: {
     flex: 1,
@@ -59,8 +60,8 @@ export const addImovel_style = StyleSheet.create({
   },
   headerTitle02:{
     fontSize: 33,
-    fontWeight: 'bold',
-    color: PRIMARY
+    fontWeight: '900',
+    color: "#000"
   },
   containerFormAddress:{
     paddingHorizontal: 16,
@@ -73,7 +74,7 @@ export const addImovel_style = StyleSheet.create({
   },
   input:{
     height: 50,
-    backgroundColor: 'white',
+    backgroundColor: '#f4f4f4',
     borderRadius: 12,
     padding: 12,
     shadowColor: '#000',
@@ -103,7 +104,7 @@ export const addImovel_style = StyleSheet.create({
     gap: 10
   },
   counterBtn:{
-    backgroundColor: PRIMARY,
+    backgroundColor: "#000",
     justifyContent: 'center',
     alignItems: 'center',
     width: 30,
@@ -133,7 +134,7 @@ export const addImovel_style = StyleSheet.create({
     borderStyle: 'dashed'
   },
   pictureText:{
-    color: PRIMARY,
+    color: "#000",
     fontSize: 25,
   },
   categoryImovel:{
@@ -143,7 +144,8 @@ export const addImovel_style = StyleSheet.create({
     height: 100,
     borderWidth: 1,
     marginHorizontal: 10,
-    marginVertical: 10
+    marginVertical: 10,
+    borderRadius: 10
   }
 
 });

@@ -4,7 +4,7 @@ import { PRIMARY, BG_COLOR, TEXTCOLOR, BORDER } from './palette';
 export const profile_style = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: BG_COLOR,
+        backgroundColor: "#fff",
         paddingTop: 40,
     },
     containerProfileDetails:{
