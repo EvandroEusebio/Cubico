@@ -1,14 +1,15 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import API_URL from "../../../config/api";
 import axios from "axios";
-import * as Device from 'expo-device';
-import * as Notifications from 'expo-notifications';
-import Constants from 'expo-constants';
+import * as Device from "expo-device";
+import * as Notifications from "expo-notifications";
+import Constants from "expo-constants";
 
 const initialState = {
   message: null,
-  user:null,
+  user: null,
   token: "",
+  isAuthenticated: false,
   isloading: false,
 };
 
@@ -42,26 +43,27 @@ export const login = createAsyncThunk("login", async (data) => {
   })*/
 });
 
+
+
 export const register = createAsyncThunk("register", async (data) => {
-  try{
-    const response  = await axios.post(API_URL + "api/v1/register", data, {
+  try {
+    const response = await axios.post(API_URL + "api/v1/register", data, {
       headers: {
         "Content-Type": "application/json",
-        "Accept": "application/json",
-      }
-    })
+        Accept: "application/json",
+      },
+    });
     console.log(response.data);
     return response.data;
-  } catch(error){
+  } catch (error) {
     if (error.response && error.response.status === 422) {
-      console.error('Erro 422 - Solicitação inválida:', error.response.data);
+      console.error("Erro 422 - Solicitação inválida:", error.response.data);
       console.error("Erro ao criar o usuário: Preencha todos os campos");
     } else {
       // Outro tipo de erro
-      console.error('Erro:', error);
+      console.error("Erro:", error);
     }
   }
-  
 
   /*
   const response = await fetch(API_URL + "api/v1/register", {
@@ -79,17 +81,19 @@ export const register = createAsyncThunk("register", async (data) => {
 });
 
 export const updateUser = createAsyncThunk("updateUser", async (data) => {
-  
   console.log(data.id);
-  console.log(data)
-  try{
-    const response = await axios.put(API_URL + `api/v1/user/update/${data.id}`, data)
+  console.log(data);
+  try {
+    const response = await axios.put(
+      API_URL + `api/v1/user/update/${data.id}`,
+      data
+    );
     console.log(response.data);
     return response.data;
-  }catch(error){
-    console.error(error.response.data)
+  } catch (error) {
+    console.error(error.response.data);
   }
-  
+
   /*
   const response = await fetch(API_URL + "api/v1/user/update/" + id, {
     method: "PUT",
@@ -126,23 +130,24 @@ async function sendPushNotification(expoPushToken) {
 const storeDeviceToken = async (user_id) => {
   let token;
 
-  if (Platform.OS === 'android') {
-    Notifications.setNotificationChannelAsync('default', {
-      name: 'default',
+  if (Platform.OS === "android") {
+    Notifications.setNotificationChannelAsync("default", {
+      name: "default",
       importance: Notifications.AndroidImportance.HIGH,
       vibrationPattern: [0, 250, 250, 250],
     });
   }
 
   if (Device.isDevice) {
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
-    if (existingStatus !== 'granted') {
+    if (existingStatus !== "granted") {
       const { status } = await Notifications.requestPermissionsAsync();
       finalStatus = status;
     }
-    if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
+    if (finalStatus !== "granted") {
+      alert("Failed to get push token for push notification!");
       return;
     }
     token = await Notifications.getExpoPushTokenAsync({
@@ -150,23 +155,39 @@ const storeDeviceToken = async (user_id) => {
     });
     console.log(token);
   } else {
-    alert('Must use physical device for Push Notifications');
+    alert("Must use physical device for Push Notifications");
   }
 
   const data = {
     token: token.data,
-    user_id: user_id
-  }
+    user_id: user_id,
+  };
   await axios
-  .post(API_URL + `api/v1/criar/devicetoken`, data)
-  .then(function (response) {
-    console.log(response.data)
-    
-  })
-  .catch((error) => {
-    console.error(error);
-  });
-}
+    .post(API_URL + `api/v1/criar/devicetoken`, data)
+    .then(function (response) {
+      console.log(response.data);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+};
+
+
+export const logout = createAsyncThunk("logout", async (token) => {
+  try {
+    const response = await axios.post(API_URL + "api/v1/user/logout", null, {
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    console.log(response.data);
+    return console.log(response.data.msg);
+  } catch (error) {
+    console.error("Erro ao fazer logout:", error);
+    throw error;
+  }
+});
 
 const authSlice = createSlice({
   name: "auth",
@@ -188,8 +209,9 @@ const authSlice = createSlice({
           } else {
             state.user = user;
             state.token = token;
+            state.isAuthenticated = true;
             console.warn("sucesso!");
-            storeDeviceToken(user.id)
+            storeDeviceToken(user.id);
           }
         }
       )
@@ -233,14 +255,23 @@ const authSlice = createSlice({
           } else {
             state.user = user;
             state.token = token;
+            state.isAuthenticated = true;
             console.warn("sucesso!");
             console.log(state.token);
             console.log(state.user);
+            console.log(state.isAuthenticated)
           }
         }
       )
       .addCase(register.rejected, (state, action) => {
         state.isloading = true;
+      })
+      .addCase(logout.fulfilled, (state, action) => {
+        state.isloading = false;
+        state.token = null;
+        state.user = null;
+        state.isAuthenticated = false
+        state.message = null; // Limpa qualquer erro anterior
       });
   },
 });

@@ -52,10 +52,38 @@ const dataTypeProperties = [
   },
 ];
 
+async function postFavorite(userId, imovelId){
+  try {
+    let data = {
+      user_id: userId,
+      imovel_id: imovelId,
+    };
+    const response = await axios.post(
+      API_URL + "api/v1/favorite/store",
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
+    );
+    console.log(response.data);
+  } catch (error) {
+    if (error.response && error.response.status === 422) {
+      console.error("Erro 422 - Solicitação inválida:", error.response.data);
+    } else {
+      // Outro tipo de erro
+      console.error("Erro:", error);
+    }
+  }
+  
+}
+
 /*
 /storage/profilePictures/1703253586.png
 http://192.168.100.60:8000/storage/imovelPictures/01HJ8XQ7DSP0QSMKKVSJQ5K15X.jpg */
-const Properties = ({ item, navigation, dispatch }) => (
+const Properties = ({ item, navigation, dispatch, userId }) => (
   <View style={home_style.containerItemPropertie}>
     <Swiper
       style={{ height: 250 }}
@@ -102,7 +130,7 @@ const Properties = ({ item, navigation, dispatch }) => (
         </View>
       </View>
     </View>
-    <TouchableOpacity activeOpacity={0.7} style={home_style.favorites}>
+    <TouchableOpacity activeOpacity={0.7} style={home_style.favorites} onPress={() => postFavorite(9, item.id)}>
       <Icon2 name="favorite" size={25} color="#fff" />
     </TouchableOpacity>
     <View
@@ -134,6 +162,9 @@ export default function Home() {
   const [showMap, setShowMap] = useState(false);
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  //const userId = useSelector((state) => state.auth.user.id);
+
+  
 
   useEffect(() => {
     getDataImovels();
@@ -292,6 +323,7 @@ export default function Home() {
                 item={item}
                 navigation={navigation}
                 dispatch={dispatch}
+                //userId={userId}
               />
             )}
             keyExtractor={(item) => item.id.toString()}

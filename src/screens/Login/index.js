@@ -7,11 +7,13 @@ import {  useFonts, Poppins_700Bold,  Poppins_300Light, Poppins_500Medium, Poppi
 import Button from '../../components/button/Button';
 import { useDispatch } from 'react-redux';
 import { login } from '../../features/authentication/authSlice';
+import { useNavigation } from "@react-navigation/native";
 
 export default function Login(){
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
+  const navigate = useNavigation()
 
   const loginHandle = () =>{
     dispatch(login({password, phone}));
@@ -68,7 +70,7 @@ export default function Login(){
 
         <View style={login_style.containerSignUp}>
           <Text style={[login_style.info, {fontFamily: 'Poppins_400Regular'}]}>Não tens uma conta?</Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigate.navigate("SignUp")}>
             <Text style={[login_style.signUp, {fontFamily: 'Poppins_400Regular'}]}>Registrar</Text>
           </TouchableOpacity>
         </View>

@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, Image, FlatList, TouchableOpacity } from "react-native";
 import { profile_style } from "../../styles/profile_style";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Feather from "react-native-vector-icons/Feather";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { useNavigation } from "@react-navigation/native";
+import { useSelector, useDispatch } from "react-redux";
+import axios from "axios";
+import API_URL from "../../../config/api";
+import { logout } from '../../features/authentication/authSlice';
 
 const DATA = [
   {
@@ -52,11 +56,11 @@ const DATA = [
   },
 ];
 
-const Item = ({ title, icon, navigation, route }) => (
+const Item = ({ title, icon, navigation, route, dispatch, token }) => (
   <TouchableOpacity
     style={profile_style.item}
     onPress={() => {
-      navigation.navigate(route);
+      title == "Sair" ? dispatch(logout(token)) : navigation.navigate(route);
     }}
   >
     <View style={profile_style.containerItemLeft}>
@@ -83,7 +87,42 @@ const Item = ({ title, icon, navigation, route }) => (
 );
 
 export default function Profile() {
+  const user = useSelector((state) => state.auth.user);
+  const token = useSelector((state) => state.auth.token);
   const navigation = useNavigation();
+  const [userTotalImovel, setUserTotalImovel] = useState(0);
+  const [userTotalFavoritos, setUserTotalFavoritos] = useState(0);
+  const dispatch = useDispatch();
+
+  const logout = () => {
+    dispatch(logout());
+  };
+  
+  useEffect(() => {
+    getUserTotalImovel(user.id);
+    getUserTotalFavotes(user.id);
+  }, []);
+
+  async function getUserTotalImovel(user_id) {
+    await axios
+      .get(API_URL + `api/v1/user/total/imovels/${user_id}`)
+      .then((response) => {
+        //console.warn(response.data.ownerTotalImovel);
+        setUserTotalImovel(response.data.ownerTotalImovel);
+      })
+      .catch((error) => console.error("Erro ao buscar os dados: " + error));
+  }
+
+  async function getUserTotalFavotes(user_id) {
+    await axios
+      .get(API_URL + `api/v1/user/total/favorites/${user_id}`)
+      .then((response) => {
+        //console.warn(response.data.userTotalFavorites);
+        setUserTotalFavoritos(response.data.userTotalFavorites);
+      })
+      .catch((error) => console.error("Erro ao buscar os dados: " + error));
+  }
+
   return (
     <View style={profile_style.container}>
       <View style={profile_style.containerProfileDetails}>
@@ -92,21 +131,21 @@ export default function Profile() {
             source={require("../../../assets/profile.jpg")}
             style={profile_style.imageProfile}
           />
-          <Text style={profile_style.name}>Evandro</Text>
-          <Text style={profile_style.PhoneNumber}>938390399</Text>
+          <Text style={profile_style.name}>{user.name}</Text>
+          <Text style={profile_style.PhoneNumber}>{user.phone}</Text>
         </View>
         <View style={profile_style.containerResumeDetails}>
           <View style={profile_style.resumeDetails}>
-            <Text style={profile_style.countDetails}>50</Text>
+            <Text style={profile_style.countDetails}>{userTotalImovel}</Text>
             <Text style={profile_style.textDetails}>Imóveis</Text>
           </View>
           <View style={profile_style.resumeDetails}>
-            <Text style={profile_style.countDetails}>50</Text>
+            <Text style={profile_style.countDetails}>{userTotalFavoritos}</Text>
             <Text style={profile_style.textDetails}>Favoritos</Text>
           </View>
           <View style={profile_style.resumeDetails}>
             <Text style={profile_style.countDetails}>50</Text>
-            <Text style={profile_style.textDetails}>Favoritos</Text>
+            <Text style={profile_style.textDetails}>Visualizações</Text>
           </View>
         </View>
       </View>
@@ -120,6 +159,8 @@ export default function Profile() {
               icon={item.icon}
               navigation={navigation}
               route={item.route}
+              dispatch={dispatch}
+              token={token}
             />
           )}
           keyExtractor={(item) => item.id}

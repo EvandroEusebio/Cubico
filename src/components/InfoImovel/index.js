@@ -183,6 +183,8 @@ export default function InfoImovel() {
   useEffect(() => {
     getDataImovelCommentar();
   }, []);
+
+  
   return (
     <ScrollView
       style={infoImovel_style.container}
