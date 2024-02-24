@@ -1,9 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import API_URL from "../../../config/api";
+import SOCKET_API from "../../../config/api_socket";
 import axios from "axios";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
+import io from "socket.io-client";
 
 const initialState = {
   message: null,
@@ -42,8 +44,6 @@ export const login = createAsyncThunk("login", async (data) => {
     }
   })*/
 });
-
-
 
 export const register = createAsyncThunk("register", async (data) => {
   try {
@@ -172,12 +172,11 @@ const storeDeviceToken = async (user_id) => {
     });
 };
 
-
 export const logout = createAsyncThunk("logout", async (token) => {
   try {
     const response = await axios.post(API_URL + "api/v1/user/logout", null, {
       headers: {
-        "Authorization": `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     });
@@ -212,6 +211,9 @@ const authSlice = createSlice({
             state.isAuthenticated = true;
             console.warn("sucesso!");
             storeDeviceToken(user.id);
+
+            
+            
           }
         }
       )
@@ -259,7 +261,9 @@ const authSlice = createSlice({
             console.warn("sucesso!");
             console.log(state.token);
             console.log(state.user);
-            console.log(state.isAuthenticated)
+            console.log(state.isAuthenticated);
+
+            
           }
         }
       )
@@ -270,7 +274,7 @@ const authSlice = createSlice({
         state.isloading = false;
         state.token = null;
         state.user = null;
-        state.isAuthenticated = false
+        state.isAuthenticated = false;
         state.message = null; // Limpa qualquer erro anterior
       });
   },

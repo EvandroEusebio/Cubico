@@ -14,9 +14,26 @@ import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { createStackNavigator } from "@react-navigation/stack";
 import MarkDataCalendar from "../../screens/MarkDataCalendar";
+import Hosting from "../../screens/Hosting";
+
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+
+
+const InfoImovelStack = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="InfoImovel" component={InfoImovel} />
+      <Stack.Screen
+        name="ChatTalk"
+        component={ChatTalk}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen name="VisitAppointment" component={MarkDataCalendar} />
+    </Stack.Navigator>
+  );
+};
 
 const HomeStack = () => {
   return (
@@ -26,9 +43,27 @@ const HomeStack = () => {
         component={Home}
         options={{ headerShown: false }}
       />
-      <Stack.Screen name="InfoImovel" component={InfoImovel} />
-      <Stack.Screen name="VisitAppointment" component={MarkDataCalendar} />
+      <Stack.Screen name="InfoImovelStack" component={InfoImovelStack} options={{ headerShown: false }}/>
+      
       <Stack.Screen name="Profile" component={Profile} />
+    </Stack.Navigator>
+  );
+};
+
+const ChatStack = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Chat"
+        component={Chat}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ChatTalk"
+        component={ChatTalk}
+        options={{ headerShown: false }}
+      />
+      
     </Stack.Navigator>
   );
 };
@@ -123,7 +158,7 @@ export default function MainNavigator() {
       />
       <Tab.Screen
         name="Chat"
-        component={Chat}
+        component={ChatStack}
         options={{ headerShown: false }}
       />
       <Tab.Screen
@@ -143,7 +178,7 @@ const getTabBarVisibility = route => {
     const routeName = getFocusedRouteNameFromRoute(route) ?? 'Feed';
     //console.warn(routeName)MyInfoImovel;
   
-    if( routeName === 'MyImovels' || routeName === 'MyInfoImovel' || routeName === 'UpdateMyImovel' ) {
+    if( routeName === 'MyImovels' || routeName === 'MyInfoImovel' || routeName === 'UpdateMyImovel' || routeName === 'ChatTalk' ) {
       return 'none';
     }
     return 'flex';

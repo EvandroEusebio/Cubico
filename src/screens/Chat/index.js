@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 import Icon2 from "react-native-vector-icons/MaterialIcons";
+import { useNavigation } from "@react-navigation/native";
 
 const contactUsers = [
   {
@@ -79,8 +80,8 @@ const contactUsers = [
   },
 ];
 
-const Item = ({ name, status, img, message }) => (
-  <TouchableOpacity style={chat_style.item}>
+const Item = ({ name, status, img, message, navigation }) => (
+  <TouchableOpacity style={chat_style.item} onPress={() => navigation.navigate("ChatTalk")}>
     <Image source={img} style={chat_style.profileImg} />
     <View style={chat_style.containerImg}>
       <View style={chat_style.containerProfileName}>
@@ -95,6 +96,7 @@ const Item = ({ name, status, img, message }) => (
 );
 
 const Chat = () => {
+  const navigation = useNavigation()
   const [text, onChangeText] = useState("");
   return (
     <SafeAreaView style={chat_style.container}>
@@ -117,8 +119,12 @@ const Chat = () => {
               status={item.status}
               img={item.img}
               message={item.message}
+              navigation={navigation}
+              
             />
+            
           )}
+          showsVerticalScrollIndicator={false}
           keyExtractor={(item) => item.id}
         />
       </View>

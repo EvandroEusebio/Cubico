@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-
 import {
   View,
   Text,
@@ -132,6 +131,14 @@ export default function InfoImovel() {
 
   //console.log(infoImovel);
 
+  function navigateChatRoom(){
+    navigation.navigate("ChatTalk", {
+      recenderId: infoImovel.owner.id,
+      recenderName: infoImovel.owner.name,
+      recenderPhoto: infoImovel.owner.imageProfile
+    })
+  }
+
   async function postComment(comment, user_id, imovel_id) {
     try {
       let data = {
@@ -208,6 +215,7 @@ export default function InfoImovel() {
             horizontal
             showsHorizontalScrollIndicator={false}
           />
+
         </View>
         <Text style={infoImovel_style.title}>
           {infoImovel.type_imovel.type} Kz {infoImovel.price}/mês
@@ -262,6 +270,7 @@ export default function InfoImovel() {
           <View style={infoImovel_style.containerContactBtn}>
             <TouchableOpacity
               style={[infoImovel_style.contactBtn, { flex: 2 }]}
+              onPress={() => navigateChatRoom()}
             >
               <MaterialIcons name="chat" size={20} color={"#fff"} />
               <Text style={{ color: "#fff" }}>Mensagem</Text>

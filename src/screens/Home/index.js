@@ -99,7 +99,7 @@ const Properties = ({ item, navigation, dispatch, userId }) => (
             style={{ marginRight: 10 }}
             onPress={() => {
               dispatch(setDataImovel(item));
-              navigation.navigate("InfoImovel");
+              navigation.navigate("InfoImovelStack");
             }}
           >
             <Image
@@ -192,10 +192,19 @@ export default function Home() {
       item.id === selectedTypeImovelItemId ? "#000" : "#fff";
     const iconColor = item.id === selectedTypeImovelItemId ? "#fff" : "#000";
 
+    
     return (
       <TypeProperties
         item={item}
-        onPress={() => setSelectedTypeImovelItemId(item.id)}
+        onPress={() => {
+          if(item.id === selectedTypeImovelItemId){
+            getDataImovels()
+            return
+          }else{
+            setSelectedTypeImovelItemId(item.id)
+          }
+          }
+        }
         backgroundColor={backgroundColor}
         iconColor={iconColor}
       />
@@ -212,15 +221,18 @@ export default function Home() {
         .get(API_URL + `api/v1/imovel?page=${pagination}`)
         .then((response) => {
           if (response.data.imovel.data.length === 0) {
+            setLoading(false);
             return;
+            
           } else {
             setImovels([...imovels, ...response.data.imovel.data]);
             setPagination(pagination + 1);
             console.log(response.data.imovel.data);
+            setLoading(false);
           }
         })
         .catch((error) => console.error("Erro ao buscar os dados: " + error));
-      setLoading(false);
+      
       return;
     }
 
@@ -233,15 +245,17 @@ export default function Home() {
       )
       .then((response) => {
         if (response.data.imovel.data.length === 0) {
+          setLoading(false);
           return;
         } else {
           setImovels([...imovels, ...response.data.imovel.data]);
           setPagination(pagination + 1);
           console.log(response.data.imovel.data);
+          setLoading(false);
         }
       })
       .catch((error) => console.error("Erro ao buscar os dados: " + error));
-    setLoading(false);
+    
 
     
   }
