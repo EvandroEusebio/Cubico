@@ -29,6 +29,8 @@ import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { setDataImovel } from "../../features/infoImovel/infoImovelSlice";
 
+
+
 const dataTypeProperties = [
   {
     id: 1,
@@ -153,6 +155,7 @@ const ListEndLoader = ({ loading }) => {
 };
 
 export default function Home() {
+ 
   const [selectedTypeImovelItemId, setSelectedTypeImovelItemId] =
     useState(null);
   const [text, onChangeText] = useState("");

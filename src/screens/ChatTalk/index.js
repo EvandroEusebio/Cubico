@@ -23,20 +23,19 @@ import { styles } from "./styles";
 import axios from "axios";
 import API_URL from "../../../config/api";
 import { useSelector } from "react-redux";
-import { io } from "socket.io-client";
-import SOCKET_API from "../../../config/api_socket";
+import MySocketApp from "../../utils/Socket"
 
 const ChatTalk = () => {
   const route = useRoute();
-  const socket = io(SOCKET_API)
+  
   const navigation = useNavigation();
   const [messages, setMessages] = useState([]);
   const userId = useSelector((state) => state.auth.user.id);
   const userName = useSelector((state) => state.auth.user.name);
 
   useEffect(() => {
-    socket.emit("addUser", userId)
-    socket.on("getUsers", (users) =>{
+    MySocketApp.emit("addUser", userId)
+    MySocketApp.on("getUsers", (users) =>{
       console.log(`conectado : ${JSON.stringify(users)}`)
     })
 
@@ -78,7 +77,7 @@ const ChatTalk = () => {
 
     const idNumero = parseInt(messages[0]._id, 36);
     console.log(idNumero)
-    socket.emit("sendMessage", {senderId: userId, receiverId: route.params?.recenderId,  data: messages[0] })
+    MySocketApp.emit("sendMessage", {senderId: userId, receiverId: route.params?.recenderId,  data: messages[0] })
     sendMessage({ message_content: messages[0].text,
       recipient_id: route.params?.recenderId, sender_id: messages[0].user._id });
     setMessages((previousMessages) =>
@@ -86,8 +85,10 @@ const ChatTalk = () => {
     );
   }, []);
 
+  
+
   useEffect(() => {
-    socket.on("getMessage", (data) => {
+    MySocketApp.on("getMessage", (data) => {
       console.log(data)
       setMessages((previousMessages) =>
       GiftedChat.append(previousMessages, data)

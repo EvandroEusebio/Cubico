@@ -5,7 +5,6 @@ class MySocketApp {
   constructor() {
     this.io = io(SOCKET_API);
   }
-
   emit(event, data) {
     this.io.emit(event, data);
   }
