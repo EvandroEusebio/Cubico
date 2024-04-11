@@ -105,9 +105,10 @@ const Properties = ({ item, navigation, dispatch, userId }) => (
             }}
           >
             <Image
-              source={{ uri: API_URL + "storage/" + image }}
+              source={{ uri: API_URL + "storage/imovelPictures/" + image }}
               style={home_style.imageProperties}
             />
+            
           </TouchableOpacity>
         )
       )}

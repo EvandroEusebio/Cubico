@@ -5,8 +5,7 @@ export const register_style = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center'
+    
   },
   containerForm:{
     gap: 20,

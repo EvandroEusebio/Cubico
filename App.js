@@ -28,7 +28,7 @@ import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import Onboard from "./src/screens/Onboard";
 import Chat from "./src/screens/Chat";
 import ChatTalk from "./src/screens/ChatTalk";
-
+import { AlertNotificationRoot } from "react-native-alert-notification";
 import AppNavigator from "./src/navigator/AppNavigator";
 
 Notifications.setNotificationHandler({
@@ -39,11 +39,12 @@ Notifications.setNotificationHandler({
   }),
 });
 
-
 export default function App() {
   return (
     <Provider store={Store}>
-      <AppNavigator/>
+      <AlertNotificationRoot>
+        <AppNavigator />
+      </AlertNotificationRoot>
     </Provider>
   );
 }

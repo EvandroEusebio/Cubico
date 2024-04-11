@@ -131,7 +131,7 @@ export default function MyImovels() {
     >
       <View style={myImovels_style.infoImovels}>
         <Image
-          source={{ uri: API_URL + "storage/" + item.image01 }}
+          source={{ uri: API_URL + "storage/imovelPictures/" + item.image01 }}
           style={myImovels_style.imgImovel}
         />
         <View style={myImovels_style.detailImovel}>

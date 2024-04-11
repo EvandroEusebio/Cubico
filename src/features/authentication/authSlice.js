@@ -6,6 +6,10 @@ import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
 import io from "socket.io-client";
+import {
+  ALERT_TYPE,
+  Toast,
+} from "react-native-alert-notification";
 
 const initialState = {
   message: null,
@@ -28,21 +32,18 @@ export const login = createAsyncThunk("login", async (data) => {
     return response.data;
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      console.error("Credenciais incorretas.");
+      console.error(
+        "Credenciais incorretas: " + JSON.stringify(error.response.data)
+      );
+      Toast.show({
+        type: ALERT_TYPE.DANGER,
+        title: "Erro",
+        textBody: "Erro: " + error.response.data.message,
+      });
     } else {
       console.error("Erro:", error);
     }
-    throw error;
   }
-
-  /*const response = await fetch(API_URL + "api/v1/login", {
-    method: 'POST',
-    body:JSON.stringify(data),
-    headers:{
-      "Content-Type":'application/json',
-      "Accept":"application/json"
-    }
-  })*/
 });
 
 export const register = createAsyncThunk("register", async (data) => {
@@ -57,27 +58,19 @@ export const register = createAsyncThunk("register", async (data) => {
     return response.data;
   } catch (error) {
     if (error.response && error.response.status === 422) {
-      console.error("Erro 422 - Solicitação inválida:", error.response.data);
-      console.error("Erro ao criar o usuário: Preencha todos os campos");
+      console.error(
+        "Erro ao criar o usuário:",
+        JSON.stringify(error.response.data)
+      );
+      Toast.show({
+        type: ALERT_TYPE.DANGER,
+        title: "Erro",
+        textBody: "Erro: " + error.response.data.message,
+      });
     } else {
-      // Outro tipo de erro
       console.error("Erro:", error);
     }
   }
-
-  /*
-  const response = await fetch(API_URL + "api/v1/register", {
-    method: "POST",
-    body: JSON.stringify(data),
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json",
-    },
-  });
-
-  const resp = await response.json();
-  console.log(resp);
-  return resp;*/
 });
 
 export const updateUser = createAsyncThunk("updateUser", async (data) => {
@@ -92,6 +85,11 @@ export const updateUser = createAsyncThunk("updateUser", async (data) => {
     return response.data;
   } catch (error) {
     console.error(error.response.data);
+    Toast.show({
+      type: ALERT_TYPE.DANGER,
+      title: "Erro",
+      textBody: "Erro: " + error.response.data.message,
+    });
   }
 
   /*
@@ -211,9 +209,6 @@ const authSlice = createSlice({
             state.isAuthenticated = true;
             console.warn("sucesso!");
             storeDeviceToken(user.id);
-
-            
-            
           }
         }
       )
@@ -262,8 +257,6 @@ const authSlice = createSlice({
             console.log(state.token);
             console.log(state.user);
             console.log(state.isAuthenticated);
-
-            
           }
         }
       )

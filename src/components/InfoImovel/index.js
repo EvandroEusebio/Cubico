@@ -199,7 +199,7 @@ export default function InfoImovel() {
     >
       <View style={{ height: 260 }}>
         <Image
-          source={{ uri: API_URL + "storage/" + infoImovel.image01 }}
+          source={{ uri: API_URL + "storage/imovelPictures/" + infoImovel.image01 }}
           style={infoImovel_style.bannerImage}
         />
         <TouchableOpacity style={infoImovel_style.iconHeart}>
@@ -395,10 +395,10 @@ export default function InfoImovel() {
                 province_id: infoImovel.province_id,
                 county_id: infoImovel.county_id,
                 showCounty: true,
-                image01: API_URL + "storage/" + infoImovel.image01,
-                image02: API_URL + "storage/" + infoImovel.image02,
-                image03: API_URL + "storage/" + infoImovel.image03,
-                image04: API_URL + "storage/" + infoImovel.image04,
+                image01: API_URL + "storage/imovelPictures/" + infoImovel.image01,
+                image02: API_URL + "storage/imovelPictures/" + infoImovel.image02,
+                image03: API_URL + "storage/imovelPictures/" + infoImovel.image03,
+                image04: API_URL + "storage/imovelPictures/" + infoImovel.image04,
                 status: true,
                 price: infoImovel.price.toString(),
                 totalArea: infoImovel.area_total.toString(),
