@@ -21,24 +21,33 @@ import { useRoute } from "@react-navigation/native";
 
 export default function AddImovel() {
   const route = useRoute();
-  const [latitude, setLatitude] = useState(route.params?.latitude);
-  const [longitude, setLongitude] = useState(route.params?.longitude);
+  const [latitude, setLatitude] = useState(route.params?.latitude || null);
+  const [longitude, setLongitude] = useState(route.params?.longitude || null);
+  const [address, setAddress] = useState("");
+  const [street, setStreet] = useState("");
   const [dataProvince, setDataProvince] = useState([]);
   const [dataCounty, setDataCounty] = useState([]);
-  const [typeStatus, setTypeStatus] = useState(route.params?.transaction_type_id);
+  const [showGeoLocation, setShowGeoLocation] = useState(false);
+  const [rent_time, setRentTime] = useState("0");
+  const [showRentTime, setShowRentTime] = useState(false);
+  const [typeStatus, setTypeStatus] = useState(
+    route.params?.transaction_type_id
+  );
   const [price, setPrice] = useState(route.params?.price);
   const [selectedCategory, setSelectedCategory] = useState(
-    route.params?.type_imovel_id
+    route.params?.type_imovel_id || 1
   );
   const [totalArea, setTotalArea] = useState(route.params?.totalArea);
   const [selectedItemId, setSelectedItemId] = useState(
-    route.params?.type_imovel_id
+    route.params?.type_imovel_id || 1
   );
   const [image01, setImage01] = useState(route.params?.image01);
   const [image02, setImage02] = useState(route.params?.image02);
   const [image03, setImage03] = useState(route.params?.image03);
   const [image04, setImage04] = useState(route.params?.image04);
-  const [totalBedrooms, setTotalBedrooms] = useState(route.params?.total_bedrooms);
+  const [totalBedrooms, setTotalBedrooms] = useState(
+    route.params?.total_bedrooms || 0
+  );
   const [totalWC, setTotalWC] = useState(0);
   const [totalChinken, setTotalChinken] = useState(0);
   const [province, setProvince] = useState(route.params?.province_id);
@@ -62,6 +71,8 @@ export default function AddImovel() {
     setTotalBedrooms(0);
     setTotalWC(0);
     setTotalChinken(0);
+    setShowRentTime(false)
+    setShowGeoLocation(false)
     setProvince(null);
     await axios
       .get(API_URL + `api/v1/provincia`)
@@ -143,9 +154,15 @@ export default function AddImovel() {
     formData.append("total_wc", totalWC);
     formData.append("latitude", latitude);
     formData.append("longitude", longitude);
+
     formData.append("area_total", totalArea);
+    formData.append("address", address);
+    formData.append("street", street);
+
     formData.append("price", price);
     formData.append("transaction_type_id", typeStatus);
+    formData.append("rent_time", rent_time);
+
     formData.append("image01", {
       uri: uri01,
       type: type01,
@@ -170,7 +187,7 @@ export default function AddImovel() {
     console.log(formData._parts);
 
     await axios
-      .post(API_URL + `api/v1/criar/imovel`, formData, {
+      .post(API_URL + `api/v1/imovel/store`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -180,7 +197,7 @@ export default function AddImovel() {
         console.warn("Enviado com sucesso");
       })
       .catch((error) => {
-        console.error(error);
+        console.error(error.response.data);
       });
   }
 
@@ -195,7 +212,9 @@ export default function AddImovel() {
       }}
     >
       <Icon2 name={item.icon} size={20} color={iconColor} />
-      <Text style={[addImovel_style.categoryImovelText, {color: textColor}]}>{item.type}</Text>
+      <Text style={[addImovel_style.categoryImovelText, { color: textColor }]}>
+        {item.type}
+      </Text>
     </TouchableOpacity>
   );
   const renderItem = ({ item }) => {
@@ -263,6 +282,11 @@ export default function AddImovel() {
   const typeStatusData = [
     { label: "a venda", value: 1 },
     { label: "aluguer", value: 2 },
+  ];
+
+  const dataRendTime = [
+    { label: "Mensal", value: 1 },
+    { label: "Anual", value: 2 },
   ];
 
   // Function Async, for Acess Galery of the dispositive, and get Photo
@@ -430,8 +454,12 @@ export default function AddImovel() {
       showsVerticalScrollIndicator={false}
     >
       <View style={addImovel_style.header}>
-        <Text style={addImovel_style.headerTitle01}>{route.params?.title ? route.params?.title : "Adicione seu"}</Text>
-        <Text style={addImovel_style.headerTitle02}>{route.params?.text ? route.params?.text : "Imóvel"}</Text>
+        <Text style={addImovel_style.headerTitle01}>
+          {route.params?.title ? route.params?.title : "Adicione seu"}
+        </Text>
+        <Text style={addImovel_style.headerTitle02}>
+          {route.params?.text ? route.params?.text : "Imóvel"}
+        </Text>
       </View>
       {!route.params?.status && (
         <View>
@@ -488,56 +516,41 @@ export default function AddImovel() {
 
         <TextInput
           style={addImovel_style.input}
-          onChangeText={setLatitude}
-          value={latitude}
-          placeholder="Insira a latitude"
+          onChangeText={setAddress}
+          placeholder="Insira o Endereço"
           keyboardType="default"
         />
         <TextInput
           style={addImovel_style.input}
-          onChangeText={setLongitude}
-          value={longitude}
-          placeholder="Insira a longitude"
+          onChangeText={setStreet}
+          placeholder="Insira a Rua"
           keyboardType="default"
         />
+        <TouchableOpacity onPress={() => setShowGeoLocation(!showGeoLocation)}>
+          <Text>Adicionar coordenadas geográficas</Text>
+        </TouchableOpacity>
+
+        {showGeoLocation && (
+          <>
+            <TextInput
+              style={addImovel_style.input}
+              onChangeText={setLatitude}
+              value={latitude}
+              placeholder="Insira a latitude"
+              keyboardType="default"
+            />
+            <TextInput
+              style={addImovel_style.input}
+              onChangeText={setLongitude}
+              value={longitude}
+              placeholder="Insira a longitude"
+              keyboardType="default"
+            />
+          </>
+        )}
       </View>
-      {selectedCategory === 3 && (
-        <View style={addImovel_style.containerFormInfo}>
-          <Text style={addImovel_style.subtitle}>Informações Básicas</Text>
-          <Dropdown
-            style={addImovel_style.dropdown}
-            placeholderStyle={addImovel_style.placeholderStyle}
-            selectedTextStyle={addImovel_style.selectedTextStyle}
-            inputSearchStyle={addImovel_style.inputSearchStyle}
-            iconStyle={addImovel_style.iconStyle}
-            data={typeStatusData}
-            maxHeight={300}
-            labelField="label"
-            valueField="value"
-            placeholder="qual o tipo de transação"
-            value={typeStatus}
-            onChange={(item) => {
-              setTypeStatus(item.value);
-            }}
-          />
+      
 
-          <TextInput
-            style={addImovel_style.input}
-            onChangeText={setPrice}
-            value={price}
-            placeholder="Informe o preço"
-            keyboardType="default"
-          />
-
-          <TextInput
-            style={addImovel_style.input}
-            onChangeText={setTotalArea}
-            value={totalArea}
-            placeholder="Informe a Area total em metros"
-            keyboardType="default"
-          />
-        </View>
-      )}
       {selectedCategory === 1 && (
         <View style={addImovel_style.containerFormInfo}>
           <Text style={addImovel_style.subtitle}>Informações Básicas</Text>
@@ -604,69 +617,6 @@ export default function AddImovel() {
               </TouchableOpacity>
             </View>
           </View>
-
-          <Dropdown
-            style={addImovel_style.dropdown}
-            placeholderStyle={addImovel_style.placeholderStyle}
-            selectedTextStyle={addImovel_style.selectedTextStyle}
-            inputSearchStyle={addImovel_style.inputSearchStyle}
-            iconStyle={addImovel_style.iconStyle}
-            data={typeStatusData}
-            maxHeight={300}
-            labelField="label"
-            valueField="value"
-            placeholder="qual o tipo de transação"
-            value={typeStatus}
-            onChange={(item) => {
-              setTypeStatus(item.value);
-            }}
-          />
-
-          <TextInput
-            style={addImovel_style.input}
-            onChangeText={setPrice}
-            value={price}
-            placeholder="Informe o preço"
-            keyboardType="default"
-          />
-
-          <TextInput
-            style={addImovel_style.input}
-            onChangeText={setTotalArea}
-            value={totalArea}
-            placeholder="Informe a Area total em metros"
-            keyboardType="default"
-          />
-        </View>
-      )}
-
-      {selectedCategory === 4 && (
-        <View style={addImovel_style.containerFormInfo}>
-          <Text style={addImovel_style.subtitle}>Informações Básicas</Text>
-          <Dropdown
-            style={addImovel_style.dropdown}
-            placeholderStyle={addImovel_style.placeholderStyle}
-            selectedTextStyle={addImovel_style.selectedTextStyle}
-            inputSearchStyle={addImovel_style.inputSearchStyle}
-            iconStyle={addImovel_style.iconStyle}
-            data={typeStatusData}
-            maxHeight={300}
-            labelField="label"
-            valueField="value"
-            placeholder="qual o tipo de transação"
-            value={typeStatus}
-            onChange={(item) => {
-              setTypeStatus(item.value);
-            }}
-          />
-
-          <TextInput
-            style={addImovel_style.input}
-            onChangeText={setPrice}
-            value={price}
-            placeholder="Informe o preço"
-            keyboardType="default"
-          />
         </View>
       )}
 
@@ -735,7 +685,12 @@ export default function AddImovel() {
               </TouchableOpacity>
             </View>
           </View>
+        </View>
+      )}
 
+
+      <View style={addImovel_style.containerFormInfo}>
+          <Text style={addImovel_style.subtitle}>Informações Básicas</Text>
           <Dropdown
             style={addImovel_style.dropdown}
             placeholderStyle={addImovel_style.placeholderStyle}
@@ -750,8 +705,32 @@ export default function AddImovel() {
             value={typeStatus}
             onChange={(item) => {
               setTypeStatus(item.value);
+              if (item.value === 2) {
+                setShowRentTime(true);
+              }
             }}
           />
+
+          {showRentTime && (
+            <>
+              <Dropdown
+                style={addImovel_style.dropdown}
+                placeholderStyle={addImovel_style.placeholderStyle}
+                selectedTextStyle={addImovel_style.selectedTextStyle}
+                inputSearchStyle={addImovel_style.inputSearchStyle}
+                iconStyle={addImovel_style.iconStyle}
+                data={dataRendTime}
+                maxHeight={300}
+                labelField="label"
+                valueField="value"
+                placeholder="Selecione o tempo de aluguer"
+                value={rent_time}
+                onChange={(item) => {
+                  setRentTime(item.value);
+                }}
+              />
+            </>
+          )}
 
           <TextInput
             style={addImovel_style.input}
@@ -769,7 +748,6 @@ export default function AddImovel() {
             keyboardType="default"
           />
         </View>
-      )}
 
       <View style={addImovel_style.containerFormInfo}>
         <Text style={addImovel_style.subtitle}>Adicione Imagens</Text>
@@ -854,7 +832,6 @@ export default function AddImovel() {
             />
           </View>
         )}
-        
       </View>
     </ScrollView>
   );

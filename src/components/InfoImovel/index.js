@@ -67,14 +67,14 @@ const calcularDiferencaTempo = (dataComentario) => {
   }
 };
 
-const ShowImages = ({ item }) => (
+const ShowImages = ({ item, showImage }) => (
   <View style={{ flexDirection: "row" }}>
     {[item.image01, item.image02, item.image03, item.image04].map(
       (image, index) => (
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => showImage(image)}>
           <Image
             key={index}
-            source={{ uri: API_URL + "storage/" + image }}
+            source={{ uri: API_URL + "storage/imovelPictures/" + image }}
             style={infoImovel_style.galeryImage}
           />
         </TouchableOpacity>
@@ -90,11 +90,15 @@ const Commentar = ({ item }) => {
         <Text>{calcularDiferencaTempo(item.created_at)}</Text>
       </View>
       <ScrollView style={infoImovel_style.textComment}>
-        <Text numberOfLines={7} >{item.comment}</Text>
+        <Text numberOfLines={7}>{item.comment}</Text>
       </ScrollView>
       <View style={infoImovel_style.containerUserComentar}>
         <Image
-          source={item.user.imageProfile == null ? require("../../../assets/pro.png"): { uri: API_URL + "storage/" + item.user.imageProfile }}
+          source={
+            item.user.imageProfile == null
+              ? require("../../../assets/pro.png")
+              : { uri: API_URL + "storage/" + item.user.imageProfile }
+          }
           style={infoImovel_style.userImageComentar}
         />
         <View>
@@ -128,15 +132,18 @@ export default function InfoImovel() {
   const [showContainerComment, setShowContainerComment] = useState(false);
   const [myComment, setMyComment] = useState("");
   const [totalCommentImovel, setTotalCommentImovel] = useState(0);
+  const [showImageBanner, setShowImageBanner] = useState(infoImovel.image01);
 
-  //console.log(infoImovel);
+  function change(image) {
+    setShowImageBanner(image);
+  }
 
-  function navigateChatRoom(){
+  function navigateChatRoom() {
     navigation.navigate("ChatTalk", {
-      recenderId: infoImovel.owner.id,
-      recenderName: infoImovel.owner.name,
-      recenderPhoto: infoImovel.owner.imageProfile
-    })
+      recenderId: infoImovel.owner.id || "",
+      recenderName: infoImovel.owner.name || "",
+      recenderPhoto: infoImovel.owner.imageProfile || "",
+    });
   }
 
   async function postComment(comment, user_id, imovel_id) {
@@ -156,7 +163,7 @@ export default function InfoImovel() {
           },
         }
       );
-      getDataImovelCommentar()
+      getDataImovelCommentar();
       console.log(response.data);
     } catch (error) {
       if (error.response && error.response.status === 422) {
@@ -191,7 +198,6 @@ export default function InfoImovel() {
     getDataImovelCommentar();
   }, []);
 
-  
   return (
     <ScrollView
       style={infoImovel_style.container}
@@ -199,7 +205,9 @@ export default function InfoImovel() {
     >
       <View style={{ height: 260 }}>
         <Image
-          source={{ uri: API_URL + "storage/imovelPictures/" + infoImovel.image01 }}
+          source={{
+            uri: API_URL + "storage/imovelPictures/" + showImageBanner,
+          }}
           style={infoImovel_style.bannerImage}
         />
         <TouchableOpacity style={infoImovel_style.iconHeart}>
@@ -210,12 +218,13 @@ export default function InfoImovel() {
         <View>
           <FlatList
             data={data}
-            renderItem={({ item }) => <ShowImages item={item} />}
+            renderItem={({ item }) => (
+              <ShowImages item={item} showImage={setShowImageBanner} />
+            )}
             keyExtractor={(item) => item.id.toString()}
             horizontal
             showsHorizontalScrollIndicator={false}
           />
-
         </View>
         <Text style={infoImovel_style.title}>
           {infoImovel.type_imovel.type} Kz {infoImovel.price}/mês
@@ -297,24 +306,27 @@ export default function InfoImovel() {
         </View>
         <View style={infoImovel_style.containerMap}>
           <Text style={infoImovel_style.subTitle}>Localização</Text>
-          <MapView
-            style={infoImovel_style.map}
-            initialRegion={{
-              latitude: infoImovel.latitude,
-              longitude: infoImovel.longitude,
-              latitudeDelta: 0.00922,
-              longitudeDelta: 0.00421,
-            }}
-          >
-            <Marker
-              coordinate={{
-                latitude: infoImovel.latitude,
-                longitude: infoImovel.longitude,
-              }}
-              title="Seu Marcador"
-              description="Descrição do seu marcador aqui"
-            />
-          </MapView>
+          {infoImovel.latitude !== null ||
+            (infoImovel.longitude !== null && (
+              <MapView
+                style={infoImovel_style.map}
+                initialRegion={{
+                  latitude: infoImovel.latitude,
+                  longitude: infoImovel.longitude,
+                  latitudeDelta: 0.00922,
+                  longitudeDelta: 0.00421,
+                }}
+              >
+                <Marker
+                  coordinate={{
+                    latitude: infoImovel.latitude,
+                    longitude: infoImovel.longitude,
+                  }}
+                  title="Seu Marcador"
+                  description="Descrição do seu marcador aqui"
+                />
+              </MapView>
+            ))}
         </View>
 
         <View style={infoImovel_style.containerComm}>
@@ -395,10 +407,14 @@ export default function InfoImovel() {
                 province_id: infoImovel.province_id,
                 county_id: infoImovel.county_id,
                 showCounty: true,
-                image01: API_URL + "storage/imovelPictures/" + infoImovel.image01,
-                image02: API_URL + "storage/imovelPictures/" + infoImovel.image02,
-                image03: API_URL + "storage/imovelPictures/" + infoImovel.image03,
-                image04: API_URL + "storage/imovelPictures/" + infoImovel.image04,
+                image01:
+                  API_URL + "storage/imovelPictures/" + infoImovel.image01,
+                image02:
+                  API_URL + "storage/imovelPictures/" + infoImovel.image02,
+                image03:
+                  API_URL + "storage/imovelPictures/" + infoImovel.image03,
+                image04:
+                  API_URL + "storage/imovelPictures/" + infoImovel.image04,
                 status: true,
                 price: infoImovel.price.toString(),
                 totalArea: infoImovel.area_total.toString(),
