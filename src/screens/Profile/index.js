@@ -2,59 +2,14 @@ import React, { useEffect, useState } from "react";
 import { View, Text, Image, FlatList, TouchableOpacity } from "react-native";
 import { profile_style } from "../../styles/profile_style";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import Feather from "react-native-vector-icons/Feather";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import API_URL from "../../../config/api";
-import { logout } from '../../features/authentication/authSlice';
-
-const DATA = [
-  {
-    id: 1,
-    title: "Editar Perfil",
-    icon: "person-outline",
-    route: "EditProfile",
-  },
-  {
-    id: 2,
-    title: "Ver Fvoritos",
-    icon: "heart-outline",
-    route: "MyImovels",
-  },
-  {
-    id: 3,
-    title: "Meus Imóveis",
-    icon: "home-outline",
-    route: "MyImovels",
-  },
-
-  {
-    id: 4,
-    title: "Notificações",
-    icon: "notifications-outline",
-    route: "MyImovels",
-  },
-  {
-    id: 5,
-    title: "Nos contacte",
-    icon: "megaphone-outline",
-    route: "MyImovels",
-  },
-  {
-    id: 6,
-    title: "Termos & Privacidade",
-    icon: "key-outline",
-    route: "MyImovels",
-  },
-  {
-    id: 7,
-    title: "Sair",
-    icon: "exit-outline",
-    route: "MyImovels",
-  },
-];
+import { logout } from "../../features/authentication/authSlice";
+import SlicePointerPhrase from "../../utils/SlicePointerPhrase";
+import { Data } from "../../../assets/json/MenuProfile";
 
 const Item = ({ title, icon, navigation, route, dispatch, token }) => (
   <TouchableOpacity
@@ -97,7 +52,7 @@ export default function Profile() {
   const logout = () => {
     dispatch(logout());
   };
-  
+
   useEffect(() => {
     getUserTotalImovel(user.id);
     getUserTotalFavotes(user.id);
@@ -131,7 +86,7 @@ export default function Profile() {
             source={require("../../../assets/profile.jpg")}
             style={profile_style.imageProfile}
           />
-          <Text style={profile_style.name}>{user.name}</Text>
+          <Text style={profile_style.name}>{SlicePointerPhrase(user.name, 8)}</Text>
           <Text style={profile_style.PhoneNumber}>{user.phone}</Text>
         </View>
         <View style={profile_style.containerResumeDetails}>
@@ -144,7 +99,7 @@ export default function Profile() {
             <Text style={profile_style.textDetails}>Favoritos</Text>
           </View>
           <View style={profile_style.resumeDetails}>
-            <Text style={profile_style.countDetails}>50</Text>
+            <Text style={profile_style.countDetails}>00</Text>
             <Text style={profile_style.textDetails}>Visualizações</Text>
           </View>
         </View>
@@ -152,7 +107,7 @@ export default function Profile() {
 
       <View style={profile_style.containerLinks}>
         <FlatList
-          data={DATA}
+          data={Data}
           renderItem={({ item }) => (
             <Item
               title={item.title}

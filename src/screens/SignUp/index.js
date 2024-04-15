@@ -40,15 +40,12 @@ const validationSchema = yup.object().shape({
 });
 
 export default function SignUp() {
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+
   const dispatch = useDispatch();
   const navigate = useNavigation();
 
-  const signUpHandle = () => {
-    dispatch(register({ name, email, password, phone }));
+  const signUpHandle = (values) => {
+    dispatch(register(values));
   };
 
   const [showPassword, setShowPassword] = useState(false);
@@ -175,7 +172,7 @@ export default function SignUp() {
                 bgColor={"#000"}
                 textColor={"#f3f3f3"}
                 fontFamily={"Poppins_700Bold"}
-                onPress={() => signUpHandle()}
+                onPress={handleSubmit}
               />
             </View>
 

@@ -37,11 +37,16 @@ export const login = createAsyncThunk("login", async (data) => {
       );
       Toast.show({
         type: ALERT_TYPE.DANGER,
-        title: "Erro",
+        title: "Credenciais incorretas",
         textBody: "Erro: " + error.response.data.message,
       });
     } else {
-      console.error("Erro:", error);
+      console.error("Erro:", error.response.data);
+      Toast.show({
+        type: ALERT_TYPE.DANGER,
+        title: "Erro de Entidade",
+        textBody: "Erro: " + error.response.data.message,
+      });
     }
   }
 });
