@@ -49,7 +49,7 @@ export default function AddImovel() {
     route.params?.total_bedrooms || 0
   );
   const [totalWC, setTotalWC] = useState(0);
-  const [totalChinken, setTotalChinken] = useState(0);
+  const [totalKitchen, setTotalKitchen] = useState(0);
   const [province, setProvince] = useState(route.params?.province_id);
   const [county, setCounty] = useState(route.params?.county_id);
   const id = useSelector((state) => state.auth.user.id);
@@ -104,7 +104,7 @@ export default function AddImovel() {
     } else if (typeTotal == "totalWC") {
       setTotalWC(totalWC + 1);
     } else if (typeTotal == "totalChinken") {
-      setTotalChinken(totalChinken + 1);
+      setTotalKitchen(totalKitchen + 1);
     }
   }
 
@@ -114,8 +114,8 @@ export default function AddImovel() {
       setTotalBedrooms(totalBedrooms - 1);
     } else if (typeTotal == "totalWC" && totalWC > 0) {
       setTotalWC(totalWC - 1);
-    } else if (typeTotal == "totalChinken" && totalChinken > 0) {
-      setTotalChinken(totalChinken - 1);
+    } else if (typeTotal == "totalChinken" && totalKitchen > 0) {
+      setTotalKitchen(totalKitchen - 1);
     }
   }
 
@@ -152,6 +152,7 @@ export default function AddImovel() {
 
     formData.append("total_bedrooms", totalBedrooms);
     formData.append("total_wc", totalWC);
+    formData.append("total_kitchen", totalKitchen);
     formData.append("latitude", latitude);
     formData.append("longitude", longitude);
 
@@ -608,7 +609,7 @@ export default function AddImovel() {
               >
                 <Text style={addImovel_style.counterBtnText}>+</Text>
               </TouchableOpacity>
-              <Text>{totalChinken}</Text>
+              <Text>{totalKitchen}</Text>
               <TouchableOpacity
                 style={addImovel_style.counterBtn}
                 onPress={() => decrementTotal("totalChinken")}
@@ -676,7 +677,7 @@ export default function AddImovel() {
               >
                 <Text style={addImovel_style.counterBtnText}>+</Text>
               </TouchableOpacity>
-              <Text>{totalChinken}</Text>
+              <Text>{totalKitchen}</Text>
               <TouchableOpacity
                 style={addImovel_style.counterBtn}
                 onPress={() => decrementTotal("totalChinken")}

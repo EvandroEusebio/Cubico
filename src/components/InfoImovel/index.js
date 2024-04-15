@@ -6,6 +6,7 @@ import {
   FlatList,
   TouchableOpacity,
   ScrollView,
+  Platform
 } from "react-native";
 import { infoImovel_style } from "../../styles/infoImovel_style";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
@@ -17,6 +18,16 @@ import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { TextInput } from "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
+import SlicePointerPhrase from "../../utils/SlicePointerPhrase";
+import * as Linking from 'expo-linking';
+
+const make  = () =>{
+  if(Platform.OS === "ios" || Platform.OS === "android"){
+    Linking.openURL("tel:938390399")
+  }else{
+    Linking.openURL("telprompt: 938390399")
+  }
+}
 
 const dataInfo = [
   {
@@ -133,10 +144,27 @@ export default function InfoImovel() {
   const [myComment, setMyComment] = useState("");
   const [totalCommentImovel, setTotalCommentImovel] = useState(0);
   const [showImageBanner, setShowImageBanner] = useState(infoImovel.image01);
-
+  console.log(infoImovel);
   function change(image) {
     setShowImageBanner(image);
   }
+
+  const total = [
+    { id: 1, type: "Quarto", icon: "bed", quantity: infoImovel.total_bedrooms },
+    { id: 2, type: "Wc", icon: "shower", quantity: infoImovel.total_wc },
+    {
+      id: 3,
+      type: "Cosinha",
+      icon: "food",
+      quantity: infoImovel.total_kitchen,
+    },
+    {
+      id: 4,
+      type: "metros",
+      icon: "map-marker-distance",
+      quantity: 5,
+    },
+  ];
 
   function navigateChatRoom() {
     navigation.navigate("ChatTalk", {
@@ -198,6 +226,16 @@ export default function InfoImovel() {
     getDataImovelCommentar();
   }, []);
 
+  function hasRendTimeImovel(rendTime) {
+    if (rendTime === "0") {
+      return;
+    } else if (rendTime === "1") {
+      return "/mês";
+    } else if (rendTime === "2") {
+      return "/anual";
+    }
+  }
+
   return (
     <ScrollView
       style={infoImovel_style.container}
@@ -227,11 +265,12 @@ export default function InfoImovel() {
           />
         </View>
         <Text style={infoImovel_style.title}>
-          {infoImovel.type_imovel.type} Kz {infoImovel.price}/mês
+          {infoImovel.type_imovel.type} Kz {infoImovel.price}
+          {hasRendTimeImovel(infoImovel.rent_time)}
         </Text>
         <View style={{ alignItems: "center" }}>
           <FlatList
-            data={dataInfo}
+            data={total}
             renderItem={({ item }) => (
               <Info
                 type={item.type}
@@ -265,7 +304,7 @@ export default function InfoImovel() {
               <MaterialIcons name="alternate-email" size={20} />
               <Text>Email ......................................</Text>
             </View>
-            <Text>{infoImovel.owner.email}</Text>
+            <Text>{SlicePointerPhrase(infoImovel.owner.email, 10)}</Text>
           </View>
           <View style={infoImovel_style.userDatail}>
             <View style={infoImovel_style.userDatailDiv1}>
@@ -286,6 +325,7 @@ export default function InfoImovel() {
             </TouchableOpacity>
             <TouchableOpacity
               style={[infoImovel_style.contactBtn, { flex: 1 }]}
+              onPress={() => make()}
             >
               <MaterialIcons name="phone" size={20} color={"#fff"} />
               <Text style={{ color: "#fff" }}>Ligar</Text>
