@@ -41,6 +41,11 @@ import ContentButtonSheetFilter from "../../components/ContentButtonSheetFilter"
 
 const dataTypeProperties = [
   {
+    id: 0,
+    type: "todos",
+    icon: 'all-inclusive'
+  },
+  {
     id: 1,
     type: "Casas",
     icon: "house",
@@ -166,7 +171,7 @@ const ListEndLoader = ({ loading }) => {
 export default function Home() {
 
   const [selectedTypeImovelItemId, setSelectedTypeImovelItemId] =
-    useState(null);
+    useState(0);
   const [text, onChangeText] = useState("");
   const [imovels, setImovels] = useState([]);
   const [pagination, setPagination] = useState(1);
@@ -228,7 +233,7 @@ export default function Home() {
 
     setLoading(true);
 
-    if (selectedTypeImovelItemId === null) {
+    if (selectedTypeImovelItemId === null || selectedTypeImovelItemId === 0) {
       await axios
         .get(API_URL + `api/v1/imovel?page=${pagination}`)
         .then((response) => {
