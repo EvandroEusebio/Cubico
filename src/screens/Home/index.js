@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useRef, useMemo, useCallback } from "react";
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  useMemo,
+  useCallback,
+} from "react";
 import {
   View,
   Text,
@@ -9,7 +15,7 @@ import {
   TextInput,
   ActivityIndicator,
   StatusBar,
-  StyleSheet
+  StyleSheet,
 } from "react-native";
 import Search from "../../components/Search";
 import { home_style } from "../../styles/home_style";
@@ -30,20 +36,12 @@ import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { setDataImovel } from "../../features/infoImovel/infoImovelSlice";
 
-import {
-  BottomSheetModal,
-  BottomSheetView,
-  BottomSheetModalProvider,
-} from "@gorhom/bottom-sheet";
-import ContentButtonSheetFilter from "../../components/ContentButtonSheetFilter";
-
-
 
 const dataTypeProperties = [
   {
     id: 0,
     type: "todos",
-    icon: 'all-inclusive'
+    icon: "all-inclusive",
   },
   {
     id: 1,
@@ -67,22 +65,18 @@ const dataTypeProperties = [
   },
 ];
 
-async function postFavorite(userId, imovelId){
+async function postFavorite(userId, imovelId) {
   try {
     let data = {
       user_id: userId,
       imovel_id: imovelId,
     };
-    const response = await axios.post(
-      API_URL + "api/v1/favorite/store",
-      data,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      }
-    );
+    const response = await axios.post(API_URL + "api/v1/favorite/store", data, {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
     console.log(response.data);
   } catch (error) {
     if (error.response && error.response.status === 422) {
@@ -92,76 +86,115 @@ async function postFavorite(userId, imovelId){
       console.error("Erro:", error);
     }
   }
-  
 }
 
 /*
 /storage/profilePictures/1703253586.png
 http://192.168.100.60:8000/storage/imovelPictures/01HJ8XQ7DSP0QSMKKVSJQ5K15X.jpg */
-const Properties = ({ item, navigation, dispatch, userId }) => (
-  <View style={home_style.containerItemPropertie}>
-    <Swiper
-      style={{ height: 250 }}
-      horizontal
-      dotColor="#fff"
-      activeDotColor="red"
-    >
-      {[item.image01, item.image02, item.image03, item.image04].map(
-        (image, index) => (
-          <TouchableOpacity
-            key={index}
-            activeOpacity={1}
-            style={{ marginRight: 10 }}
-            onPress={() => {
-              dispatch(setDataImovel(item));
-              navigation.navigate("InfoImovelStack");
-            }}
-          >
-            <Image
-              source={{ uri: API_URL + "storage/imovelPictures/" + image }}
-              style={home_style.imageProperties}
-            />
-            
-          </TouchableOpacity>
-        )
-      )}
-    </Swiper>
-    <View style={[home_style.containerInfo]}>
-      <View>
-        <Text>
-          {item.province.name}, {item.county.name}
-        </Text>
-        <Text>{item.owner.name}</Text>
-        <View style={home_style.details}>
-          <Icon name="map-pin" size={13} color="#000" />
+const Properties = ({ item, navigation, dispatch, userId }) => {
+  const [isFavorite, setIsFavorite] = useState(false);
 
-          <Icon name="shopping-bag" size={13} color="#000" />
-          <Text>{item.status}</Text>
+  useEffect(() => {
+    // Verifica se o imóvel é favorito quando o componente é montado
+    isPropertyFavorite();
+  }, []);
+
+  const isPropertyFavorite = async () => {
+    try {
+      const response = await fetch(
+        API_URL + `api/v1/user/${userId}/favorite/${item.id}`
+      );
+      const data = await response.json();
+      //console.warn(data.is_favorite);
+      setIsFavorite(data.is_favorite);
+    } catch (error) {
+      console.error("Erro ao verificar favorito:", error.message);
+      return false;
+    }
+  };
+
+  const toggleFavorite = async () => {
+    try {
+      const response = await fetch(API_URL + `api/v1/user/${userId}/favorite/${item.id}`
+      , {
+        method: isFavorite ? 'DELETE' : 'POST',
+      });
+      const data = await response.json();
+      console.warn(data)
+      setIsFavorite(data.is_favorite);
+    } catch (error) {
+      console.error('Erro ao marcar favorito:', error.message);
+    }
+  };
+
+  return (
+    <View style={home_style.containerItemPropertie}>
+      <Swiper
+        style={{ height: 250 }}
+        horizontal
+        dotColor="#fff"
+        activeDotColor="red"
+      >
+        {[item.image01, item.image02, item.image03, item.image04].map(
+          (image, index) => (
+            <TouchableOpacity
+              key={index}
+              activeOpacity={1}
+              style={{ marginRight: 10 }}
+              onPress={() => {
+                dispatch(setDataImovel(item));
+                navigation.navigate("InfoImovelStack");
+              }}
+            >
+              <Image
+                source={{ uri: API_URL + "storage/imovelPictures/" + image }}
+                style={home_style.imageProperties}
+              />
+            </TouchableOpacity>
+          )
+        )}
+      </Swiper>
+      <View style={[home_style.containerInfo]}>
+        <View>
+          <Text>
+            {item.province.name}, {item.county.name}
+          </Text>
+          <Text>{item.owner.name}</Text>
+          <View style={home_style.details}>
+            <Icon name="map-pin" size={13} color="#000" />
+
+            <Icon name="shopping-bag" size={13} color="#000" />
+            <Text>{item.status}</Text>
+          </View>
+        </View>
+        <View style={home_style.details2}>
+          <Text>{item.type_imovel.type}</Text>
+          <View style={home_style.price}>
+            <Text style={home_style.textPrice}>{item.price} KZ</Text>
+          </View>
         </View>
       </View>
-      <View style={home_style.details2}>
-        <Text>{item.type_imovel.type}</Text>
-        <View style={home_style.price}>
-          <Text style={home_style.textPrice}>{item.price} KZ</Text>
-        </View>
+      <TouchableOpacity
+        activeOpacity={0.7}
+        style={home_style.favorites}
+        onPress={() => toggleFavorite()}
+      >
+        <Icon2 name="favorite" size={25} color={isFavorite ? "red" : "#fff"} />
+      </TouchableOpacity>
+      <View
+        style={[
+          home_style.tag,
+          {
+            backgroundColor:
+              item.type_transaction.type == "a venda" ? "green" : "red",
+          },
+        ]}
+      >
+        <Text style={home_style.textTag}>{item.type_transaction.type}</Text>
       </View>
     </View>
-    <TouchableOpacity activeOpacity={0.7} style={home_style.favorites} onPress={() => postFavorite(9, item.id)}>
-      <Icon2 name="favorite" size={25} color="#fff" />
-    </TouchableOpacity>
-    <View
-      style={[
-        home_style.tag,
-        {
-          backgroundColor:
-            item.type_transaction.type == "a venda" ? "green" : "red",
-        },
-      ]}
-    >
-      <Text style={home_style.textTag}>{item.type_transaction.type}</Text>
-    </View>
-  </View>
-);
+  );
+};
 
 const ListEndLoader = ({ loading }) => {
   if (!loading) return null;
@@ -169,9 +202,7 @@ const ListEndLoader = ({ loading }) => {
 };
 
 export default function Home() {
-
-  const [selectedTypeImovelItemId, setSelectedTypeImovelItemId] =
-    useState(0);
+  const [selectedTypeImovelItemId, setSelectedTypeImovelItemId] = useState(0);
   const [text, onChangeText] = useState("");
   const [imovels, setImovels] = useState([]);
   const [pagination, setPagination] = useState(1);
@@ -179,9 +210,7 @@ export default function Home() {
   const [showMap, setShowMap] = useState(false);
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  //const userId = useSelector((state) => state.auth.user.id);
-
-  
+  const userId = useSelector((state) => state.auth.user.id);
 
   useEffect(() => {
     getDataImovels();
@@ -209,19 +238,17 @@ export default function Home() {
       item.id === selectedTypeImovelItemId ? "#000" : "#fff";
     const iconColor = item.id === selectedTypeImovelItemId ? "#fff" : "#000";
 
-    
     return (
       <TypeProperties
         item={item}
         onPress={() => {
-          if(item.id === selectedTypeImovelItemId){
-            getDataImovels()
-            return
-          }else{
-            setSelectedTypeImovelItemId(item.id)
+          if (item.id === selectedTypeImovelItemId) {
+            getDataImovels();
+            return;
+          } else {
+            setSelectedTypeImovelItemId(item.id);
           }
-          }
-        }
+        }}
         backgroundColor={backgroundColor}
         iconColor={iconColor}
       />
@@ -240,7 +267,6 @@ export default function Home() {
           if (response.data.imovel.data.length === 0) {
             setLoading(false);
             return;
-            
           } else {
             setImovels([...imovels, ...response.data.imovel.data]);
             setPagination(pagination + 1);
@@ -249,7 +275,7 @@ export default function Home() {
           }
         })
         .catch((error) => console.error("Erro ao buscar os dados: " + error));
-      
+
       return;
     }
 
@@ -272,9 +298,6 @@ export default function Home() {
         }
       })
       .catch((error) => console.error("Erro ao buscar os dados: " + error));
-    
-
-    
   }
 
   let [fontsLoaded] = useFonts({
@@ -354,7 +377,7 @@ export default function Home() {
                 item={item}
                 navigation={navigation}
                 dispatch={dispatch}
-                //userId={userId}
+                userId={userId}
               />
             )}
             keyExtractor={(item) => item.id.toString()}
@@ -371,13 +394,11 @@ export default function Home() {
   );
 }
 
-
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 24,
-    backgroundColor: 'grey',
+    backgroundColor: "grey",
   },
   contentContainer: {
     flex: 1,

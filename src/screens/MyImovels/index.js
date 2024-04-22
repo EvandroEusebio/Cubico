@@ -24,6 +24,10 @@ import { useNavigation } from "@react-navigation/native";
 
 const typeProperties = [
   {
+    id: 0,
+    type: "todos"
+  },
+  {
     id: 1,
     type: "Casas",
   },
@@ -47,7 +51,7 @@ const ListEndLoader = ({ loading }) => {
 };
 
 export default function MyImovels() {
-  const [selectedTypeImovelItemId, setSelectedTypeImovelItemId] = useState(1);
+  const [selectedTypeImovelItemId, setSelectedTypeImovelItemId] = useState(0);
   const [imovels, setImovels] = useState([]);
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState(1);
@@ -183,22 +187,24 @@ export default function MyImovels() {
     if (loading) return;
 
     setLoading(true);
-    /*
-    if (selectedTypeImovelItemId === null) {
+    
+    if (selectedTypeImovelItemId === null || selectedTypeImovelItemId === 0) {
       await axios
-        .get(API_URL + `api/v1/imovel?page=${pagination}`)
+        .get(API_URL + `api/v1/user/show/imovels/${id}?page=${pagination}`)
         .then((response) => {
           if (response.data.imovel.data.length === 0) {
+            setLoading(false);
             return;
           } else {
             setImovels([...imovels, ...response.data.imovel.data]);
-            //setPagination(pagination + 1);
+            setPagination(pagination + 1);
             console.log(response.data.imovel.data);
+            setLoading(false);
           }
         })
         .catch((error) => console.error("Erro ao buscar os dados: " + error));
       return;
-    }*/
+    }
 
     //console.warn(selectedTypeImovelItemId);
 

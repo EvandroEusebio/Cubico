@@ -83,7 +83,7 @@ export default function Profile() {
       <View style={profile_style.containerProfileDetails}>
         <View style={profile_style.Details}>
           <Image
-            source={require("../../../assets/profile.jpg")}
+            source={user.imageProfile === "null" ? require("../../../assets/im/user.png") : {uri: API_URL + "storage/profilePictures/" + user.imageProfile} }
             style={profile_style.imageProfile}
           />
           <Text style={profile_style.name}>{SlicePointerPhrase(user.name, 8)}</Text>
@@ -99,7 +99,7 @@ export default function Profile() {
             <Text style={profile_style.textDetails}>Favoritos</Text>
           </View>
           <View style={profile_style.resumeDetails}>
-            <Text style={profile_style.countDetails}>00</Text>
+            <Text style={profile_style.countDetails}>0</Text>
             <Text style={profile_style.textDetails}>Visualizações</Text>
           </View>
         </View>
