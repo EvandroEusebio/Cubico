@@ -64,15 +64,17 @@ export default function AddImovel() {
     setTypeStatus(null);
     setPrice("");
     setTotalArea("");
+    setAddress("")
+    setStreet("")
     setImage01(null);
     setImage02(null);
     setImage03(null);
     setImage04(null);
     setTotalBedrooms(0);
     setTotalWC(0);
-    setTotalChinken(0);
-    setShowRentTime(false)
-    setShowGeoLocation(false)
+    setTotalKitchen(0);
+    setShowRentTime(false);
+    setShowGeoLocation(false);
     setProvince(null);
     await axios
       .get(API_URL + `api/v1/provincia`)
@@ -153,8 +155,10 @@ export default function AddImovel() {
     formData.append("total_bedrooms", totalBedrooms);
     formData.append("total_wc", totalWC);
     formData.append("total_kitchen", totalKitchen);
-    formData.append("latitude", latitude);
-    formData.append("longitude", longitude);
+    if (latitude !== null || longitude !== null) {
+      formData.append("latitude", latitude);
+      formData.append("longitude", longitude);
+    }
 
     formData.append("area_total", totalArea);
     formData.append("address", address);
@@ -520,10 +524,12 @@ export default function AddImovel() {
           onChangeText={setAddress}
           placeholder="Insira o Endereço"
           keyboardType="default"
+          value={address}
         />
         <TextInput
           style={addImovel_style.input}
           onChangeText={setStreet}
+          value={street}
           placeholder="Insira a Rua"
           keyboardType="default"
         />
@@ -550,7 +556,6 @@ export default function AddImovel() {
           </>
         )}
       </View>
-      
 
       {selectedCategory === 1 && (
         <View style={addImovel_style.containerFormInfo}>
@@ -689,66 +694,65 @@ export default function AddImovel() {
         </View>
       )}
 
-
       <View style={addImovel_style.containerFormInfo}>
-          <Text style={addImovel_style.subtitle}>Informações Básicas</Text>
-          <Dropdown
-            style={addImovel_style.dropdown}
-            placeholderStyle={addImovel_style.placeholderStyle}
-            selectedTextStyle={addImovel_style.selectedTextStyle}
-            inputSearchStyle={addImovel_style.inputSearchStyle}
-            iconStyle={addImovel_style.iconStyle}
-            data={typeStatusData}
-            maxHeight={300}
-            labelField="label"
-            valueField="value"
-            placeholder="qual o tipo de transação"
-            value={typeStatus}
-            onChange={(item) => {
-              setTypeStatus(item.value);
-              if (item.value === 2) {
-                setShowRentTime(true);
-              }
-            }}
-          />
+        <Text style={addImovel_style.subtitle}>Informações Básicas</Text>
+        <Dropdown
+          style={addImovel_style.dropdown}
+          placeholderStyle={addImovel_style.placeholderStyle}
+          selectedTextStyle={addImovel_style.selectedTextStyle}
+          inputSearchStyle={addImovel_style.inputSearchStyle}
+          iconStyle={addImovel_style.iconStyle}
+          data={typeStatusData}
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder="qual o tipo de transação"
+          value={typeStatus}
+          onChange={(item) => {
+            setTypeStatus(item.value);
+            if (item.value === 2) {
+              setShowRentTime(true);
+            }
+          }}
+        />
 
-          {showRentTime && (
-            <>
-              <Dropdown
-                style={addImovel_style.dropdown}
-                placeholderStyle={addImovel_style.placeholderStyle}
-                selectedTextStyle={addImovel_style.selectedTextStyle}
-                inputSearchStyle={addImovel_style.inputSearchStyle}
-                iconStyle={addImovel_style.iconStyle}
-                data={dataRendTime}
-                maxHeight={300}
-                labelField="label"
-                valueField="value"
-                placeholder="Selecione o tempo de aluguer"
-                value={rent_time}
-                onChange={(item) => {
-                  setRentTime(item.value);
-                }}
-              />
-            </>
-          )}
+        {showRentTime && (
+          <>
+            <Dropdown
+              style={addImovel_style.dropdown}
+              placeholderStyle={addImovel_style.placeholderStyle}
+              selectedTextStyle={addImovel_style.selectedTextStyle}
+              inputSearchStyle={addImovel_style.inputSearchStyle}
+              iconStyle={addImovel_style.iconStyle}
+              data={dataRendTime}
+              maxHeight={300}
+              labelField="label"
+              valueField="value"
+              placeholder="Selecione o tempo de aluguer"
+              value={rent_time}
+              onChange={(item) => {
+                setRentTime(item.value);
+              }}
+            />
+          </>
+        )}
 
-          <TextInput
-            style={addImovel_style.input}
-            onChangeText={setPrice}
-            value={price}
-            placeholder="Informe o preço"
-            keyboardType="default"
-          />
+        <TextInput
+          style={addImovel_style.input}
+          onChangeText={setPrice}
+          value={price}
+          placeholder="Informe o preço"
+          keyboardType="default"
+        />
 
-          <TextInput
-            style={addImovel_style.input}
-            onChangeText={setTotalArea}
-            value={totalArea}
-            placeholder="Informe a Area total em metros"
-            keyboardType="default"
-          />
-        </View>
+        <TextInput
+          style={addImovel_style.input}
+          onChangeText={setTotalArea}
+          value={totalArea}
+          placeholder="Informe a Area total em metros"
+          keyboardType="default"
+        />
+      </View>
 
       <View style={addImovel_style.containerFormInfo}>
         <Text style={addImovel_style.subtitle}>Adicione Imagens</Text>

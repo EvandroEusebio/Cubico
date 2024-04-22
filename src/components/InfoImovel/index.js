@@ -346,8 +346,8 @@ export default function InfoImovel() {
         </View>
         <View style={infoImovel_style.containerMap}>
           <Text style={infoImovel_style.subTitle}>Localização</Text>
-          {infoImovel.latitude !== null ||
-            (infoImovel.longitude !== null && (
+          {(infoImovel.latitude !== null ||
+            infoImovel.longitude !== null) && (
               <MapView
                 style={infoImovel_style.map}
                 initialRegion={{
@@ -366,7 +366,7 @@ export default function InfoImovel() {
                   description="Descrição do seu marcador aqui"
                 />
               </MapView>
-            ))}
+            )}
         </View>
 
         <View style={infoImovel_style.containerComm}>

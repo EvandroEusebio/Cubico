@@ -110,68 +110,80 @@ export default function Map() {
     await axios
       .get(API_URL + `api/v1/all/imovel`)
       .then((response) => {
-        setDataImovel(response.data);
+        response.data.map((item) => {
+          if (item.latitude !== null || item.longitude !== null) {
+            setDataImovel([...dataImovel, item]);
+          }
+        });
       })
-      .catch((error) => console.error("Erro ao buscar os dados: " + error));
+      .catch((error) =>
+        console.error("Erro ao buscar os dados: " + error.message.date)
+      );
   }
 
   console.log(dataImovel);
 
   return (
     <View style={styles.container}>
-      <MapView style={styles.map} initialRegion={initialRegion}>
-        {currentLocation && (
-          <Marker
-            coordinate={{
-              latitude: currentLocation.latitude,
-              longitude: currentLocation.longitude,
-            }}
-            title="Your Location"
-            pinColor="black"
-          >
-            <Image
-              source={require("../../../assets/profile.jpg")}
-              style={map_style.locationImageUser}
-            />
-          </Marker>
+      {dataImovel.length !==
+        0  ? (
+          <MapView style={styles.map} initialRegion={initialRegion}>
+            {currentLocation && (
+              <Marker
+                coordinate={{
+                  latitude: currentLocation.latitude,
+                  longitude: currentLocation.longitude,
+                }}
+                title="Your Location"
+                pinColor="black"
+              >
+                <Image
+                  source={require("../../../assets/profile.jpg")}
+                  style={map_style.locationImageUser}
+                />
+              </Marker>
+            )}
+
+            {dataImovel.map((imovel) => (
+              <Marker
+                key={imovel.id}
+                coordinate={{
+                  latitude: imovel.latitude,
+                  longitude: imovel.longitude,
+                }}
+                title={imovel.type_imovel.type}
+                description={imovel.status}
+                onPress={() => {
+                  setShowDivImovelDetail(true);
+                  setImovelData(imovel);
+                  startNavigation({
+                    latitude: imovel.latitude,
+                    longitude: imovel.longitude,
+                  });
+                }}
+              >
+                <View style={map_style.markerIcon}>
+                  <MaterialIcons
+                    name="home"
+                    size={20}
+                    color={"#fff"}
+                    style={{ padding: 10 }}
+                  />
+                </View>
+              </Marker>
+            ))}
+            {routeCoordinates.length > 0 && (
+              <Polyline
+                coordinates={routeCoordinates}
+                strokeColor="#000"
+                strokeWidth={3}
+              />
+            )}
+          </MapView>
+        ): (
+          <Text>Nenhum imóvel com coodernadas geográficas</Text>
         )}
 
-        {dataImovel.map((imovel) => (
-          <Marker
-            key={imovel.id}
-            coordinate={{
-              latitude: imovel.latitude,
-              longitude: imovel.longitude,
-            }}
-            title={imovel.type_imovel.type}
-            description={imovel.status}
-            onPress={() => {
-              setShowDivImovelDetail(true);
-              setImovelData(imovel);
-              startNavigation({
-                latitude: imovel.latitude,
-                longitude: imovel.longitude,
-              });
-            }}
-          >
-            <View style={map_style.markerIcon}>
-              <MaterialIcons
-                name="home"
-                size={20}
-                color={"#fff"}
-                style={{ padding: 10 }}
-              />
-            </View>
-          </Marker>
-        ))}
-        {routeCoordinates.length > 0 && (
-          <Polyline
-            coordinates={routeCoordinates}
-            strokeColor="#000"
-            strokeWidth={3}
-          />
-        )}
-      </MapView>
       {showDivImovelDetail && imovelData && (
         <TouchableOpacity
           style={map_style.containerImovelInfo}
@@ -228,3 +240,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+/*
+ */

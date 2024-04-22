@@ -1,4 +1,4 @@
-import "react-native-gesture-handler";
+import 'react-native-gesture-handler';
 import { useState, useEffect, useRef } from "react";
 import { StatusBar } from "expo-status-bar";
 import { Text, View, Button, Platform, TouchableOpacity } from "react-native";
@@ -30,6 +30,7 @@ import Chat from "./src/screens/Chat";
 import ChatTalk from "./src/screens/ChatTalk";
 import { AlertNotificationRoot } from "react-native-alert-notification";
 import AppNavigator from "./src/navigator/AppNavigator";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -41,10 +42,12 @@ Notifications.setNotificationHandler({
 
 export default function App() {
   return (
-    <Provider store={Store}>
-      <AlertNotificationRoot>
-        <AppNavigator />
-      </AlertNotificationRoot>
-    </Provider>
+    <GestureHandlerRootView style={{flex: 1}}>
+      <Provider store={Store}>
+        <AlertNotificationRoot>
+          <AppNavigator />
+        </AlertNotificationRoot>
+      </Provider>
+    </GestureHandlerRootView>
   );
 }

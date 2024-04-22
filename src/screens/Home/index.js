@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   TextInput,
   ActivityIndicator,
   StatusBar,
+  StyleSheet
 } from "react-native";
 import Search from "../../components/Search";
 import { home_style } from "../../styles/home_style";
@@ -28,6 +29,13 @@ import Map from "../../components/Map";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { setDataImovel } from "../../features/infoImovel/infoImovelSlice";
+
+import {
+  BottomSheetModal,
+  BottomSheetView,
+  BottomSheetModalProvider,
+} from "@gorhom/bottom-sheet";
+import ContentButtonSheetFilter from "../../components/ContentButtonSheetFilter";
 
 
 
@@ -156,7 +164,7 @@ const ListEndLoader = ({ loading }) => {
 };
 
 export default function Home() {
- 
+
   const [selectedTypeImovelItemId, setSelectedTypeImovelItemId] =
     useState(null);
   const [text, onChangeText] = useState("");
@@ -357,3 +365,16 @@ export default function Home() {
     </View>
   );
 }
+
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 24,
+    backgroundColor: 'grey',
+  },
+  contentContainer: {
+    flex: 1,
+  },
+});
