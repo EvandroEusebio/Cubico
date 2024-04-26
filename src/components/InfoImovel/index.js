@@ -82,7 +82,7 @@ const ShowImages = ({ item, showImage }) => (
   <View style={{ flexDirection: "row" }}>
     {[item.image01, item.image02, item.image03, item.image04].map(
       (image, index) => (
-        <TouchableOpacity onPress={() => showImage(image)}>
+        <TouchableOpacity onPress={() => showImage(image)} key={index}>
           <Image
             key={index}
             source={{ uri: API_URL + "storage/imovelPictures/" + image }}
@@ -145,6 +145,7 @@ export default function InfoImovel() {
   const [totalCommentImovel, setTotalCommentImovel] = useState(0);
   const [showImageBanner, setShowImageBanner] = useState(infoImovel.image01);
   console.log(infoImovel);
+  const [isFavorite, setIsFavorite] = useState(false);
   function change(image) {
     setShowImageBanner(image);
   }
@@ -226,6 +227,41 @@ export default function InfoImovel() {
     getDataImovelCommentar();
   }, []);
 
+  
+
+  useEffect(() => {
+    // Verifica se o imóvel é favorito quando o componente é montado
+    isPropertyFavorite();
+  }, []);
+
+  const isPropertyFavorite = async () => {
+    try {
+      const response = await fetch(
+        API_URL + `api/v1/user/${ownerId}/favorite/${infoImovel.id}`
+      );
+      const data = await response.json();
+      //console.warn(data.is_favorite);
+      setIsFavorite(data.is_favorite);
+    } catch (error) {
+      console.error("Erro ao verificar favorito:", error.message);
+      return false;
+    }
+  };
+
+  const toggleFavorite = async () => {
+    try {
+      const response = await fetch(API_URL + `api/v1/user/${ownerId}/favorite/${infoImovel.id}`
+      , {
+        method: isFavorite ? 'DELETE' : 'POST',
+      });
+      const data = await response.json();
+      console.warn(data)
+      setIsFavorite(data.is_favorite);
+    } catch (error) {
+      console.error('Erro ao marcar favorito:', error.message);
+    }
+  };
+
   function hasRendTimeImovel(rendTime) {
     if (rendTime === "0") {
       return;
@@ -248,8 +284,8 @@ export default function InfoImovel() {
           }}
           style={infoImovel_style.bannerImage}
         />
-        <TouchableOpacity style={infoImovel_style.iconHeart}>
-          <M2 name="heart" size={35} color="rgba(0, 0, 0, 0.5)" />
+        <TouchableOpacity style={infoImovel_style.iconHeart} onPress={() => toggleFavorite()}>
+          <M2 name="heart" size={35} color={isFavorite ? "red" : "rgba(0, 0, 0, 0.5)"} />
         </TouchableOpacity>
       </View>
       <View style={infoImovel_style.containerInfo}>

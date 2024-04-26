@@ -37,6 +37,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setDataImovel } from "../../features/infoImovel/infoImovelSlice";
 
 
+
 const dataTypeProperties = [
   {
     id: 0,

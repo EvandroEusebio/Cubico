@@ -166,9 +166,6 @@ export default function MyImovels() {
             X
           </Text>
         </TouchableOpacity>
-        <View>
-          <Text>10</Text>
-        </View>
       </View>
       <View
         style={[
