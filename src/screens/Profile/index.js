@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, Image, FlatList, TouchableOpacity } from "react-native";
+import React, { useEffect, useState, useCallback } from "react";
+import { View, Text, Image, FlatList, TouchableOpacity, ActivityIndicator, ScrollView, RefreshControl } from "react-native";
 import { profile_style } from "../../styles/profile_style";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
@@ -10,6 +10,7 @@ import API_URL from "../../../config/api";
 import { logout } from "../../features/authentication/authSlice";
 import SlicePointerPhrase from "../../utils/SlicePointerPhrase";
 import { Data } from "../../../assets/json/MenuProfile";
+
 
 const Item = ({ title, icon, navigation, route, dispatch, token }) => (
   <TouchableOpacity
@@ -49,6 +50,17 @@ export default function Profile() {
   const [userTotalFavoritos, setUserTotalFavoritos] = useState(0);
   const dispatch = useDispatch();
 
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+      getUserTotalImovel(user.id);
+    getUserTotalFavotes(user.id);
+    }, 2000);
+  }, []);
+
   const logout = () => {
     dispatch(logout());
   };
@@ -79,7 +91,9 @@ export default function Profile() {
   }
 
   return (
-    <View style={profile_style.container}>
+    <ScrollView style={profile_style.container} refreshControl={
+      <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+    } >
       <View style={profile_style.containerProfileDetails}>
         <View style={profile_style.Details}>
           <Image
@@ -119,8 +133,9 @@ export default function Profile() {
             />
           )}
           keyExtractor={(item) => item.id}
+          scrollEnabled={false}
         />
       </View>
-    </View>
+    </ScrollView>
   );
 }

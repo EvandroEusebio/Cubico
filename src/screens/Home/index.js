@@ -213,6 +213,7 @@ export default function Home() {
   const dispatch = useDispatch();
   const userId = useSelector((state) => state.auth.user.id);
 
+
   useEffect(() => {
     getDataImovels();
   }, [selectedTypeImovelItemId]);
@@ -261,7 +262,7 @@ export default function Home() {
 
     setLoading(true);
 
-    if (selectedTypeImovelItemId === null || selectedTypeImovelItemId === 0) {
+    if (selectedTypeImovelItemId === null || selectedTypeImovelItemId === 0 && text === "") {
       await axios
         .get(API_URL + `api/v1/imovel?page=${pagination}`)
         .then((response) => {
@@ -275,7 +276,32 @@ export default function Home() {
             setLoading(false);
           }
         })
-        .catch((error) => console.error("Erro ao buscar os dados: " + error));
+        .catch((error) => console.error("Erro ao buscar os dados: " + error.data));
+
+    }
+    
+    if(selectedTypeImovelItemId === 0 && text !== ""){
+      await axios
+        .get(API_URL + `api/v1/imovel/search/${text}`)
+        .then((response) => {
+          console.warn(response.data)
+          setImovels(response.data)
+          setLoading(false)
+        })
+        .catch((error) => console.error("Erro ao buscar os dados: " + error.data));
+
+      return;
+    }
+
+    if(selectedTypeImovelItemId !== 0 && text !== ""){
+      await axios
+        .get(API_URL + `api/v1/imovel/search/show/type/${selectedTypeImovelItemId}/${text}`)
+        .then((response) => {
+          console.warn(response.data)
+          setImovels(response.data)
+          setLoading(false)
+        })
+        .catch((error) => console.error("Erro ao buscar os dados: " + error.data));
 
       return;
     }
@@ -292,13 +318,14 @@ export default function Home() {
           setLoading(false);
           return;
         } else {
+          //setImovels([])
           setImovels([...imovels, ...response.data.imovel.data]);
           setPagination(pagination + 1);
           console.log(response.data.imovel.data);
           setLoading(false);
         }
       })
-      .catch((error) => console.error("Erro ao buscar os dados: " + error));
+      .catch((error) => console.error("Erro ao buscar os dados: " + error.data));
   }
 
   let [fontsLoaded] = useFonts({
@@ -343,7 +370,7 @@ export default function Home() {
             style={home_style.input}
             onChangeText={onChangeText}
             value={text}
-            placeholder="Pesquise o que deseja encontrar"
+            placeholder="Pesquise por endereço"
           />
         </View>
         <TouchableOpacity style={home_style.containerIcon}>
