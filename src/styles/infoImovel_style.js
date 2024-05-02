@@ -90,8 +90,11 @@ export const infoImovel_style = StyleSheet.create({
   },
   iconHeart: {
     position: "absolute",
-    top: 50,
-    left: 310,
+    top: 25,
+    left: 270,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10
   },
   userDatailDiv1: {
     flexDirection: "row",

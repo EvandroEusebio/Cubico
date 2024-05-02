@@ -23,7 +23,6 @@ export default function Move(props) {
     <View style={styles.container}>
       <Video
             ref={video}
-            style={styles.video}
             source={{
               uri: `${props.videoUri}`,
             }}
@@ -31,6 +30,9 @@ export default function Move(props) {
             resizeMode={ResizeMode.CONTAIN}
             isLooping
             onPlaybackStatusUpdate={(status) => setStatus(() => status)}
+            style={{ alignSelf: "center",
+            width: props.width,
+            height: props.height,}}
           />
           
     </View>
@@ -38,13 +40,6 @@ export default function Move(props) {
 }
 
 const styles = StyleSheet.create({
-  
-  video: {
-    alignSelf: "center",
-    width: 320,
-    height: 150,
-    
-  },
   buttons: {
     flexDirection: "row",
     justifyContent: "center",

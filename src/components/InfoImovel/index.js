@@ -6,7 +6,8 @@ import {
   FlatList,
   TouchableOpacity,
   ScrollView,
-  Platform
+  Platform,
+  Dimensions
 } from "react-native";
 import { infoImovel_style } from "../../styles/infoImovel_style";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
@@ -19,15 +20,19 @@ import axios from "axios";
 import { TextInput } from "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
 import SlicePointerPhrase from "../../utils/SlicePointerPhrase";
-import * as Linking from 'expo-linking';
+import * as Linking from "expo-linking";
+import Move from "../Move";
 
-const make  = () =>{
-  if(Platform.OS === "ios" || Platform.OS === "android"){
-    Linking.openURL("tel:938390399")
-  }else{
-    Linking.openURL("telprompt: 938390399")
+
+const {width, height} = Dimensions.get('window')
+
+const make = () => {
+  if (Platform.OS === "ios" || Platform.OS === "android") {
+    Linking.openURL("tel:938390399");
+  } else {
+    Linking.openURL("telprompt: 938390399");
   }
-}
+};
 
 const dataInfo = [
   {
@@ -146,9 +151,11 @@ export default function InfoImovel() {
   const [showImageBanner, setShowImageBanner] = useState(infoImovel.image01);
   console.log(infoImovel);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [showVideo, setShowVideo] = useState(false)
   function change(image) {
     setShowImageBanner(image);
   }
+
 
   const total = [
     { id: 1, type: "Quarto", icon: "bed", quantity: infoImovel.total_bedrooms },
@@ -227,8 +234,6 @@ export default function InfoImovel() {
     getDataImovelCommentar();
   }, []);
 
-  
-
   useEffect(() => {
     // Verifica se o imóvel é favorito quando o componente é montado
     isPropertyFavorite();
@@ -250,15 +255,17 @@ export default function InfoImovel() {
 
   const toggleFavorite = async () => {
     try {
-      const response = await fetch(API_URL + `api/v1/user/${ownerId}/favorite/${infoImovel.id}`
-      , {
-        method: isFavorite ? 'DELETE' : 'POST',
-      });
+      const response = await fetch(
+        API_URL + `api/v1/user/${ownerId}/favorite/${infoImovel.id}`,
+        {
+          method: isFavorite ? "DELETE" : "POST",
+        }
+      );
       const data = await response.json();
-      console.warn(data)
+      console.warn(data);
       setIsFavorite(data.is_favorite);
     } catch (error) {
-      console.error('Erro ao marcar favorito:', error.message);
+      console.error("Erro ao marcar favorito:", error.message);
     }
   };
 
@@ -278,15 +285,35 @@ export default function InfoImovel() {
       showsVerticalScrollIndicator={false}
     >
       <View style={{ height: 260 }}>
-        <Image
-          source={{
-            uri: API_URL + "storage/imovelPictures/" + showImageBanner,
-          }}
-          style={infoImovel_style.bannerImage}
-        />
-        <TouchableOpacity style={infoImovel_style.iconHeart} onPress={() => toggleFavorite()}>
-          <M2 name="heart" size={35} color={isFavorite ? "red" : "rgba(0, 0, 0, 0.5)"} />
-        </TouchableOpacity>
+        {infoImovel.video !== null && showVideo ? (
+          <>
+            <Move
+              videoUri={`${API_URL}storage/imovelVideo/${infoImovel.video}`}
+              width={width}
+              height={200}
+            />
+          </>
+        ) : (
+          <Image
+            source={{
+              uri: API_URL + "storage/imovelPictures/" + showImageBanner,
+            }}
+            style={infoImovel_style.bannerImage}
+          />
+        )}
+
+        <View style={infoImovel_style.iconHeart}>
+          <TouchableOpacity onPress={() => toggleFavorite()}>
+            <M2
+              name="heart"
+              size={35}
+              color={isFavorite ? "red" : "rgba(0, 0, 0, 0.5)"}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setShowVideo(!showVideo)}>
+            <M2 name="video" size={35} color={"rgba(0, 0, 0, 0.5)"} />
+          </TouchableOpacity>
+        </View>
       </View>
       <View style={infoImovel_style.containerInfo}>
         <View>
@@ -382,27 +409,26 @@ export default function InfoImovel() {
         </View>
         <View style={infoImovel_style.containerMap}>
           <Text style={infoImovel_style.subTitle}>Localização</Text>
-          {(infoImovel.latitude !== null ||
-            infoImovel.longitude !== null) && (
-              <MapView
-                style={infoImovel_style.map}
-                initialRegion={{
+          {(infoImovel.latitude !== null || infoImovel.longitude !== null) && (
+            <MapView
+              style={infoImovel_style.map}
+              initialRegion={{
+                latitude: infoImovel.latitude,
+                longitude: infoImovel.longitude,
+                latitudeDelta: 0.00922,
+                longitudeDelta: 0.00421,
+              }}
+            >
+              <Marker
+                coordinate={{
                   latitude: infoImovel.latitude,
                   longitude: infoImovel.longitude,
-                  latitudeDelta: 0.00922,
-                  longitudeDelta: 0.00421,
                 }}
-              >
-                <Marker
-                  coordinate={{
-                    latitude: infoImovel.latitude,
-                    longitude: infoImovel.longitude,
-                  }}
-                  title="Seu Marcador"
-                  description="Descrição do seu marcador aqui"
-                />
-              </MapView>
-            )}
+                title="Seu Marcador"
+                description="Descrição do seu marcador aqui"
+              />
+            </MapView>
+          )}
         </View>
 
         <View style={infoImovel_style.containerComm}>

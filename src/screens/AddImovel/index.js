@@ -92,6 +92,7 @@ export default function AddImovel() {
     setTotalBedrooms(0);
     setTotalWC(0);
     setTotalKitchen(0);
+    setVideoUri(null)
     setShowRentTime(false);
     setShowGeoLocation(false);
     setProvince(null);
@@ -207,6 +208,14 @@ export default function AddImovel() {
       type: type04,
       name: "imovel.jpg",
     });
+
+    if (videoUri !== null) {
+      formData.append("video", {
+        uri: videoUri,
+        name: "video.mp4",
+        type: "video/mp3",
+      });
+    }
 
     console.log(formData._parts);
 
@@ -835,7 +844,8 @@ export default function AddImovel() {
 
         <View>
           <TouchableOpacity
-            style={{ flexDirection: "row", alignItems: "center", gap: 10 }} onPress={() => setAddVideo(!addVideo)}
+            style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
+            onPress={() => setAddVideo(!addVideo)}
           >
             <Text style={addImovel_style.subtitle}>Adicionar Video</Text>
             <Icon2 name={"camera"} size={20} color={"#000"} />
@@ -843,12 +853,9 @@ export default function AddImovel() {
         </View>
         {addVideo && (
           <View>
-            <TouchableOpacity
-              style={addImovel_style.video}
-              onPress={pickVideo}
-            >
+            <TouchableOpacity style={addImovel_style.video} onPress={pickVideo}>
               {videoUri !== null ? (
-                <Move videoUri={videoUri}/>
+                <Move videoUri={videoUri} width={300} height={150}/>
               ) : (
                 <Icon2 name={"camera"} size={20} color={"#000"} />
               )}
