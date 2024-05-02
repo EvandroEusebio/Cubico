@@ -112,7 +112,8 @@ export default function Map() {
       .then((response) => {
         response.data.map((item) => {
           if (item.latitude !== null || item.longitude !== null) {
-            setDataImovel([...dataImovel, item]);
+            setImovelData(imovelData.push(item));
+            //console.log(dataImovel)
           }
         });
       })
@@ -121,7 +122,7 @@ export default function Map() {
       );
   }
 
-  console.log(dataImovel);
+  //console.log(dataImovel);
 
   return (
     <View style={styles.container}>
@@ -144,9 +145,9 @@ export default function Map() {
               </Marker>
             )}
 
-            {dataImovel.map((imovel) => (
+            {imovelData.map((imovel, index) => (
               <Marker
-                key={imovel.id}
+                key={index}
                 coordinate={{
                   latitude: imovel.latitude,
                   longitude: imovel.longitude,
@@ -164,7 +165,7 @@ export default function Map() {
               >
                 <View style={map_style.markerIcon}>
                   <MaterialIcons
-                    name="home"
+                    name="apartament"
                     size={20}
                     color={"#fff"}
                     style={{ padding: 10 }}
@@ -176,7 +177,7 @@ export default function Map() {
               <Polyline
                 coordinates={routeCoordinates}
                 strokeColor="#000"
-                strokeWidth={3}
+                strokeWidth={5}
               />
             )}
           </MapView>

@@ -562,7 +562,7 @@ export default function AddImovel() {
           keyboardType="default"
         />
         <TouchableOpacity onPress={() => setShowGeoLocation(!showGeoLocation)}>
-          <Text>Adicionar coordenadas geográficas</Text>
+          <Text style={{textDecorationLine: showGeoLocation ? 'none':'underline'}}>Adicionar coordenadas geográficas</Text>
         </TouchableOpacity>
 
         {showGeoLocation && (
@@ -845,9 +845,12 @@ export default function AddImovel() {
         <View>
           <TouchableOpacity
             style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
-            onPress={() => setAddVideo(!addVideo)}
+            onPress={() => {
+              setVideoUri(null)
+              setAddVideo(!addVideo)
+            }}
           >
-            <Text style={addImovel_style.subtitle}>Adicionar Video</Text>
+            <Text style={[addImovel_style.subtitle, {textDecorationLine: addVideo ? 'none':'underline'}]}>Adicionar Video</Text>
             <Icon2 name={"camera"} size={20} color={"#000"} />
           </TouchableOpacity>
         </View>
