@@ -51,7 +51,9 @@
     "rn-fetch-blob": "^0.12.0",
     "socket.io-client": "^4.7.4",
     "typescript": "^5.1.3",
-    "yup": "^1.4.0"
+    "yup": "^1.4.0",
+    "expo-av": "~13.4.1",
+    "expo-file-system": "~15.4.5"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

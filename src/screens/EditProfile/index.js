@@ -21,9 +21,13 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { editProfile_style } from "../../styles/editProfile_style";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 import axios from "axios";
-import { updateUser } from "../../features/authentication/authSlice";
-import { useNavigation } from '@react-navigation/native';
+import { updateUser, updateImageProfile } from "../../features/authentication/authSlice";
+import { useNavigation } from "@react-navigation/native";
+import * as ImagePicker from "expo-image-picker";
+import Video from "../../components/Move";
+
 
 export default function EditProfile() {
   const phoneRedux = useSelector((state) => state.auth.user.phone);
@@ -33,7 +37,7 @@ export default function EditProfile() {
   const id = useSelector((state) => state.auth.user.id);
   const navigation = useNavigation();
 
-  console.log(imageProfile)
+  console.log(imageProfile);
 
   const [editedName, setEditedName] = useState("");
   const [editedEmail, setEditedEmail] = useState("");
@@ -42,6 +46,8 @@ export default function EditProfile() {
   const [showEditedName, setShowEditedName] = useState(false);
   const [showEditedEmail, setShowEditedEmail] = useState(false);
   const [showEditedPhone, setShowEditedPhone] = useState(false);
+  const [image, setImage] = useState(null);
+
   const dispatch = useDispatch();
 
   const updateUserHandle = (type) => {
@@ -56,6 +62,71 @@ export default function EditProfile() {
       dispatch(updateUser({ id, phone }));
     }
   };
+
+  async function changeImage() {
+    const uri = image;
+    const filename = image.split("/").pop();
+    const match = /\.(\w+)$/.exec(filename);
+    const ext = match?.[1];
+    const type = match ? `image/${match[1]}` : `image`;
+
+    const formData = new FormData();
+
+    formData.append("id", id);
+
+    formData.append("imageProfile", {
+      uri: uri,
+      type: type,
+      name: "imovel.jpg",
+    });
+
+    dispatch(updateImageProfile(formData));
+
+
+  }
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      const originalWidth = result.assets[0].width;
+      const originalHeight = result.assets[0].height;
+
+      // Define as dimensões máximas desejadas
+      const maxWidth = 800;
+      const maxHeight = 600;
+
+      // Calcula as novas dimensões mantendo a proporção original
+      const aspectRatio = originalWidth / originalHeight;
+      let newWidth = maxWidth;
+      let newHeight = newWidth / aspectRatio;
+
+      if (newHeight > maxHeight) {
+        newHeight = maxHeight;
+        newWidth = newHeight * aspectRatio;
+      }
+
+      // Redimensiona a imagem
+      const resizedImage = await manipulateAsync(
+        result.assets[0].uri,
+        [{ resize: { width: newWidth, height: newHeight } }],
+        { compress: 0.7, format: SaveFormat.JPEG }
+      );
+
+      setImage(resizedImage.uri);
+      changeImage();
+      console.log(resizedImage);
+    }
+  };
+
   let [fontsLoaded] = useFonts({
     Poppins_700Bold,
     Poppins_300Light,
@@ -70,19 +141,17 @@ export default function EditProfile() {
   return (
     <ScrollView contentContainerStyle={editProfile_style.container}>
       <View style={editProfile_style.containerImage}>
-        {imageProfile == null && (
+        <TouchableOpacity onPress={pickImage}>
           <Image
-          source={{ uri: `${API_URL}${imageProfile}` }}
-          style={editProfile_style.image}
-        />
-        )}
-        {imageProfile != null && (
-          
-          <Image
-            source={require("../../../assets/pro.png")}
+            source={
+              imageProfile === "null"
+                ? require("../../../assets/pro.png")
+                : { uri: API_URL + "storage/profilePictures/" + imageProfile }
+            }
             style={editProfile_style.image}
           />
-        )}
+        </TouchableOpacity>
+
         <Text
           style={[editProfile_style.name, { fontFamily: "Poppins_700Bold" }]}
         >
@@ -120,7 +189,6 @@ export default function EditProfile() {
                 { fontFamily: "Poppins_400Regular" },
               ]}
               onChangeText={setEditedName}
-              value={editedName}
             />
 
             <TouchableOpacity>
@@ -206,6 +274,7 @@ export default function EditProfile() {
           </View>
         )}
       </View>
+      
     </ScrollView>
   );
 }

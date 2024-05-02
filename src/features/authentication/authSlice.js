@@ -51,6 +51,8 @@ export const login = createAsyncThunk("login", async (data) => {
   }
 });
 
+
+
 export const register = createAsyncThunk("register", async (data) => {
   try {
     const response = await axios.post(API_URL + "api/v1/register", data, {
@@ -129,6 +131,26 @@ async function sendPushNotification(expoPushToken) {
   });
 }
 */
+
+export const updateImageProfile = createAsyncThunk("updateUser", async (data) => {
+  console.log(data.id);
+  console.log(data);
+  await axios
+      .post(API_URL + `api/v1/user/add/image_profile/${data.id}`, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then(function (response) {
+        console.log(response.data);
+        
+        console.warn("Enviado com sucesso");
+      })
+      .catch((error) => {
+        console.error(error.response.data);
+      });
+});
+
 
 const storeDeviceToken = async (user_id) => {
   let token;
@@ -274,7 +296,10 @@ const authSlice = createSlice({
         state.user = null;
         state.isAuthenticated = false;
         state.message = null; // Limpa qualquer erro anterior
-      });
+      })
+
+      
+      
   },
 });
 

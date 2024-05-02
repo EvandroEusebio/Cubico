@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -18,6 +18,8 @@ import axios from "axios";
 import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 import { useSelector } from "react-redux";
 import { useRoute } from "@react-navigation/native";
+import { Video, ResizeMode } from "expo-av";
+import Move from "../../components/Move";
 
 export default function AddImovel() {
   const route = useRoute();
@@ -29,6 +31,7 @@ export default function AddImovel() {
   const [dataCounty, setDataCounty] = useState([]);
   const [showGeoLocation, setShowGeoLocation] = useState(false);
   const [rent_time, setRentTime] = useState("0");
+
   const [showRentTime, setShowRentTime] = useState(false);
   const [typeStatus, setTypeStatus] = useState(
     route.params?.transaction_type_id
@@ -53,6 +56,22 @@ export default function AddImovel() {
   const [province, setProvince] = useState(route.params?.province_id);
   const [county, setCounty] = useState(route.params?.county_id);
   const id = useSelector((state) => state.auth.user.id);
+  const video = useRef(null);
+  const [statusVideo, setStatusVideo] = useState({});
+  const [videoUri, setVideoUri] = useState(null);
+  const [addVideo, setAddVideo] = useState(false);
+
+  const pickVideo = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      setVideoUri(result.uri);
+    }
+  };
 
   // Function for Update screen
   async function fresh() {
@@ -64,8 +83,8 @@ export default function AddImovel() {
     setTypeStatus(null);
     setPrice("");
     setTotalArea("");
-    setAddress("")
-    setStreet("")
+    setAddress("");
+    setStreet("");
     setImage01(null);
     setImage02(null);
     setImage03(null);
@@ -813,6 +832,30 @@ export default function AddImovel() {
             )}
           </TouchableOpacity>
         </View>
+
+        <View>
+          <TouchableOpacity
+            style={{ flexDirection: "row", alignItems: "center", gap: 10 }} onPress={() => setAddVideo(!addVideo)}
+          >
+            <Text style={addImovel_style.subtitle}>Adicionar Video</Text>
+            <Icon2 name={"camera"} size={20} color={"#000"} />
+          </TouchableOpacity>
+        </View>
+        {addVideo && (
+          <View>
+            <TouchableOpacity
+              style={addImovel_style.video}
+              onPress={pickVideo}
+            >
+              {videoUri !== null ? (
+                <Move videoUri={videoUri}/>
+              ) : (
+                <Icon2 name={"camera"} size={20} color={"#000"} />
+              )}
+            </TouchableOpacity>
+          </View>
+        )}
+
         {route.params?.status && (
           <View style={{ marginBottom: 40 }}>
             <Button

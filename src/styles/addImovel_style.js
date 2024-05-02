@@ -133,6 +133,16 @@ export const addImovel_style = StyleSheet.create({
     borderColor: 'rgba(0, 0, 0, 0.2)',
     borderStyle: 'dashed'
   },
+  video:{
+    width: 'auto',
+    height: 150,
+    justifyContent:'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.2)',
+    borderStyle: 'dashed'
+  },
   pictureText:{
     color: "#000",
     fontSize: 25,
