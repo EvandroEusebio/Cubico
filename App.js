@@ -1,7 +1,6 @@
 import 'react-native-gesture-handler';
 import { useState, useEffect, useRef } from "react";
 import { StatusBar } from "expo-status-bar";
-import { Text, View, Button, Platform, TouchableOpacity } from "react-native";
 import Login from "./src/screens/Login";
 import { Provider } from "react-redux";
 import { Store } from "./src/features/store";

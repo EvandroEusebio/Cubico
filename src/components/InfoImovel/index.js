@@ -6,7 +6,6 @@ import {
   FlatList,
   TouchableOpacity,
   ScrollView,
-  Platform,
   Dimensions
 } from "react-native";
 import { infoImovel_style } from "../../styles/infoImovel_style";
@@ -27,11 +26,7 @@ import Move from "../Move";
 const {width, height} = Dimensions.get('window')
 
 const make = () => {
-  if (Platform.OS === "ios" || Platform.OS === "android") {
     Linking.openURL("tel:938390399");
-  } else {
-    Linking.openURL("telprompt: 938390399");
-  }
 };
 
 const dataInfo = [
@@ -413,8 +408,8 @@ export default function InfoImovel() {
             <MapView
               style={infoImovel_style.map}
               initialRegion={{
-                latitude: infoImovel.latitude,
-                longitude: infoImovel.longitude,
+                latitude: parseFloat(infoImovel.latitude),
+                longitude: parseFloat(infoImovel.longitude),
                 latitudeDelta: 0.00922,
                 longitudeDelta: 0.00421,
               }}

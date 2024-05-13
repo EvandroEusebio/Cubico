@@ -108,84 +108,97 @@ export default function Map() {
   };
   async function getDataImovels() {
     await axios
-      .get(API_URL + `api/v1/all/imovel`)
+      .get(API_URL + `api/v1/imovel/withCoordenate/all`)
       .then((response) => {
-        response.data.map((item) => {
-          if (item.latitude !== null || item.longitude !== null) {
-            setImovelData(imovelData.push(item));
-            //console.log(dataImovel)
-          }
-        });
+        console.log(response.data.imovel);
+        setImovelData(response.data.imovel);
       })
       .catch((error) =>
-        console.error("Erro ao buscar os dados: " + error.message.date)
+        console.error("Erro ao buscar os dados: " + error.message)
       );
   }
 
-  //console.log(dataImovel);
+  console.log(imovelData);
 
   return (
     <View style={styles.container}>
-      {dataImovel.length !==
-        0  ? (
-          <MapView style={styles.map} initialRegion={initialRegion}>
-            {currentLocation && (
-              <Marker
-                coordinate={{
-                  latitude: currentLocation.latitude,
-                  longitude: currentLocation.longitude,
-                }}
-                title="Your Location"
-                pinColor="black"
-              >
-                <Image
-                  source={require("../../../assets/profile.jpg")}
-                  style={map_style.locationImageUser}
-                />
-              </Marker>
-            )}
+      {imovelData.length !== 0 ? (
+        <MapView style={styles.map} initialRegion={initialRegion}>
+          {currentLocation && (
+            <Marker
+              coordinate={{
+                latitude: currentLocation.latitude,
+                longitude: currentLocation.longitude,
+              }}
+              title="Your Location"
+              pinColor="black"
+            >
+              <Image
+                source={require("../../../assets/profile.jpg")}
+                style={map_style.locationImageUser}
+              />
+            </Marker>
+          )}
 
-            {imovelData.map((imovel, index) => (
-              <Marker
-                key={index}
-                coordinate={{
+          {imovelData.map((imovel, index) => (
+            <Marker
+              key={index}
+              coordinate={{
+                latitude: imovel.latitude,
+                longitude: imovel.longitude,
+              }}
+              title={imovel.type_imovel.type}
+              description={imovel.status}
+              onPress={() => {
+                setShowDivImovelDetail(true);
+                setDataImovel(imovel);
+                startNavigation({
                   latitude: imovel.latitude,
                   longitude: imovel.longitude,
-                }}
-                title={imovel.type_imovel.type}
-                description={imovel.status}
-                onPress={() => {
-                  setShowDivImovelDetail(true);
-                  setImovelData(imovel);
-                  startNavigation({
-                    latitude: imovel.latitude,
-                    longitude: imovel.longitude,
-                  });
-                }}
-              >
-                <View style={map_style.markerIcon}>
+                });
+              }}
+            >
+              <View style={map_style.markerIcon}>
+                {imovel.type_imovel.type === "Casa" && (
                   <MaterialIcons
-                    name="apartament"
+                    name="home"
                     size={20}
                     color={"#fff"}
                     style={{ padding: 10 }}
                   />
-                </View>
-              </Marker>
-            ))}
-            {routeCoordinates.length > 0 && (
-              <Polyline
-                coordinates={routeCoordinates}
-                strokeColor="#000"
-                strokeWidth={5}
-              />
-            )}
-          </MapView>
-        ): (
-          <Text>Nenhum imóvel com coodernadas geográficas</Text>
-        )}
+                )}
+                {imovel.type_imovel.type === "Apartamento" && (
+                  <MaterialIcons
+                    name="apartment"
+                    size={20}
+                    color={"#fff"}
+                    style={{ padding: 10 }}
+                  />
+                )}
+                {imovel.type_imovel.type === "Terreno" && (
+                  <MaterialIcons
+                    name="landscape"
+                    size={20}
+                    color={"#fff"}
+                    style={{ padding: 10 }}
+                  />
+                )}
+              </View>
+            </Marker>
+          ))}
+          {routeCoordinates.length > 0 && (
+            <Polyline
+              coordinates={routeCoordinates}
+              strokeColor="#000"
+              strokeWidth={5}
+            />
+          )}
+        </MapView>
+      ) : (
+        <Text>Nenhum imóvel com coodernadas geográficas</Text>
+      )}
 
-      {showDivImovelDetail && imovelData && (
+      {showDivImovelDetail && dataImovel && (
         <TouchableOpacity
           style={map_style.containerImovelInfo}
           activeOpacity={0.5}
@@ -199,32 +212,26 @@ export default function Map() {
             <Ionicons name="close" size={20} color={"#fff"} />
           </TouchableOpacity>
           <Image
-            source={require("../../../assets/apartamento.jpg")}
+            source={{ uri: API_URL + "storage/imovelPictures/" + dataImovel.image01 }}
             style={map_style.image}
           />
           <View style={map_style.details}>
             <View style={{ justifyContent: "space-between" }}>
               <View>
                 <Text style={map_style.textLocation}>
-                  {imovelData.province.name}
+                  {dataImovel.province.name}
                 </Text>
                 <Text style={map_style.textLocation}>
-                  {imovelData.county.name}
+                  {dataImovel.county.name}
                 </Text>
                 <Text style={{ color: "gray" }}>
-                  Por {imovelData.owner.name}
+                  Por {dataImovel.owner.name}
                 </Text>
               </View>
 
               <View style={map_style.price}>
-                <Text style={{ fontWeight: "bold" }}>{imovelData.price}</Text>
+                <Text style={{ fontWeight: "bold" }}>kz {dataImovel.price}</Text>
               </View>
-            </View>
-
-            <View>
-              <TouchableOpacity>
-                <Ionicons name="heart-outline" size={20} color={"#000"} />
-              </TouchableOpacity>
             </View>
           </View>
         </TouchableOpacity>

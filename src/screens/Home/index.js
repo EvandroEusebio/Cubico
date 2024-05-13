@@ -1,14 +1,10 @@
 import React, {
   useEffect,
   useState,
-  useRef,
-  useMemo,
-  useCallback,
 } from "react";
 import {
   View,
   Text,
-  ScrollView,
   TouchableOpacity,
   FlatList,
   Image,
@@ -17,7 +13,6 @@ import {
   StatusBar,
   StyleSheet,
 } from "react-native";
-import Search from "../../components/Search";
 import { home_style } from "../../styles/home_style";
 import {
   useFonts,
@@ -35,8 +30,6 @@ import Map from "../../components/Map";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { setDataImovel } from "../../features/infoImovel/infoImovelSlice";
-
-
 
 const dataTypeProperties = [
   {
@@ -116,15 +109,17 @@ const Properties = ({ item, navigation, dispatch, userId }) => {
 
   const toggleFavorite = async () => {
     try {
-      const response = await fetch(API_URL + `api/v1/user/${userId}/favorite/${item.id}`
-      , {
-        method: isFavorite ? 'DELETE' : 'POST',
-      });
+      const response = await fetch(
+        API_URL + `api/v1/user/${userId}/favorite/${item.id}`,
+        {
+          method: isFavorite ? "DELETE" : "POST",
+        }
+      );
       const data = await response.json();
-      console.warn(data)
+      console.warn(data);
       setIsFavorite(data.is_favorite);
     } catch (error) {
-      console.error('Erro ao marcar favorito:', error.message);
+      console.error("Erro ao marcar favorito:", error.message);
     }
   };
 
@@ -213,7 +208,6 @@ export default function Home() {
   const dispatch = useDispatch();
   const userId = useSelector((state) => state.auth.user.id);
 
-
   useEffect(() => {
     getDataImovels();
   }, [selectedTypeImovelItemId]);
@@ -262,7 +256,10 @@ export default function Home() {
 
     setLoading(true);
 
-    if (selectedTypeImovelItemId === null || selectedTypeImovelItemId === 0 && text === "") {
+    if (
+      selectedTypeImovelItemId === null ||
+      (selectedTypeImovelItemId === 0 && text === "")
+    ) {
       await axios
         .get(API_URL + `api/v1/imovel?page=${pagination}`)
         .then((response) => {
@@ -276,32 +273,40 @@ export default function Home() {
             setLoading(false);
           }
         })
-        .catch((error) => console.error("Erro ao buscar os dados: " + error.data));
-
+        .catch((error) =>
+          console.error("Erro ao buscar os dados: " + error.data)
+        );
     }
-    
-    if(selectedTypeImovelItemId === 0 && text !== ""){
+
+    if (selectedTypeImovelItemId === 0 && text !== "") {
       await axios
         .get(API_URL + `api/v1/imovel/search/${text}`)
         .then((response) => {
-          console.warn(response.data)
-          setImovels(response.data)
-          setLoading(false)
+          console.warn(response.data);
+          setImovels(response.data);
+          setLoading(false);
         })
-        .catch((error) => console.error("Erro ao buscar os dados: " + error.data));
+        .catch((error) =>
+          console.error("Erro ao buscar os dados: " + error.data)
+        );
 
       return;
     }
 
-    if(selectedTypeImovelItemId !== 0 && text !== ""){
+    if (selectedTypeImovelItemId !== 0 && text !== "") {
       await axios
-        .get(API_URL + `api/v1/imovel/search/show/type/${selectedTypeImovelItemId}/${text}`)
+        .get(
+          API_URL +
+            `api/v1/imovel/search/show/type/${selectedTypeImovelItemId}/${text}`
+        )
         .then((response) => {
-          console.warn(response.data)
-          setImovels(response.data)
-          setLoading(false)
+          console.warn(response.data);
+          setImovels(response.data);
+          setLoading(false);
         })
-        .catch((error) => console.error("Erro ao buscar os dados: " + error.data));
+        .catch((error) =>
+          console.error("Erro ao buscar os dados: " + error.data)
+        );
 
       return;
     }
@@ -325,7 +330,9 @@ export default function Home() {
           setLoading(false);
         }
       })
-      .catch((error) => console.error("Erro ao buscar os dados: " + error.data));
+      .catch((error) =>
+        console.error("Erro ao buscar os dados: " + error.data)
+      );
   }
 
   let [fontsLoaded] = useFonts({
@@ -365,7 +372,10 @@ export default function Home() {
       </View>
       <View style={home_style.containerFilter}>
         <View style={home_style.containerInput}>
-          <Icon name="search" size={20} color="#000" />
+          <TouchableOpacity onPress={() => getDataImovels()}>
+            <Icon name="search" size={20} color="#000" />
+          </TouchableOpacity>
+
           <TextInput
             style={home_style.input}
             onChangeText={onChangeText}

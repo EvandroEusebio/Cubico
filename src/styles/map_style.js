@@ -1,4 +1,4 @@
-import { StyleSheet, Dimensions } from "react-native";
+import { StyleSheet, Dimensions, Platform } from "react-native";
 import { PRIMARY, BG_COLOR, TEXTCOLOR, BORDER } from "./palette";
 
 const windowWidth = Dimensions.get("window").width;
