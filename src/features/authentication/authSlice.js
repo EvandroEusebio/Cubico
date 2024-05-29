@@ -7,13 +7,10 @@ import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
 import io from "socket.io-client";
 import { Platform } from "react-native";
-import {
-  ALERT_TYPE,
-  Toast,
-} from "react-native-alert-notification";
+import { ALERT_TYPE, Toast } from "react-native-alert-notification";
 
 const initialState = {
-  message: null,
+  error: null,
   user: null,
   token: "",
   isAuthenticated: false,
@@ -51,8 +48,6 @@ export const login = createAsyncThunk("login", async (data) => {
     }
   }
 });
-
-
 
 export const register = createAsyncThunk("register", async (data) => {
   try {
@@ -133,10 +128,12 @@ async function sendPushNotification(expoPushToken) {
 }
 */
 
-export const updateImageProfile = createAsyncThunk("updateUser", async (data) => {
-  console.log(data.id);
-  console.log(data);
-  await axios
+export const updateImageProfile = createAsyncThunk(
+  "updateUser",
+  async (data) => {
+    console.log(data.id);
+    console.log(data);
+    await axios
       .post(API_URL + `api/v1/user/add/image_profile/${data.id}`, data, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -144,14 +141,14 @@ export const updateImageProfile = createAsyncThunk("updateUser", async (data) =>
       })
       .then(function (response) {
         console.log(response.data);
-        
+
         console.warn("Enviado com sucesso");
       })
       .catch((error) => {
         console.error(error.response.data);
       });
-});
-
+  }
+);
 
 const storeDeviceToken = async (user_id) => {
   let token;
@@ -223,73 +220,77 @@ const authSlice = createSlice({
       /*----------------------login----------------------------------*/
       .addCase(login.pending, (state, action) => {
         state.isloading = true;
+        state.user = null;
+        state.isAuthenticated = false;
+        state.token = "";
+        state.error = null;
       })
-      .addCase(
-        login.fulfilled,
-        (state, { payload: { message, user, token } }) => {
-          state.isloading = false;
-          if (message) {
-            state.message = message;
-            console.warn(state.message);
-          } else {
-            state.user = user;
-            state.token = token;
-            state.isAuthenticated = true;
-            console.warn("sucesso!");
-            storeDeviceToken(user.id);
-          }
-        }
-      )
+      .addCase(login.fulfilled, (state, { payload: { user, token } }) => {
+        state.isloading = false;
+        console.log("loading: " + state.isloading);
+        state.user = user;
+        state.token = token;
+        state.isAuthenticated = true;
+        console.warn("Autenticado com sucesso!");
+        state.error = null;
+        storeDeviceToken(user.id);
+      })
       .addCase(login.rejected, (state, action) => {
+        state.isloading = false;
         state.isloading = true;
+        state.user = null;
+        state.isAuthenticated = false;
+        state.token = "";
+        state.error = null;
+        state.error = JSON.stringify(action.error.message);
+        console.warn("Erro: " + state.error);
       })
 
       /*----------------------UPDATE----------------------------------*/
       .addCase(updateUser.pending, (state, action) => {
         state.isloading = true;
       })
-      .addCase(
-        updateUser.fulfilled,
-        (state, { payload: { message, user } }) => {
-          state.isloading = false;
-          if (message) {
-            state.message = message;
-            console.warn(state.message);
-          } else {
-            state.user = user;
-            console.warn("sucesso!");
-            console.log(state.user.id);
-          }
-        }
-      )
+      .addCase(updateUser.fulfilled, (state, { payload: { error, user } }) => {
+        state.isloading = false;
+
+        state.user = user;
+        console.warn("sucesso!");
+        console.log(state.user.id);
+      })
       .addCase(updateUser.rejected, (state, action) => {
-        state.isloading = true;
+        state.isloading = false;
       })
 
       /*----------------------Register----------------------------------*/
       .addCase(register.pending, (state, action) => {
         state.isloading = true;
+        state.user = null;
+        state.isAuthenticated = false;
+        state.token = "";
+        state.error = null;
       })
       .addCase(
         register.fulfilled,
         (state, { payload: { message, user, token } }) => {
           state.isloading = false;
-          if (message) {
-            state.message = message;
-            console.warn(state.message);
-          } else {
-            state.user = user;
-            state.token = token;
-            state.isAuthenticated = true;
-            console.warn("sucesso!");
-            console.log(state.token);
-            console.log(state.user);
-            console.log(state.isAuthenticated);
-          }
+          console.log("loading: " + state.isloading);
+          state.user = user;
+          state.token = token;
+          state.isAuthenticated = true;
+          console.warn("Autenticado com sucesso!");
+          state.error = null;
+          storeDeviceToken(user.id);
         }
       )
       .addCase(register.rejected, (state, action) => {
+        state.isloading = false;
         state.isloading = true;
+        state.user = null;
+        state.isAuthenticated = false;
+        state.token = "";
+        state.error = null;
+        state.error = JSON.stringify(action.error.message);
+        console.warn("Erro: " + state.error);
       })
       .addCase(logout.fulfilled, (state, action) => {
         state.isloading = false;
@@ -297,10 +298,7 @@ const authSlice = createSlice({
         state.user = null;
         state.isAuthenticated = false;
         state.message = null; // Limpa qualquer erro anterior
-      })
-
-      
-      
+      });
   },
 });
 
