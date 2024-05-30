@@ -46,6 +46,7 @@ export const login = createAsyncThunk("login", async (data) => {
         textBody: "Erro: " + error.response.data.message,
       });
     }
+    throw error;
   }
 });
 
@@ -237,7 +238,6 @@ const authSlice = createSlice({
       })
       .addCase(login.rejected, (state, action) => {
         state.isloading = false;
-        state.isloading = true;
         state.user = null;
         state.isAuthenticated = false;
         state.token = "";
@@ -284,7 +284,6 @@ const authSlice = createSlice({
       )
       .addCase(register.rejected, (state, action) => {
         state.isloading = false;
-        state.isloading = true;
         state.user = null;
         state.isAuthenticated = false;
         state.token = "";

@@ -19,7 +19,7 @@ import {
   Poppins_400Regular,
 } from "@expo-google-fonts/poppins";
 import Button from "../../components/button/Button";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { register } from "../../features/authentication/authSlice";
 import * as ImagePicker from "expo-image-picker";
 import { Formik } from "formik";
@@ -43,6 +43,8 @@ const validationSchema = yup.object().shape({
 export default function SignUp() {
   const dispatch = useDispatch();
   const navigate = useNavigation();
+  const loading = useSelector((state) => state.auth.isloading)
+  console.warn(loading)
 
   const signUpHandle = (values) => {
     dispatch(register(values));
@@ -175,16 +177,6 @@ export default function SignUp() {
               {touched.password && errors.password && (
                 <Text style={{ color: "red" }}>{errors.password}</Text>
               )}
-              <TouchableOpacity>
-                <Text
-                  style={[
-                    register_style.info,
-                    { fontFamily: "Poppins_400Regular" },
-                  ]}
-                >
-                  Esqueceu sua senha?
-                </Text>
-              </TouchableOpacity>
 
               <View>
                 <Button
@@ -193,6 +185,7 @@ export default function SignUp() {
                   textColor={"#f3f3f3"}
                   fontFamily={"Poppins_700Bold"}
                   onPress={handleSubmit}
+                  loading={loading}
                 />
               </View>
 
