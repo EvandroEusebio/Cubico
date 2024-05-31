@@ -25,7 +25,7 @@ import { useNavigation } from "@react-navigation/native";
 const typeProperties = [
   {
     id: 0,
-    type: "todos"
+    type: "todos",
   },
   {
     id: 1,
@@ -56,6 +56,7 @@ export default function MyImovels() {
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState(1);
   const id = useSelector((state) => state.auth.user.id);
+  const [error, setError] = useState(false);
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
@@ -126,7 +127,7 @@ export default function MyImovels() {
 
   const Properties = ({ item, navigation, dispatch }) => (
     <TouchableOpacity
-    activeOpacity={0.7}
+      activeOpacity={0.7}
       style={myImovels_style.containerItemPropertie}
       onPress={() => {
         dispatch(setDataImovel(item));
@@ -180,23 +181,29 @@ export default function MyImovels() {
     </TouchableOpacity>
   );
 
+  console.warn(error);
   async function getDataImovels() {
-    if (loading) return;
+    setError(false);
 
     setLoading(true);
-    
+
     if (selectedTypeImovelItemId === null || selectedTypeImovelItemId === 0) {
       await axios
         .get(API_URL + `api/v1/user/show/imovels/${id}?page=${pagination}`)
         .then((response) => {
           if (response.data.imovel.data.length === 0) {
             setLoading(false);
+            if (imovels.length === 0) {
+              setError(true);
+            }
+
             return;
           } else {
             setImovels([...imovels, ...response.data.imovel.data]);
             setPagination(pagination + 1);
             console.log(response.data.imovel.data);
             setLoading(false);
+            setError(false);
           }
         })
         .catch((error) => console.error("Erro ao buscar os dados: " + error));
@@ -212,11 +219,18 @@ export default function MyImovels() {
       )
       .then((response) => {
         if (response.data.imovel.data.length === 0) {
+          setLoading(false);
+          if (imovels.length === 0) {
+            setError(true);
+          }
+
           return;
         } else {
           setImovels([...imovels, ...response.data.imovel.data]);
           setPagination(pagination + 1);
           console.log(response.data.imovel.data);
+          setError(false);
+          setLoading(false);
         }
       })
       .catch((error) => console.error("Erro ao buscar os dados: " + error));
@@ -250,23 +264,36 @@ export default function MyImovels() {
           extraData={selectedTypeImovelItemId}
         />
       </View>
-      <View style={myImovels_style.containerImovels}>
-        <FlatList
-          data={imovels}
-          renderItem={({ item }) => (
-            <Properties
-              item={item}
-              navigation={navigation}
-              dispatch={dispatch}
-            />
-          )}
-          keyExtractor={(item) => item.id.toString()}
-          showsVerticalScrollIndicator={false}
-          onEndReached={!loading && getDataImovels}
-          onEndReachedThreshold={0.1}
-          ListFooterComponent={<ListEndLoader loading={loading} />}
-        />
-      </View>
+      {error ? (
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <Image
+            source={require("../../../assets/not.png")}
+            style={{ width: 150, height: 150 }}
+          />
+          <Text>Nenhum imóvel encontrado!</Text>
+        </View>
+      ) : (
+        <View style={myImovels_style.containerImovels}>
+          <FlatList
+            data={imovels}
+            renderItem={({ item }) => (
+              <Properties
+                item={item}
+                navigation={navigation}
+                dispatch={dispatch}
+              />
+            )}
+            keyExtractor={(item) => item.id.toString()}
+            showsVerticalScrollIndicator={false}
+            onEndReached={!loading && getDataImovels}
+            onEndReachedThreshold={0.1}
+            ListFooterComponent={<ListEndLoader loading={loading} />}
+          />
+        </View>
+      )}
+
       <View style={myImovels_style.span}></View>
     </View>
   );

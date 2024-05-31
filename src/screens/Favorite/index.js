@@ -1,5 +1,15 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, RefreshControl, ScrollView, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  Image,
+  RefreshControl,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import {
   useFonts,
   Poppins_700Bold,
@@ -41,15 +51,17 @@ const Properties = ({ item, navigation, dispatch, userId }) => {
 
   const toggleFavorite = async () => {
     try {
-      const response = await fetch(API_URL + `api/v1/user/${userId}/favorite/${item.id}`
-      , {
-        method: isFavorite ? 'DELETE' : 'POST',
-      });
+      const response = await fetch(
+        API_URL + `api/v1/user/${userId}/favorite/${item.id}`,
+        {
+          method: isFavorite ? "DELETE" : "POST",
+        }
+      );
       const data = await response.json();
-      console.warn(data)
+      console.warn(data);
       setIsFavorite(data.is_favorite);
     } catch (error) {
-      console.error('Erro ao marcar favorito:', error.message);
+      console.error("Erro ao marcar favorito:", error.message);
     }
   };
 
@@ -124,39 +136,45 @@ const Properties = ({ item, navigation, dispatch, userId }) => {
 
 export default function Favorite() {
   const id = useSelector((state) => state.auth.user.id);
-  const [favorites, setFavorites] = useState([])
+  const [favorites, setFavorites] = useState([]);
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
-      getUserFavorite()
+      getUserFavorite();
     }, 2000);
   }, []);
 
-  useEffect(()=>{
-    getUserFavorite()
+  useEffect(() => {
+    getUserFavorite();
     //console.warn(favorites)
-  }, [])
+  }, []);
 
   async function getUserFavorite() {
     setLoading(true);
+    setError(false);
     try {
-        const response = await axios.get(API_URL + `api/v1/user/favorite/imovels/${id}`);
-        //console.warn(response.data);
-        setFavorites(response.data);
-        setLoading(false)
+      const response = await axios.get(
+        API_URL + `api/v1/user/favorite/imovels/${id}`
+      );
+      //console.warn(response.data);
+      setFavorites(response.data);
+      setLoading(false);
+      if (response.data.length === 0) {
+        setError(true);
+      }
     } catch (error) {
-        console.error(error);
-        setLoading(false)
+      console.error(error);
+      setLoading(false);
+      setError(true);
     }
-}
-
-  
+  }
 
   let [fontsLoaded] = useFonts({
     Poppins_700Bold,
@@ -170,46 +188,62 @@ export default function Favorite() {
   }
 
   return (
-    <ScrollView style={style.container} refreshControl={
-      <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-    } showsVerticalScrollIndicator={false} >
-      <Text style={{margin: 10, color: '#000', fontFamily: "Poppins_700Bold",
-    fontSize: 25}}>
+    <ScrollView
+      style={style.container}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+      showsVerticalScrollIndicator={false}
+    >
+      <Text
+        style={{
+          margin: 10,
+          color: "#000",
+          fontFamily: "Poppins_700Bold",
+          fontSize: 25,
+        }}
+      >
         Seus Favoritos
       </Text>
-      {
-        loading ? (
-          <ActivityIndicator style={{ padding: 10 }} size={25} color={"#000"} />
-        ) : (
-          <FlatList
-            data={favorites}
-            renderItem={({ item }) => (
-              <Properties
-                item={item}
-                navigation={navigation}
-                dispatch={dispatch}
-                userId={id}
-              />
-            )}
-            keyExtractor={(item) => item.id.toString()}
-            showsVerticalScrollIndicator={false}
-            scrollEnabled={false}
-            //onEndReached={!loading && getDataImovels}
-            //onEndReachedThreshold={0.1}
-            //ListFooterComponent={<ListEndLoader loading={loading} />}
-          />
-        )
-      }
-      
+      {loading ? (
+        <ActivityIndicator style={{ padding: 10 }} size={25} color={"#000"} />
+      ) : (
+        <View>
+          {error ? (
+            <View style={{flex: 1, justifyContent:'center', alignItems: 'center'}}>
+              <Image source={require("../../../assets/not.png")} style={{width: 150, height: 150}}/>
+              <Text>
+                Nenhum imóvel favorito encontrado!
+              </Text>
+            </View>
+          ) : (
+            <FlatList
+              data={favorites}
+              renderItem={({ item }) => (
+                <Properties
+                  item={item}
+                  navigation={navigation}
+                  dispatch={dispatch}
+                  userId={id}
+                />
+              )}
+              keyExtractor={(item) => item.id.toString()}
+              showsVerticalScrollIndicator={false}
+              scrollEnabled={false}
+              //onEndReached={!loading && getDataImovels}
+              //onEndReachedThreshold={0.1}
+              //ListFooterComponent={<ListEndLoader loading={loading} />}
+            />
+          )}
+        </View>
+      )}
     </ScrollView>
   );
 }
 
-
 const style = StyleSheet.create({
   container: {
     flex: 1,
-    
   },
   text: {
     color: "#000",

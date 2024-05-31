@@ -4,6 +4,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import AuthNavigator from '../AuthNavigator';
 import MainNavigator from '../MainNavigator';
 import { useSelector } from "react-redux";
+import Filter from '../../screens/Filter';
 
 
 export default function AppNavigator() {
