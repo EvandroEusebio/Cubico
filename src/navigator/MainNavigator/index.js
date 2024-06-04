@@ -1,20 +1,20 @@
-import React from "react";
-import { View, Platform } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Favorite from "../../screens/Favorite";
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
+import { createStackNavigator } from "@react-navigation/stack";
+import React from "react";
+import { Platform, View } from "react-native";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import InfoImovel from "../../components/InfoImovel";
+import AddImovel from "../../screens/AddImovel";
 import Chat from "../../screens/Chat";
 import ChatTalk from "../../screens/ChatTalk";
-import Profile from "../../screens/Profile";
 import EditProfile from "../../screens/EditProfile";
-import InfoImovel from "../../components/InfoImovel";
-import MyImovels from "../../screens/MyImovels";
+import Favorite from "../../screens/Favorite";
 import Home from "../../screens/Home";
-import AddImovel from "../../screens/AddImovel";
-import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
-import Ionicons from "react-native-vector-icons/Ionicons";
-import { createStackNavigator } from "@react-navigation/stack";
 import MarkDataCalendar from "../../screens/MarkDataCalendar";
-import Hosting from "../../screens/Hosting";
+import MyImovels from "../../screens/MyImovels";
+import Profile from "../../screens/Profile";
+import VisitAppointement from "../../screens/VisitAppointement";
 
 
 const Tab = createBottomTabNavigator();
@@ -80,6 +80,7 @@ const ScreenProfile = () => {
         <Stack.Screen name="EditProfile" component={EditProfile} />
         <Stack.Screen name="MyInfoImovel" component={InfoImovel} />
         <Stack.Screen name="UpdateMyImovel" component={AddImovel} />
+        <Stack.Screen name="MyAppointment" component={VisitAppointement} />
       </Stack.Navigator>
     );
   };
@@ -178,7 +179,7 @@ const getTabBarVisibility = route => {
     const routeName = getFocusedRouteNameFromRoute(route) ?? 'Feed';
     //console.warn(routeName)MyInfoImovel;
   
-    if( routeName === 'MyImovels' || routeName === 'MyInfoImovel' || routeName === 'UpdateMyImovel' || routeName === 'ChatTalk' ) {
+    if( routeName === 'MyImovels' || routeName === 'MyInfoImovel' || routeName === 'UpdateMyImovel' || routeName === 'ChatTalk' || routeName === 'MyAppointment' ) {
       return 'none';
     }
     return 'flex';

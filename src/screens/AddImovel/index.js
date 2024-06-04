@@ -69,7 +69,9 @@ export default function AddImovel() {
     });
 
     if (!result.cancelled) {
-      setVideoUri(result.uri);
+      setVideoUri(result.assets[0].uri);
+      console.warn(result.assets)
+      console.log(result.assets[0].uri)
     }
   };
 
@@ -213,7 +215,7 @@ export default function AddImovel() {
       formData.append("video", {
         uri: videoUri,
         name: "video.mp4",
-        type: "video/mp3",
+        type: "video/mp4",
       });
     }
 

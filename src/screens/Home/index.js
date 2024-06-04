@@ -1,7 +1,4 @@
-import React, {
-  useEffect,
-  useState,
-} from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -155,7 +152,10 @@ const Properties = ({ item, navigation, dispatch, userId }) => {
           <Text>
             {item.province.name}, {item.county.name}
           </Text>
-          <Text>{item.owner.name}</Text>
+          <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
+            <Icon2 name={'person'} size={20}/>
+            <Text>{item.owner.name}</Text>
+          </View>
           <View style={home_style.details}>
             <Icon name="map-pin" size={13} color="#000" />
 
