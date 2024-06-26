@@ -177,7 +177,7 @@ export default function MainNavigator() {
 const getTabBarVisibility = route => {
     //console.warn(route);
     const routeName = getFocusedRouteNameFromRoute(route) ?? 'Feed';
-    //console.warn(routeName)MyInfoImovel;
+    //console.warn(routeName);
   
     if( routeName === 'MyImovels' || routeName === 'MyInfoImovel' || routeName === 'UpdateMyImovel' || routeName === 'ChatTalk' || routeName === 'MyAppointment' ) {
       return 'none';

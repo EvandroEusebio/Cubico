@@ -21,6 +21,7 @@ import API_URL from "../../../config/api";
 import { useDispatch, useSelector } from "react-redux";
 import { setDataImovel } from "../../features/infoImovel/infoImovelSlice";
 import { useNavigation } from "@react-navigation/native";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 const typeProperties = [
   {
@@ -29,7 +30,7 @@ const typeProperties = [
   },
   {
     id: 1,
-    type: "Pedidos",
+    type: "Solicitações",
   },
   {
     id: 2,
@@ -38,6 +39,10 @@ const typeProperties = [
   {
     id: 3,
     type: "Negados",
+  },
+  {
+    id: 4,
+    type: "Meus pedidos",
   },
 ];
 
@@ -122,7 +127,7 @@ export default function VisitAppointement() {
   };
 
   const Properties = ({ item, navigation, dispatch }) => (
-    <TouchableOpacity
+    <View
       activeOpacity={0.7}
       style={myImovels_style.containerItemPropertie}
       onPress={() => {
@@ -132,38 +137,73 @@ export default function VisitAppointement() {
     >
       <View style={myImovels_style.infoImovels}>
         <Image
-          source={{ uri: API_URL + "storage/imovelPictures/" + item.image01 }}
+          source={{
+            uri: API_URL + "storage/imovelPictures/" + item.imovel.image01,
+          }}
           style={myImovels_style.imgImovel}
         />
         <View style={myImovels_style.detailImovel}>
-          <Text style={[{}, { fontFamily: "Poppins_500Medium" }]}>
-            {item.type_imovel.type}
-          </Text>
-          <Text style={[{}, { fontFamily: "Poppins_500Medium" }]}>
-            {item.province.name}, {item.county.name}
-          </Text>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "flex-start",
+            }}
+          >
+            <View>
+              <Text style={[{}, { fontFamily: "Poppins_500Medium" }]}>
+                {item.customer_id === id && `dono: ${item.owner.name}`}
+                {item.customer_id !== id && `cliente: ${item.customer.name}`}
+              </Text>
+              <Text style={[{}, { fontFamily: "Poppins_500Medium" }]}>
+                {item.imovel.type_imovel.type}
+              </Text>
+              <Text style={[{}, { fontFamily: "Poppins_500Medium" }]}>
+                local: {item.imovel.address} - {item.imovel.street}
+              </Text>
+              <Text style={[{}, { fontFamily: "Poppins_500Medium" }]}>
+                Data: {item.date}
+              </Text>
+              <Text style={[{}, { fontFamily: "Poppins_500Medium" }]}>
+                status: {item.status == 0 ? "negado" : "aceite"}
+              </Text>
+            </View>
+            {item.customer_id != id && (
+              <View
+                style={{ flexDirection: "row", alignItems: "center", gap: 5 }}
+              >
+                <TouchableOpacity
+                  style={myImovels_style.closeBtn}
+                  onPress={() => deleteImovel(item.id)}
+                >
+                  <MaterialCommunityIcons
+                    name="check"
+                    size={20}
+                    color="black"
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={myImovels_style.closeBtn}
+                  onPress={() => deleteImovel(item.id)}
+                >
+                  <MaterialCommunityIcons
+                    name="window-close"
+                    size={20}
+                    color="black"
+                  />
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
           <View style={[myImovels_style.containerPrice]}>
             <Text style={[{}, { fontFamily: "Poppins_500Medium" }]}>
-              {item.price}Kz
+              {item.customer_id === id && "solicitaste uma visita"}
+              {item.customer_id !== id && "solicitou uma visita"}
             </Text>
           </View>
         </View>
       </View>
-      <View style={myImovels_style.outhers}>
-        <TouchableOpacity
-          style={myImovels_style.closeBtn}
-          onPress={() => deleteImovel(item.id)}
-        >
-          <Text
-            style={[
-              myImovels_style.textCloseBtn,
-              { fontFamily: "Poppins_700Bold" },
-            ]}
-          >
-            X
-          </Text>
-        </TouchableOpacity>
-      </View>
+
       <View
         style={[
           myImovels_style.tag,
@@ -171,10 +211,10 @@ export default function VisitAppointement() {
         ]}
       >
         <Text style={myImovels_style.tagText}>
-          {item.type_transaction.type}
+          {item.imovel.type_transaction.type}
         </Text>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 
   console.warn(error);
@@ -183,11 +223,11 @@ export default function VisitAppointement() {
 
     setLoading(true);
 
-    if (selectedTypeImovelItemId === null || selectedTypeImovelItemId === 0) {
+    if (selectedTypeImovelItemId === 4) {
       await axios
-        .get(API_URL + `api/v1/user/show/imovels/${id}?page=${pagination}`)
+        .get(API_URL + `api/v1/show/user/mark/visits/${id}`)
         .then((response) => {
-          if (response.data.imovel.data.length === 0) {
+          if (response.data.userMarkVisit.length === 0) {
             setLoading(false);
             if (imovels.length === 0) {
               setError(true);
@@ -195,11 +235,11 @@ export default function VisitAppointement() {
 
             return;
           } else {
-            setImovels([...imovels, ...response.data.imovel.data]);
-            setPagination(pagination + 1);
-            console.log(response.data.imovel.data);
-            setLoading(false);
+            setImovels(response.data.userMarkVisit);
+            //setPagination(pagination + 1);
+            console.log(response.data.userMarkVisit);
             setError(false);
+            setLoading(false);
           }
         })
         .catch((error) => console.error("Erro ao buscar os dados: " + error));
@@ -207,29 +247,28 @@ export default function VisitAppointement() {
     }
 
     //console.warn(selectedTypeImovelItemId);
+    if (selectedTypeImovelItemId === 1) {
+      await axios
+        .get(API_URL + `api/v1/user/show/MyRequestAppointments/${id}`)
+        .then((response) => {
+          if (response.data.myRequestAppointments.length === 0) {
+            setLoading(false);
+            if (imovels.length === 0) {
+              setError(true);
+            }
 
-    await axios
-      .get(
-        API_URL +
-          `api/v1/user/show/imovels/type/${id}/${selectedTypeImovelItemId}?page=${pagination}`
-      )
-      .then((response) => {
-        if (response.data.imovel.data.length === 0) {
-          setLoading(false);
-          if (imovels.length === 0) {
-            setError(true);
+            return;
+          } else {
+            setImovels(response.data.myRequestAppointments);
+            //setPagination(pagination + 1);
+            console.log(response.data.myRequestAppointments);
+            setError(false);
+            setLoading(false);
           }
-
-          return;
-        } else {
-          setImovels([...imovels, ...response.data.imovel.data]);
-          setPagination(pagination + 1);
-          console.log(response.data.imovel.data);
-          setError(false);
-          setLoading(false);
-        }
-      })
-      .catch((error) => console.error("Erro ao buscar os dados: " + error));
+        })
+        .catch((error) => console.error("Erro ao buscar os dados: " + error));
+      return;
+    }
 
     setLoading(false);
   }
@@ -294,3 +333,28 @@ export default function VisitAppointement() {
     </View>
   );
 }
+
+/*
+if (selectedTypeImovelItemId === null || selectedTypeImovelItemId === 0) {
+      await axios
+      .get(API_URL + `api/v1/show/user/mark/visits/2`)
+      .then((response) => {
+        if (response.data.myRequestAppointments.length === 0) {
+          setLoading(false);
+          if (imovels.length === 0) {
+            setError(true);
+          }
+
+          return;
+        } else {
+          setImovels(response.data.myRequestAppointments);
+          //setPagination(pagination + 1);
+          console.log(response.data.myRequestAppointments);
+          setError(false);
+          setLoading(false);
+        }
+      })
+      .catch((error) => console.error("Erro ao buscar os dados: " + error));
+      return;
+    }
+*/

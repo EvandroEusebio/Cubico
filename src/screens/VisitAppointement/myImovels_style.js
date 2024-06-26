@@ -25,33 +25,29 @@ export const myImovels_style = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#cfcfd1",
     flexDirection: 'row',
-    justifyContent: 'space-between',
     marginVertical: 10,
   },
   imgImovel: {
-    height: 120,
+    height: "auto",
     width: 120,
     borderTopLeftRadius: 10,
     borderBottomLeftRadius: 10,
   },
   infoImovels: {
     flexDirection: "row",
-    gap: 10,
+    flex: 1,
   },
   detailImovel: {
-    justifyContent: "space-around",
+    flex: 1,
+    padding: 10,
+    justifyContent: 'space-around',
+
   },
   containerPrice: {
     borderWidth: 1,
     borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
-  },
-  outhers:{
-    paddingRight: 10,
-    alignItems:'center',
-    justifyContent: 'space-between',
-    paddingVertical: 5
   },
   closeBtn: {
     width:30,
