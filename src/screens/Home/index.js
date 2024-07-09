@@ -68,7 +68,7 @@ async function postFavorite(userId, imovelId) {
         Accept: "application/json",
       },
     });
-    console.log(response.data);
+    //console.log(response.data);
   } catch (error) {
     if (error.response && error.response.status === 422) {
       console.error("Erro 422 - Solicitação inválida:", error.response.data);
@@ -113,7 +113,7 @@ const Properties = ({ item, navigation, dispatch, userId }) => {
         }
       );
       const data = await response.json();
-      console.warn(data);
+      //console.warn(data);
       setIsFavorite(data.is_favorite);
     } catch (error) {
       console.error("Erro ao marcar favorito:", error.message);
@@ -159,7 +159,9 @@ const Properties = ({ item, navigation, dispatch, userId }) => {
           <View style={home_style.details}>
             <Icon name="map-pin" size={13} color="#000" />
 
-            <Text style={{color: "rgba(0, 0, 0, 0.5)", fontSize: 12}}>t{item.address}, {item.street}</Text>
+            <Text style={{ color: "rgba(0, 0, 0, 0.5)", fontSize: 12 }}>
+              {item.address}, {item.street}
+            </Text>
             <Text>{item.status}</Text>
           </View>
         </View>
@@ -199,7 +201,7 @@ const ListEndLoader = ({ loading }) => {
 
 export default function Home() {
   const [selectedTypeImovelItemId, setSelectedTypeImovelItemId] = useState(0);
-  const [text, onChangeText] = useState("");
+  const [text, setTextoInput] = useState("");
   const [imovels, setImovels] = useState([]);
   const [pagination, setPagination] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -211,6 +213,12 @@ export default function Home() {
   useEffect(() => {
     getDataImovels();
   }, [selectedTypeImovelItemId]);
+
+  const handleChangeText = (text) => {
+    //console.warn("Texto do input mudou:", text);
+
+    setTextoInput(text);
+  };
 
   const TypeProperties = ({ item, backgroundColor, onPress, iconColor }) => (
     <TouchableOpacity
@@ -252,7 +260,7 @@ export default function Home() {
   };
 
   async function getDataImovels() {
-    if (loading) return;
+    //if (loading) return;
 
     setLoading(true);
 
@@ -269,7 +277,7 @@ export default function Home() {
           } else {
             setImovels([...imovels, ...response.data.imovel.data]);
             setPagination(pagination + 1);
-            console.log(response.data.imovel.data);
+            //console.log(response.data.imovel.data);
             setLoading(false);
           }
         })
@@ -280,9 +288,9 @@ export default function Home() {
 
     if (selectedTypeImovelItemId === 0 && text !== "") {
       await axios
-        .get(API_URL + `api/v1/imovel/search/${text}`)
+        .get(API_URL + `api/v1/search/imovel?endereco=${text}`)
         .then((response) => {
-          console.warn(response.data);
+          //console.warn(response.data);
           setImovels(response.data);
           setLoading(false);
         })
@@ -300,7 +308,7 @@ export default function Home() {
             `api/v1/imovel/search/show/type/${selectedTypeImovelItemId}/${text}`
         )
         .then((response) => {
-          console.warn(response.data);
+          //console.warn(response.data);
           setImovels(response.data);
           setLoading(false);
         })
@@ -326,7 +334,7 @@ export default function Home() {
           //setImovels([])
           setImovels([...imovels, ...response.data.imovel.data]);
           setPagination(pagination + 1);
-          console.log(response.data.imovel.data);
+          //console.log(response.data.imovel.data);
           setLoading(false);
         }
       })
@@ -369,16 +377,28 @@ export default function Home() {
       </View>
       <View style={home_style.containerFilter}>
         <View style={home_style.containerInput}>
-          <TouchableOpacity onPress={() => getDataImovels()}>
-            <Icon name="search" size={20} color="#000" />
-          </TouchableOpacity>
-
+        <Icon name="search" size={20} color="#000" />
           <TextInput
-            style={home_style.input}
-            onChangeText={onChangeText}
+            style={{ flex: 1 }}
+            onChangeText={handleChangeText}
             value={text}
             placeholder="Pesquise por endereço"
           />
+          {text.trim() !== "" ? (
+            <TouchableOpacity
+              onPress={() => getDataImovels()}
+              style={{
+                backgroundColor: "#000",
+                paddingVertical: 5,
+                paddingHorizontal: 10,
+                borderRadius: 100,
+              }}
+            >
+              <Text style={{color: "#fff"}}>Pesquisar</Text>
+            </TouchableOpacity>
+          ) : (
+            ""
+          )}
         </View>
         {/*
           <TouchableOpacity style={home_style.containerIcon}>

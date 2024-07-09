@@ -85,7 +85,8 @@ export const home_style = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     flex: 1,
-    padding: 7,
+    paddingVertical: 7,
+    paddingHorizontal: 13,
     gap: 10,
     borderRadius: 50,
     borderColor: '#cfcfd1'
