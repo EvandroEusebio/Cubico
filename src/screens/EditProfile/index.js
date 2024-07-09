@@ -23,11 +23,14 @@ import { editProfile_style } from "../../styles/editProfile_style";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 import axios from "axios";
-import { updateUser, updateImageProfile } from "../../features/authentication/authSlice";
+import {
+  updateUser,
+  updateImageProfile,
+} from "../../features/authentication/authSlice";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import Video from "../../components/Move";
-
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 export default function EditProfile() {
   const phoneRedux = useSelector((state) => state.auth.user.phone);
@@ -58,7 +61,9 @@ export default function EditProfile() {
       let email = editedEmail;
       dispatch(updateUser({ id, email }));
     } else if (type == "phone") {
+      console.warn(typeof editedPhone);
       let phone = editedPhone;
+
       dispatch(updateUser({ id, phone }));
     }
   };
@@ -81,8 +86,6 @@ export default function EditProfile() {
     });
 
     dispatch(updateImageProfile(formData));
-
-
   }
 
   const pickImage = async () => {
@@ -142,14 +145,16 @@ export default function EditProfile() {
     <ScrollView contentContainerStyle={editProfile_style.container}>
       <View style={editProfile_style.containerImage}>
         <TouchableOpacity onPress={pickImage}>
-          <Image
-            source={
-              imageProfile === "null"
-                ? require("../../../assets/pro.png")
-                : { uri: API_URL + "storage/profilePictures/" + imageProfile }
-            }
-            style={editProfile_style.image}
-          />
+          {imageProfile !== "null" ? (
+            <Image
+              source={{
+                uri: API_URL + "storage/profilePictures/" + imageProfile,
+              }}
+              style={editProfile_style.image}
+            />
+          ) : (
+            <FontAwesome6 name="circle-user" size={54} color="black" />
+          )}
         </TouchableOpacity>
 
         <Text
@@ -274,7 +279,6 @@ export default function EditProfile() {
           </View>
         )}
       </View>
-      
     </ScrollView>
   );
 }

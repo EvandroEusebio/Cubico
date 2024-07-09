@@ -108,13 +108,13 @@ export default function Profile() {
     >
       <View style={profile_style.containerProfileDetails}>
         <View style={profile_style.Details}>
-          {user.imageProfile === "null" ? (
+          {user.imageProfile !== "null" ? (
             <Image
-            source={{
-              uri: API_URL + "storage/profilePictures/" + user.imageProfile,
-            }}
-            style={profile_style.imageProfile}
-          />
+              source={{
+                uri: API_URL + "storage/profilePictures/" + user.imageProfile,
+              }}
+              style={profile_style.imageProfile}
+            />
           ) : (
             <FontAwesome6 name="circle-user" size={54} color="white" />
           )}

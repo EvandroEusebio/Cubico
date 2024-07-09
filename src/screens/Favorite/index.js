@@ -244,6 +244,7 @@ export default function Favorite() {
 const style = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#ffff'
   },
   text: {
     color: "#000",

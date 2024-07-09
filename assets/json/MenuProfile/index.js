@@ -9,7 +9,7 @@ export const Data = [
       id: 2,
       title: "Ver Fvoritos",
       icon: "heart-outline",
-      route: "MyImovels",
+      route: "Favoritos",
     },
     {
       id: 3,

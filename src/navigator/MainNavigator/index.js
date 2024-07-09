@@ -81,6 +81,7 @@ const ScreenProfile = () => {
         <Stack.Screen name="MyInfoImovel" component={InfoImovel} />
         <Stack.Screen name="UpdateMyImovel" component={AddImovel} />
         <Stack.Screen name="MyAppointment" component={VisitAppointement} />
+        <Stack.Screen name="Favoritos" component={Favorite} />
       </Stack.Navigator>
     );
   };
