@@ -1,32 +1,32 @@
+import {
+  Poppins_300Light,
+  Poppins_400Regular,
+  Poppins_500Medium,
+  Poppins_700Bold,
+  useFonts,
+} from "@expo-google-fonts/poppins";
+import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import {
-  View,
-  Text,
-  TouchableOpacity,
+  ActivityIndicator,
   FlatList,
   Image,
-  TextInput,
-  ActivityIndicator,
   StatusBar,
   StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { home_style } from "../../styles/home_style";
-import {
-  useFonts,
-  Poppins_700Bold,
-  Poppins_300Light,
-  Poppins_500Medium,
-  Poppins_400Regular,
-} from "@expo-google-fonts/poppins";
+import Swiper from "react-native-swiper";
 import Icon from "react-native-vector-icons/Feather";
 import Icon2 from "react-native-vector-icons/MaterialIcons";
-import API_URL from "../../../config/api";
-import Swiper from "react-native-swiper";
-import axios from "axios";
-import Map from "../../components/Map";
-import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
+import API_URL from "../../../config/api";
+import Map from "../../components/Map";
 import { setDataImovel } from "../../features/infoImovel/infoImovelSlice";
+import { home_style } from "../../styles/home_style";
 
 const dataTypeProperties = [
   {
@@ -377,7 +377,7 @@ export default function Home() {
       </View>
       <View style={home_style.containerFilter}>
         <View style={home_style.containerInput}>
-        <Icon name="search" size={20} color="#000" />
+          <Icon name="search" size={20} color="#000" />
           <TextInput
             style={{ flex: 1 }}
             onChangeText={handleChangeText}
@@ -394,7 +394,7 @@ export default function Home() {
                 borderRadius: 100,
               }}
             >
-              <Text style={{color: "#fff"}}>Pesquisar</Text>
+              <Text style={{ color: "#fff" }}>Pesquisar</Text>
             </TouchableOpacity>
           ) : (
             ""

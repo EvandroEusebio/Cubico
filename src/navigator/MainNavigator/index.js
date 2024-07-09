@@ -99,8 +99,8 @@ export default function MainNavigator() {
             iconName = focused ? "add-circle" : "add-circle-outline";
           } else if (route.name === "Perfil") {
             iconName = focused ? "person-circle" : "person-circle-outline";
-          } else if (route.name === "Chat") {
-            iconName = focused ? "chatbubbles" : "chatbubbles-outline";
+          } else if (route.name === "VisitAppointement") {
+            iconName = focused ? "walk" : "walk-outline";
           } else if (route.name === "Favoritos") {
             iconName = focused ? "heart" : "heart-outline";
           }
@@ -159,9 +159,10 @@ export default function MainNavigator() {
         }}
       />
       <Tab.Screen
-        name="Chat"
-        component={ChatStack}
-        options={{ headerShown: false }}
+        name="VisitAppointement"
+        component={VisitAppointement}
+        options={{ headerShown: true, tabBarLabel: "Visítas", headerTitle: "Visitas" }}
+        
       />
       <Tab.Screen
         name="Perfil"
