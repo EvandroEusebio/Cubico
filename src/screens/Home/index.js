@@ -152,14 +152,14 @@ const Properties = ({ item, navigation, dispatch, userId }) => {
           <Text>
             {item.province.name}, {item.county.name}
           </Text>
-          <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
-            <Icon2 name={'person'} size={20}/>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
+            <Icon2 name={"person"} size={20} />
             <Text>{item.owner.name}</Text>
           </View>
           <View style={home_style.details}>
             <Icon name="map-pin" size={13} color="#000" />
 
-            <Icon name="shopping-bag" size={13} color="#000" />
+            <Text style={{color: "rgba(0, 0, 0, 0.5)", fontSize: 12}}>t{item.address}, {item.street}</Text>
             <Text>{item.status}</Text>
           </View>
         </View>
@@ -355,9 +355,6 @@ export default function Home() {
           CUBICO
         </Text>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
-          <TouchableOpacity style={home_style.containerIcon}>
-            <Icon name="bell" size={20} color="#000" />
-          </TouchableOpacity>
           <TouchableOpacity
             style={home_style.containerIcon}
             onPress={() => setShowMap(!showMap)}
@@ -383,9 +380,11 @@ export default function Home() {
             placeholder="Pesquise por endereço"
           />
         </View>
-        <TouchableOpacity style={home_style.containerIcon}>
+        {/*
+          <TouchableOpacity style={home_style.containerIcon}>
           <Icon name="sliders" size={20} color="#000" />
         </TouchableOpacity>
+          */}
       </View>
       <View>
         <FlatList

@@ -46,7 +46,7 @@ export default function EditProfile() {
   const [showEditedName, setShowEditedName] = useState(false);
   const [showEditedEmail, setShowEditedEmail] = useState(false);
   const [showEditedPhone, setShowEditedPhone] = useState(false);
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState("");
 
   const dispatch = useDispatch();
 

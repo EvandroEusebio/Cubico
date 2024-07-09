@@ -1,13 +1,11 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import API_URL from "../../../config/api";
-import SOCKET_API from "../../../config/api_socket";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import Constants from "expo-constants";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
-import Constants from "expo-constants";
-import io from "socket.io-client";
 import { Platform } from "react-native";
 import { ALERT_TYPE, Toast } from "react-native-alert-notification";
+import API_URL from "../../../config/api";
 
 const initialState = {
   error: null,
@@ -30,16 +28,19 @@ export const login = createAsyncThunk("login", async (data) => {
     return response.data;
   } catch (error) {
     if (error.response && error.response.status === 401) {
+      /*
       console.error(
         "Credenciais incorretas: " + JSON.stringify(error.response.data)
-      );
+      );*/
       Toast.show({
         type: ALERT_TYPE.DANGER,
         title: "Credenciais incorretas",
         textBody: "Erro: " + error.response.data.message,
       });
     } else {
+      /*
       console.error("Erro:", error.response.data);
+      */
       Toast.show({
         type: ALERT_TYPE.DANGER,
         title: "Erro de Entidade",
@@ -62,18 +63,28 @@ export const register = createAsyncThunk("register", async (data) => {
     return response.data;
   } catch (error) {
     if (error.response && error.response.status === 422) {
+      /*
       console.error(
         "Erro ao criar o usuário:",
         JSON.stringify(error.response.data)
       );
+      */
       Toast.show({
         type: ALERT_TYPE.DANGER,
-        title: "Erro",
+        title: "Erro ao criar o usuário:",
         textBody: "Erro: " + error.response.data.message,
       });
     } else {
+      /*
       console.error("Erro:", error);
+      */
+      Toast.show({
+        type: ALERT_TYPE.DANGER,
+        title: "Erro ao criar o usuário:",
+        textBody: "Erro: " + error.response.data.message,
+      });
     }
+    throw error;
   }
 });
 
@@ -232,9 +243,13 @@ const authSlice = createSlice({
         state.user = user;
         state.token = token;
         state.isAuthenticated = true;
-        console.warn("Autenticado com sucesso!");
+        //console.warn("Autenticado com sucesso!");
         state.error = null;
         storeDeviceToken(user.id);
+        Toast.show({
+          type: ALERT_TYPE.SUCCESS,
+          title: "Autenticado com sucesso!",
+        });
       })
       .addCase(login.rejected, (state, action) => {
         state.isloading = false;
@@ -254,7 +269,11 @@ const authSlice = createSlice({
         state.isloading = false;
 
         state.user = user;
-        console.warn("sucesso!");
+        //console.warn("sucesso!");
+        Toast.show({
+          type: ALERT_TYPE.SUCCESS,
+          title: "Usuário atualizado com sucesso!",
+        });
         console.log(state.user.id);
       })
       .addCase(updateUser.rejected, (state, action) => {
@@ -277,9 +296,13 @@ const authSlice = createSlice({
           state.user = user;
           state.token = token;
           state.isAuthenticated = true;
-          console.warn("Autenticado com sucesso!");
+          //console.warn("Autenticado com sucesso!");
           state.error = null;
           storeDeviceToken(user.id);
+          Toast.show({
+            type: ALERT_TYPE.SUCCESS,
+            title: "Autenticado com sucesso!",
+          });
         }
       )
       .addCase(register.rejected, (state, action) => {
@@ -297,6 +320,10 @@ const authSlice = createSlice({
         state.user = null;
         state.isAuthenticated = false;
         state.message = null; // Limpa qualquer erro anterior
+        Toast.show({
+          type: ALERT_TYPE.SUCCESS,
+          title: "Logout com sucesso!",
+        });
       });
   },
 });

@@ -1,5 +1,14 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { View, Text, Image, FlatList, TouchableOpacity, ActivityIndicator, ScrollView, RefreshControl } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  FlatList,
+  TouchableOpacity,
+  ActivityIndicator,
+  ScrollView,
+  RefreshControl,
+} from "react-native";
 import { profile_style } from "../../styles/profile_style";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
@@ -10,7 +19,7 @@ import API_URL from "../../../config/api";
 import { logout } from "../../features/authentication/authSlice";
 import SlicePointerPhrase from "../../utils/SlicePointerPhrase";
 import { Data } from "../../../assets/json/MenuProfile";
-
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 const Item = ({ title, icon, navigation, route, dispatch, token }) => (
   <TouchableOpacity
@@ -57,7 +66,7 @@ export default function Profile() {
     setTimeout(() => {
       setRefreshing(false);
       getUserTotalImovel(user.id);
-    getUserTotalFavotes(user.id);
+      getUserTotalFavotes(user.id);
     }, 2000);
   }, []);
 
@@ -91,16 +100,28 @@ export default function Profile() {
   }
 
   return (
-    <ScrollView style={profile_style.container} refreshControl={
-      <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-    } >
+    <ScrollView
+      style={profile_style.container}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <View style={profile_style.containerProfileDetails}>
         <View style={profile_style.Details}>
-          <Image
-            source={user.imageProfile === "null" ? require("../../../assets/im/user.png") : {uri: API_URL + "storage/profilePictures/" + user.imageProfile} }
+          {user.imageProfile === "null" ? (
+            <Image
+            source={{
+              uri: API_URL + "storage/profilePictures/" + user.imageProfile,
+            }}
             style={profile_style.imageProfile}
           />
-          <Text style={profile_style.name}>{SlicePointerPhrase(user.name, 8)}</Text>
+          ) : (
+            <FontAwesome6 name="circle-user" size={54} color="white" />
+          )}
+
+          <Text style={profile_style.name}>
+            {SlicePointerPhrase(user.name, 8)}
+          </Text>
           <Text style={profile_style.PhoneNumber}>{user.phone}</Text>
         </View>
         <View style={profile_style.containerResumeDetails}>
@@ -111,10 +132,6 @@ export default function Profile() {
           <View style={profile_style.resumeDetails}>
             <Text style={profile_style.countDetails}>{userTotalFavoritos}</Text>
             <Text style={profile_style.textDetails}>Favoritos</Text>
-          </View>
-          <View style={profile_style.resumeDetails}>
-            <Text style={profile_style.countDetails}>0</Text>
-            <Text style={profile_style.textDetails}>Visualizações</Text>
           </View>
         </View>
       </View>

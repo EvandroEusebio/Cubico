@@ -23,13 +23,6 @@ export const Data = [
       icon: "walk-outline",
       route: "MyAppointment",
     },
-  
-    {
-      id: 5,
-      title: "Notificações",
-      icon: "notifications-outline",
-      route: "MyImovels",
-    },
     {
       id: 6,
       title: "Nos contacte",

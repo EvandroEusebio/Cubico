@@ -44,7 +44,7 @@ export default function SignUp() {
   const dispatch = useDispatch();
   const navigate = useNavigation();
   const loading = useSelector((state) => state.auth.isloading)
-  console.warn(loading)
+  //console.warn(loading)
 
   const signUpHandle = (values) => {
     dispatch(register(values));
@@ -63,12 +63,13 @@ export default function SignUp() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, marginTop: StatusBar.currentHeight || 0, justifyContent: 'center', }}>
+    <SafeAreaView style={{ flex: 1, marginTop: StatusBar.currentHeight || 1, justifyContent: 'center', }}>
       <ScrollView
         style={register_style.container}
         contentContainerStyle={{
           alignItems: "center",
           justifyContent: "center",
+          flex: 1
         }}
         showsVerticalScrollIndicator={false}
       >
