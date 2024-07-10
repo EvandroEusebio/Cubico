@@ -32,8 +32,8 @@ export const onboard_style = StyleSheet.create({
     maxWidth: '60%'
   },
   logo:{
-    width:200,
-    height: 80
+    width:130,
+    height: 50
   },
   containerLogo:{
     flexDirection: 'row',

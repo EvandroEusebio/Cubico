@@ -133,18 +133,6 @@ export default function Login() {
               {touched.password && errors.password && (
                 <Text style={{ color: "red" }}>{errors.password}</Text>
               )}
-
-              <TouchableOpacity>
-                <Text
-                  style={[
-                    login_style.info,
-                    { fontFamily: "Poppins_400Regular" },
-                  ]}
-                >
-                  Esqueceu sua senha?
-                </Text>
-              </TouchableOpacity>
-
               <View>
                 <Button
                   name={"Logar"}

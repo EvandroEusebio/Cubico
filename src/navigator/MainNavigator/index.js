@@ -78,7 +78,7 @@ const ScreenProfile = () => {
         />
         <Stack.Screen name="MyImovels" component={MyImovels} />
         <Stack.Screen name="EditProfile" component={EditProfile} />
-        <Stack.Screen name="MyInfoImovel" component={InfoImovel} />
+        <Stack.Screen name="MyInfoImovel" component={InfoImovel} options={{headerTitle: "Meus imóveis"}}/>
         <Stack.Screen name="UpdateMyImovel" component={AddImovel} />
         <Stack.Screen name="MyAppointment" component={VisitAppointement} />
         <Stack.Screen name="Favoritos" component={Favorite} />

@@ -20,6 +20,8 @@ import { useSelector } from "react-redux";
 import { useRoute } from "@react-navigation/native";
 import { Video, ResizeMode } from "expo-av";
 import Move from "../../components/Move";
+import { ALERT_TYPE, Toast } from "react-native-alert-notification";
+
 
 export default function AddImovel() {
   const route = useRoute();
@@ -31,7 +33,7 @@ export default function AddImovel() {
   const [dataCounty, setDataCounty] = useState([]);
   const [showGeoLocation, setShowGeoLocation] = useState(false);
   const [rent_time, setRentTime] = useState("0");
-
+  const [loading, setLoading] = useState(false)
   const [showRentTime, setShowRentTime] = useState(false);
   const [typeStatus, setTypeStatus] = useState(
     route.params?.transaction_type_id
@@ -144,6 +146,7 @@ export default function AddImovel() {
   }
 
   async function submitImovelData() {
+    setLoading(false)
     const uri01 = image01;
     const filename01 = image01.split("/").pop();
     const match01 = /\.(\w+)$/.exec(filename01);
@@ -219,7 +222,7 @@ export default function AddImovel() {
       });
     }
 
-    console.log(formData._parts);
+    //console.log(formData._parts);
 
     await axios
       .post(API_URL + `api/v1/imovel/store`, formData, {
@@ -229,10 +232,22 @@ export default function AddImovel() {
       })
       .then(function (response) {
         fresh();
-        console.warn("Enviado com sucesso");
+        //console.warn("Enviado com sucesso");
+        setLoading(true)
+        Toast.show({
+          type: ALERT_TYPE.SUCCESS,
+          title: "Imóvel cadastrado com sucesso!",
+        });
       })
       .catch((error) => {
         console.error(error.response.data);
+        setLoading(false)
+        Toast.show({
+          type: ALERT_TYPE.DANGER,
+          title: "Erro ao cadastrar o imóvel tente novamente",
+          textBody: "Erro: " + error.response.data.message,
+        });
+
       });
   }
 
@@ -279,7 +294,7 @@ export default function AddImovel() {
       .get(API_URL + `api/v1/provincia/localidade/${id}`)
       .then((response) => {
         setDataCounty(response.data);
-        console.log(response.data);
+        //console.log(response.data);
       })
       .catch((error) => {
         console.error("Erro ao obter dados da API:", error);
@@ -307,11 +322,6 @@ export default function AddImovel() {
       type: "Terrenos",
       icon: "landscape",
     },
-    {
-      id: 4,
-      type: "Quartos",
-      icon: "single-bed",
-    },
   ];
 
   const typeStatusData = [
@@ -334,7 +344,7 @@ export default function AddImovel() {
       quality: 1,
     });
 
-    console.log(result);
+    //console.log(result);
 
     if (!result.canceled) {
       const originalWidth = result.assets[0].width;
@@ -362,7 +372,7 @@ export default function AddImovel() {
       );
 
       setImage01(resizedImage.uri);
-      console.log(resizedImage);
+      //console.log(resizedImage);
     }
   };
   const pickImage02 = async () => {
@@ -374,7 +384,7 @@ export default function AddImovel() {
       quality: 1,
     });
 
-    console.log(result);
+    //console.log(result);
 
     if (!result.canceled) {
       const originalWidth = result.assets[0].width;
@@ -401,7 +411,7 @@ export default function AddImovel() {
         { compress: 0.7, format: SaveFormat.JPEG }
       );
       setImage02(resizedImage.uri);
-      console.log(resizedImage.uri);
+      //console.log(resizedImage.uri);
     }
   };
   const pickImage03 = async () => {
@@ -413,7 +423,7 @@ export default function AddImovel() {
       quality: 1,
     });
 
-    console.log(result);
+    //console.log(result);
 
     if (!result.canceled) {
       const originalWidth = result.assets[0].width;
@@ -440,7 +450,7 @@ export default function AddImovel() {
         { compress: 0.7, format: SaveFormat.JPEG }
       );
       setImage03(resizedImage.uri);
-      console.log(resizedImage.uri);
+      //console.log(resizedImage.uri);
     }
   };
   const pickImage04 = async () => {
@@ -452,7 +462,7 @@ export default function AddImovel() {
       quality: 1,
     });
 
-    console.log(result);
+    //console.log(result);
 
     if (!result.canceled) {
       const originalWidth = result.assets[0].width;
@@ -479,7 +489,7 @@ export default function AddImovel() {
         { compress: 0.7, format: SaveFormat.JPEG }
       );
       setImage04(resizedImage.uri);
-      console.log(resizedImage.uri);
+      //console.log(resizedImage.uri);
     }
   };
 
@@ -877,6 +887,7 @@ export default function AddImovel() {
               onPress={() => {
                 submitImovelData();
               }}
+              loading={loading}
             />
           </View>
         )}

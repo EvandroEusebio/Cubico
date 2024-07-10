@@ -25,13 +25,10 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 const typeProperties = [
   {
-    id: 0,
-    type: "todos",
-  },
-  {
     id: 1,
     type: "Solicitações",
   },
+  /*
   {
     id: 2,
     type: "Aceites",
@@ -40,6 +37,7 @@ const typeProperties = [
     id: 3,
     type: "Negados",
   },
+  */
   {
     id: 4,
     type: "Meus pedidos",
@@ -65,7 +63,7 @@ export default function VisitAppointement() {
     await axios
       .delete(API_URL + `api/v1/imovel/delete/${id}`)
       .then((response) => {
-        console.warn(response.data.response);
+        //console.warn(response.data.response);
         const filteredData = imovels.filter((item) => item.id !== id);
         setImovels(filteredData);
       })
@@ -237,7 +235,7 @@ export default function VisitAppointement() {
           } else {
             setImovels(response.data.userMarkVisit);
             //setPagination(pagination + 1);
-            console.log(response.data.userMarkVisit);
+            //console.log(response.data.userMarkVisit);
             setError(false);
             setLoading(false);
           }
@@ -261,7 +259,7 @@ export default function VisitAppointement() {
           } else {
             setImovels(response.data.myRequestAppointments);
             //setPagination(pagination + 1);
-            console.log(response.data.myRequestAppointments);
+            //console.log(response.data.myRequestAppointments);
             setError(false);
             setLoading(false);
           }

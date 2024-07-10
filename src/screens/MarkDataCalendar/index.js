@@ -5,6 +5,8 @@ import { markDataCalendar_style } from "../../styles/markDataCalendar_style";
 import axios from "axios";
 import API_URL from "../../../config/api";
 import { useSelector } from "react-redux";
+import { ALERT_TYPE, Toast } from "react-native-alert-notification";
+
 
 export default function MarkDataCalendar() {
   const [selected, setSelected] = useState("");
@@ -28,9 +30,19 @@ export default function MarkDataCalendar() {
       .then(function (response) {
         console.log(response.data)
         console.warn("Enviado com sucesso");
+        Toast.show({
+          type: ALERT_TYPE.SUCCESS,
+          title: "Pedido enviado com sucesso",
+          
+        });
       })
       .catch((error) => {
         console.error(error);
+        Toast.show({
+          type: ALERT_TYPE.DANGER,
+          title: "Credenciais incorretas",
+          textBody: "Erro: " + error.response.data.message,
+        });
       });
   }
 

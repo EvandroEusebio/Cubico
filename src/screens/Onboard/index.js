@@ -25,42 +25,42 @@ const DATA = [
     img: require("../../../assets/img_onboard/on_hello.png"),
     title: "Olá Seja bem Vindo",
     description:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+      "Cubíco é a sua nova Casa!",
   },
   {
     id: "2",
     img: require("../../../assets/img_onboard/on_house.png"),
-    title: "Olá Seja bem Vindo",
+    title: "CONSULTA DE IMÓVEIS",
     description:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+      "Todos os seus imóveis em um único Lugar, é só consultar!",
   },
   {
     id: "3",
     img: require("../../../assets/img_onboard/on_add_home.png"),
-    title: "Olá Seja bem Vindo",
+    title: "CADASTRO DE IMÓVEIS",
     description:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+      "Nunca foi tão fácil publicar o seu imóvel, com o Cubíco",
   },
   {
     id: "4",
     img: require("../../../assets/img_onboard/on_location.png"),
-    title: "Olá Seja bem Vindo",
+    title: "MAPA INTERATIVO",
     description:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+      "Já imaginou ver seu novo imóvel sem se locomover?, sim o Cubíco oferece isto",
   },
   {
     id: "5",
     img: require("../../../assets/img_onboard/on_visit.png"),
-    title: "Olá Seja bem Vindo",
+    title: "AGENDAR VISITAS",
     description:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+      "Conecte com os proprietários, aqui!",
   },
   {
     id: "6",
     img: require("../../../assets/img_onboard/on_login.png"),
-    title: "Olá Seja bem Vindo",
+    title: "AUTENTICAÇÃO",
     description:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+      "Agora é só autenticar-se, e desfrutar",
   },
 ];
 
@@ -89,7 +89,7 @@ const Item = ({ title, img, description }) => {
   );
 };
 
-export default function Onboard() {
+export default function Onboard({navigation}) {
   let [fontsLoaded] = useFonts({
     Poppins_700Bold,
     Poppins_300Light,
@@ -107,12 +107,6 @@ export default function Onboard() {
           source={require("../../../assets/im/logo.png")}
           style={onboard_style.logo}
         />
-        <TouchableOpacity>
-          <Text style={[onboard_style.btnText, {fontFamily: "Poppins_400Regular"}]}>Entrar</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text style={[onboard_style.btnText, {fontFamily: "Poppins_400Regular"}]}>Registar</Text>
-        </TouchableOpacity>
       </View>
       <View style={onboard_style.containerFlatlist}>
         <FlatList
@@ -134,11 +128,11 @@ export default function Onboard() {
 
       <View style={onboard_style.btn}>
         <Button
-          name={"Seguinte"}
+          name={"Pular"}
           bgColor={"#000"}
           textColor={"#f3f3f3"}
           fontFamily={"Poppins_700Bold"}
-          onPress={() => loginHandle()}
+          onPress={() => navigation.navigate("Login")}
         />
       </View>
     </SafeAreaView>

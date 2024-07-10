@@ -64,7 +64,7 @@ export default function MyImovels() {
     await axios
       .delete(API_URL + `api/v1/imovel/delete/${id}`)
       .then((response) => {
-        console.warn(response.data.response);
+        //console.warn(response.data.response);
         const filteredData = imovels.filter((item) => item.id !== id);
         setImovels(filteredData);
       })
@@ -201,7 +201,7 @@ export default function MyImovels() {
           } else {
             setImovels([...imovels, ...response.data.imovel.data]);
             setPagination(pagination + 1);
-            console.log(response.data.imovel.data);
+            //console.log(response.data.imovel.data);
             setLoading(false);
             setError(false);
           }
@@ -228,7 +228,7 @@ export default function MyImovels() {
         } else {
           setImovels([...imovels, ...response.data.imovel.data]);
           setPagination(pagination + 1);
-          console.log(response.data.imovel.data);
+          //console.log(response.data.imovel.data);
           setError(false);
           setLoading(false);
         }
